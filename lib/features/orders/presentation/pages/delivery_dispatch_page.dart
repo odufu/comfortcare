@@ -5,7 +5,6 @@ import '../../../../core/extensions/context_extensions.dart';
 import '../../../../core/extensions/currency_extensions.dart';
 import '../../../../core/widgets/cc_button.dart';
 import '../../../../core/widgets/cc_chip.dart';
-import '../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../domain/entities/order.dart';
 import '../bloc/orders_bloc.dart';
 import '../bloc/orders_event.dart';

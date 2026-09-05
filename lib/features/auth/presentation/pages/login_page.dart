@@ -59,7 +59,7 @@ class LoginPage extends StatelessWidget {
                   child: Image.asset(
                     'assets/images/logo.png',
                     fit: BoxFit.contain,
-                    errorBuilder: (_, __, ___) => Icon(
+                    errorBuilder: (context, error, stackTrace) => Icon(
                       Icons.local_pharmacy,
                       size: 40,
                       color: colorScheme.primary,

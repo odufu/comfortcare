@@ -9,6 +9,8 @@ import 'package:comfort_care/core/storage/local_storage_service.dart';
 import 'package:comfort_care/features/products/domain/entities/product.dart';
 import 'package:comfort_care/features/cart/domain/entities/cart_item.dart';
 import 'package:comfort_care/features/orders/domain/entities/order.dart';
+import 'package:comfort_care/core/widgets/cc_floating_ai_doctor_button.dart';
+import 'package:comfort_care/features/clinical/presentation/widgets/ai_clinical_regimen_card.dart';
 
 class FakeLocalStorageService implements LocalStorageService {
   String? themeMode;
@@ -53,9 +55,10 @@ class FakeLocalStorageService implements LocalStorageService {
 void main() {
   group('ComfortCare Core Utilities & Formatting Tests', () {
     test('Currency formatters output Nigerian Naira (₦) correctly', () {
-      expect(3850.0.toNaira(), '₦3,850.00');
-      expect(0.0.toNaira(), '₦0.00');
-      expect(1250000.5.toNaira(), '₦1,250,000.50');
+      expect(3850.0.toNaira(), '₦3,850');
+      expect(3850.0.toNaira(showDecimals: true), '₦3,850.00');
+      expect(0.0.toNaira(), '₦0');
+      expect(1250000.0.toNaira(), '₦1,250,000');
     });
 
     test('Nigerian Phone Validator accepts valid formats', () {
@@ -157,6 +160,82 @@ void main() {
       );
 
       await bloc.close();
+    });
+  });
+
+  group('AI Clinical Consultation & FAB Tests', () {
+    testWidgets('CCFloatingAiDoctorButton renders properly with live badge', (tester) async {
+      bool pressed = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            floatingActionButton: CCFloatingAiDoctorButton(
+              onPressed: () => pressed = true,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('AI Doctor'), findsOneWidget);
+      expect(find.text('Live Co-Pilot'), findsOneWidget);
+      expect(find.text('PCN'), findsOneWidget);
+      expect(find.byIcon(Icons.smart_toy), findsOneWidget);
+
+      await tester.tap(find.text('AI Doctor'));
+      expect(pressed, isTrue);
+    });
+
+    testWidgets('AiClinicalRegimenCard renders exact items, tags, and recalculates on toggle', (tester) async {
+      int reportedCount = 0;
+      double reportedTotal = 0;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: AiClinicalRegimenCard(
+                onTotalsChanged: (count, total, original, savings, ids) {
+                  reportedCount = count;
+                  reportedTotal = total;
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Verify Header & Badge
+      expect(find.text('AI Clinical Regimen'), findsOneWidget);
+      expect(find.text('Rx Ready'), findsOneWidget);
+      expect(find.text('Tap to customize individual care items'), findsOneWidget);
+
+      // Verify 4 items
+      expect(find.text('Coartem 80/480mg'), findsOneWidget);
+      expect(find.text('Emzor Paraceta...'), findsOneWidget);
+      expect(find.text('CareStart Mala...'), findsOneWidget);
+      expect(find.text('ORS Hydration ...'), findsOneWidget);
+
+      // Verify Tags
+      expect(find.text('1st Line Malaria Therapy'), findsOneWidget);
+      expect(find.text('Fast Dissolve'), findsOneWidget);
+      expect(find.text('15-Min Results'), findsOneWidget);
+      expect(find.text('Optional Add-on'), findsOneWidget);
+
+      // Verify Default 3 items checked state: Total ₦7,200
+      expect(find.text('Selected: 3 Items • Total: ₦7,200'), findsOneWidget);
+      expect(reportedCount, 3);
+      expect(reportedTotal, 7200.0);
+
+      // Tap 4th item (ORS Hydration) to select it
+      await tester.tap(find.text('ORS Hydration ...'));
+      await tester.pumpAndSettle();
+
+      // Now 4 items selected: 7200 + 1400 = 8600
+      expect(find.text('Selected: 4 Items • Total: ₦8,600'), findsOneWidget);
+      expect(reportedCount, 4);
+      expect(reportedTotal, 8600.0);
     });
   });
 }

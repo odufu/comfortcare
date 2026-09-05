@@ -13,11 +13,12 @@ class ProductsRepositoryImpl implements ProductsRepository {
     String? query,
     bool isWholesale = false,
   }) async {
-    return _remoteDataSource.getProducts(
+    final list = await _remoteDataSource.getProducts(
       category: category,
       query: query,
       isWholesale: isWholesale,
     );
+    return List<ProductEntity>.from(list);
   }
 
   @override

@@ -39,12 +39,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     return BlocBuilder<ProductsBloc, ProductsState>(
       builder: (context, state) {
         final product = state.selectedProduct ??
-            (state.products.isNotEmpty
-                ? state.products.firstWhere(
-                    (p) => p.id == widget.productId,
-                    orElse: () => state.products.first,
-                  )
-                : null);
+            state.products.where((p) => p.id == widget.productId).firstOrNull ??
+            state.products.firstOrNull;
 
         if (product == null) {
           return Scaffold(
@@ -119,7 +115,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                         width: double.infinity,
                         height: double.infinity,
                         fit: BoxFit.cover,
-                        errorWidget: (_, __, ___) => Center(
+                        errorWidget: (context, url, error) => Center(
                           child: Icon(Icons.medication, size: 70, color: colorScheme.primary),
                         ),
                       ),

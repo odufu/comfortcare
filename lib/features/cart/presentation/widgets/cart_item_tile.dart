@@ -55,7 +55,7 @@ class CartItemTile extends StatelessWidget {
                 child: CachedNetworkImage(
                   imageUrl: product.imageUrl,
                   fit: BoxFit.cover,
-                  errorWidget: (_, __, ___) => Icon(
+                  errorWidget: (context, url, error) => Icon(
                     Icons.medication,
                     color: colorScheme.primary,
                   ),

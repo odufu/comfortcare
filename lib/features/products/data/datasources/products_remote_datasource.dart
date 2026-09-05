@@ -199,10 +199,6 @@ class ProductsRemoteDataSourceImpl implements ProductsRemoteDataSource {
     }
 
     await Future.delayed(const Duration(milliseconds: 150));
-    try {
-      return _mockProducts.firstWhere((p) => p.id == id);
-    } catch (_) {
-      return _mockProducts.first;
-    }
+    return _mockProducts.where((p) => p.id == id).firstOrNull ?? _mockProducts.first;
   }
 }

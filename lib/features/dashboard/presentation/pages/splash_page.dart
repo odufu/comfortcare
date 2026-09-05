@@ -167,7 +167,7 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
                         child: Image.asset(
                           'assets/images/logo.png',
                           fit: BoxFit.contain,
-                          errorBuilder: (_, __, ___) => Icon(
+                          errorBuilder: (context, error, stackTrace) => Icon(
                             Icons.local_pharmacy,
                             size: 60,
                             color: colorScheme.primary,

@@ -55,21 +55,13 @@ class CCBottomNavBar extends StatelessWidget {
               _buildNavItem(
                 context,
                 index: 2,
-                icon: Icons.smart_toy_outlined,
-                activeIcon: Icons.smart_toy,
-                label: 'AI Doctor',
-                isSpecial: true,
-              ),
-              _buildNavItem(
-                context,
-                index: 3,
                 icon: Icons.receipt_long_outlined,
                 activeIcon: Icons.receipt_long,
                 label: 'Orders',
               ),
               _buildNavItem(
                 context,
-                index: 4,
+                index: 3,
                 icon: Icons.person_outline,
                 activeIcon: Icons.person,
                 label: 'Profile',

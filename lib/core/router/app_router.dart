@@ -19,6 +19,7 @@ import '../../features/products/presentation/pages/products_catalog_page.dart';
 import '../../features/profile/presentation/pages/account_profile_settings_page.dart';
 import '../storage/local_storage_service.dart';
 import '../widgets/cc_bottom_nav_bar.dart';
+import '../widgets/cc_floating_ai_doctor_button.dart';
 
 class AppRouter {
   static final GlobalKey<NavigatorState> _rootNavigatorKey =
@@ -95,40 +96,44 @@ class AppRouter {
         builder: (context, state, child) {
           int index = 0;
           final location = state.uri.path;
+          final isAiConsult = location.startsWith('/ai-consult');
           if (location.startsWith('/products')) {
             index = 1;
-          } else if (location.startsWith('/ai-consult')) {
-            index = 2;
           } else if (location.startsWith('/orders')) {
-            index = 3;
+            index = 2;
           } else if (location.startsWith('/profile')) {
-            index = 4;
+            index = 3;
+          } else if (isAiConsult) {
+            index = -1;
           }
 
           return Scaffold(
             body: child,
-            bottomNavigationBar: CCBottomNavBar(
-              currentIndex: index,
-              onTap: (newIndex) {
-                switch (newIndex) {
-                  case 0:
-                    context.go('/dashboard');
-                    break;
-                  case 1:
-                    context.go('/products');
-                    break;
-                  case 2:
-                    context.go('/ai-consult');
-                    break;
-                  case 3:
-                    context.go('/orders');
-                    break;
-                  case 4:
-                    context.go('/profile');
-                    break;
-                }
-              },
-            ),
+            floatingActionButton: isAiConsult
+                ? null
+                : const CCFloatingAiDoctorButton(),
+            floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+            bottomNavigationBar: isAiConsult
+                ? null
+                : CCBottomNavBar(
+                    currentIndex: index,
+                    onTap: (newIndex) {
+                      switch (newIndex) {
+                        case 0:
+                          context.go('/dashboard');
+                          break;
+                        case 1:
+                          context.go('/products');
+                          break;
+                        case 2:
+                          context.go('/orders');
+                          break;
+                        case 3:
+                          context.go('/profile');
+                          break;
+                      }
+                    },
+                  ),
           );
         },
         routes: [

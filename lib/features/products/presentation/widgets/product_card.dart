@@ -58,7 +58,7 @@ class ProductCard extends StatelessWidget {
                     child: CachedNetworkImage(
                       imageUrl: product.imageUrl,
                       fit: BoxFit.cover,
-                      placeholder: (_, __) => Center(
+                      placeholder: (context, url) => Center(
                         child: SizedBox(
                           width: 24,
                           height: 24,
@@ -68,7 +68,7 @@ class ProductCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                      errorWidget: (_, __, ___) => Icon(
+                      errorWidget: (context, url, error) => Icon(
                         Icons.medication,
                         size: 40,
                         color: colorScheme.primary,

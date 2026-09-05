@@ -15,6 +15,7 @@ class SupabaseService {
           !ApiConstants.supabaseUrl.contains('comfortcare.supabase.co')) {
         await Supabase.initialize(
           url: ApiConstants.supabaseUrl,
+          // ignore: deprecated_member_use
           anonKey: ApiConstants.supabaseAnonKey,
           debug: kDebugMode,
         );

@@ -93,10 +93,7 @@ class OrdersRemoteDataSourceImpl implements OrdersRemoteDataSource {
     }
 
     await Future.delayed(const Duration(milliseconds: 150));
-    try {
-      return _orders.firstWhere((o) => o.id == id);
-    } catch (_) {
-      return _orders.isNotEmpty ? _orders.first : null;
-    }
+    return _orders.where((o) => o.id == id).firstOrNull ??
+        (_orders.isNotEmpty ? _orders.first : null);
   }
 }

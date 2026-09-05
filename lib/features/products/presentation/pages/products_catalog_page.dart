@@ -100,7 +100,7 @@ class _ProductsCatalogPageState extends State<ProductsCatalogPage> {
                       child: ListView.separated(
                         scrollDirection: Axis.horizontal,
                         itemCount: _categories.length,
-                        separatorBuilder: (_, __) => const SizedBox(width: 8),
+                        separatorBuilder: (context, index) => const SizedBox(width: 8),
                         itemBuilder: (context, i) {
                           final cat = _categories[i];
                           final isSelected = state.selectedCategory == cat;
