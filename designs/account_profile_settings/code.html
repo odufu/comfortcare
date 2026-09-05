@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-container-lowest": "#ffffff", "inverse-on-surface": "#eef0ff", "on-error-container": "#93000a", "on-secondary-fixed-variant": "#005312", "on-tertiary-container": "#fffbff", "surface-container-high": "#e2e7ff", "surface-bright": "#faf8ff", "primary": "#006194", "error-container": "#ffdad6", "inverse-primary": "#93ccff", "on-surface": "#131b2e", "on-tertiary-fixed": "#410002", "on-secondary-container": "#217128", "primary-container": "#007bb9", "on-background": "#131b2e", "on-primary-fixed-variant": "#004b73", "on-primary": "#ffffff", "tertiary-fixed-dim": "#ffb4ac", "tertiary": "#b7131a", "on-error": "#ffffff", "on-secondary-fixed": "#002204", "on-secondary": "#ffffff", "surface-dim": "#d2d9f4", "background": "#faf8ff", "on-tertiary": "#ffffff", "secondary-fixed-dim": "#88d982", "tertiary-fixed": "#ffdad6", "on-surface-variant": "#3f4850", "primary-fixed-dim": "#93ccff", "surface-variant": "#dae2fd", "primary-fixed": "#cce5ff", "error": "#ba1a1a", "surface-container-highest": "#dae2fd", "on-primary-fixed": "#001d31", "outline-variant": "#bfc7d2", "inverse-surface": "#283044", "surface-container": "#eaedff", "surface-container-low": "#f2f3ff", "surface-tint": "#006398", "on-tertiary-fixed-variant": "#93000d", "surface": "#faf8ff", "on-primary-container": "#fdfcff", "outline": "#707881", "tertiary-container": "#db322f", "secondary-fixed": "#a3f69c", "secondary-container": "#a0f399", "secondary": "#1b6d24" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "space-xl": "1.5rem", "space-xs": "0.25rem", "space-sm": "0.5rem", "gutter-mobile": "0.75rem", "space-2xs": "0.125rem", "space-md": "0.75rem", "card-padding-mobile": "1rem", "space-3xl": "3rem", "space-2xl": "2rem", "space-base": "1rem", "screen-edge-mobile": "1rem", "space-lg": "1.25rem" }, "fontFamily": { "label-md": ["Manrope"], "headline-md": ["Manrope"], "body-sm": ["Manrope"], "label-lg": ["Manrope"], "label-sm": ["Manrope"], "headline-lg-mobile": ["Manrope"], "headline-xl": ["Manrope"], "headline-xl-mobile": ["Manrope"], "headline-lg": ["Manrope"], "body-md": ["Manrope"], "body-lg": ["Manrope"] }, "fontSize": { "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "600" }], "headline-md": ["20px", { "lineHeight": "26px", "fontWeight": "700" }], "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }], "label-lg": ["14px", { "lineHeight": "18px", "fontWeight": "700" }], "label-sm": ["10px", { "lineHeight": "12px", "fontWeight": "700" }], "headline-lg-mobile": ["22px", { "lineHeight": "28px", "fontWeight": "700" }], "headline-xl": ["36px", { "lineHeight": "44px", "fontWeight": "800" }], "headline-xl-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "800" }], "headline-lg": ["28px", { "lineHeight": "36px", "fontWeight": "700" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "500" }] } } } }</script></head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,97,148,0.06)]"><div class="h-16 px-screen-edge-mobile flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0 flex-1"><a class="shrink-0 flex items-center gap-space-xs" data-path="home" href="#"><img alt="ComfortCare" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1WjFuU0Bkh-tRsd4vZtbY50RYc-26TYPCVsc_QvRdnshh94Wl0FHxfIRp_razpbA2uyyUqkdpvvGlkW87MIhoxuJqU8PYmn8uXQN7nUCzUXuUk0107p9lTxlrF9FlPgw5tCTusZ9rW1u2ScnRZaNGNMnVtYV-2YcVeMzsfaQ4zoMGYGF6CGkh5WpVo9U9E46ot9Sg1YbmahDKp5r7DWZHkhXGRu-fNsuRBzZVjmLSE-jxVQEbN_MX6KFSr_2EdM9Ed_YBystPwLoQ"/><span class="hidden xs:inline-block font-headline-md text-headline-md text-primary tracking-tight">ComfortCare</span></a><button aria-label="Delivery location" class="flex items-center gap-space-xs px-space-sm py-space-xs rounded-full bg-surface-container-low hover:bg-surface-container transition-colors min-h-[44px] max-w-[170px]" type="button"><span class="material-symbols-outlined text-secondary text-[18px] shrink-0">location_on</span><div class="flex flex-col text-left min-w-0"><span class="font-label-sm text-label-sm text-on-surface-variant leading-none uppercase tracking-wider">Deliver to</span><span class="font-label-md text-label-md text-on-surface truncate leading-tight">Comfort Mall, Abuja</span></div><span class="material-symbols-outlined text-on-surface-variant text-[14px] shrink-0">keyboard_arrow_down</span></button></div><div class="flex items-center gap-space-xs shrink-0"><a aria-label="My Orders" class="w-11 h-11 relative flex items-center justify-center rounded-full hover:bg-surface-container-low transition-colors text-on-surface-variant" data-path="orders" href="#"><span class="material-symbols-outlined text-[22px]">receipt_long</span></a><button aria-label="Shopping Cart" class="w-11 h-11 relative flex items-center justify-center rounded-full hover:bg-surface-container-low transition-colors text-on-surface-variant" type="button"><span class="material-symbols-outlined text-[22px]">shopping_bag</span><span class="absolute top-1.5 right-1.5 min-w-[16px] h-4 px-1 rounded-full bg-primary text-on-primary font-label-sm text-[9px] font-bold flex items-center justify-center ring-2 ring-surface-container-lowest">2</span></button></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-24 bg-surface"><div class="flex flex-col w-full pb-10">
+<!-- Profile Ambient Top Bar -->
+<div class="px-screen-edge-mobile pt-space-md pb-space-sm">
+<div class="relative overflow-hidden rounded-full bg-gradient-to-br from-primary via-primary-container to-surface-tint p-space-base text-on-primary shadow-xl">
+<!-- Decorative Micro Shapes -->
+<div class="absolute -right-10 -bottom-10 w-36 h-36 rounded-full bg-white/10 blur-xl pointer-events-none"></div>
+<div class="absolute top-2 right-12 w-16 h-16 rounded-full bg-secondary-fixed/20 blur-md pointer-events-none"></div>
+<div class="relative flex items-start gap-space-md">
+<!-- User Avatar with Verified Status Ring -->
+<div class="relative shrink-0">
+<img class="w-16 h-16 rounded-full object-cover shadow-md" data-alt="Close up professional portrait of a distinguished African male doctor wearing a sharp navy medical coat with subtle clinical aesthetic, warm natural studio lighting, modern Nigerian physician look." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiNnRFYVH_YNTg2fMGAy5gdRul_0duKpAb4kNIWE8ZVV3K5V559wt61Tz1lyPNjy4rEptvOIq7x3Q5KQkbHdk1XskhkRGSN_oq4NQp6_lfCfDVpI6XGW0lf8hj26WOv5VL0ODP1znnJdMRMqNbA3MeAihX3O9KB6IZbvgfR6yGGWaj40SEbNm_0baRC75Z9cD31ZndCQeKmqhda65j4XIae5-kpJi1ZOVMXjlomviOHbxjV6dQjbaI"/>
+<div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-secondary text-on-secondary flex items-center justify-center shadow-md">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+</div>
+<!-- Name & Primary Contact -->
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-space-xs flex-wrap">
+<h1 class="font-headline-md text-headline-md text-on-primary truncate">Dr. Farouk Al-Mansur</h1>
+</div>
+<p class="font-body-sm text-body-sm text-on-primary/80 flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[15px] opacity-90">call</span>
+            +234 803 265 1505
+            <span class="mx-1 opacity-40">•</span>
+<span class="material-symbols-outlined text-[15px] opacity-90">location_on</span>
+            Abuja
+          </p>
+<!-- Account Type Tier Badge -->
+<div class="mt-space-sm inline-flex items-center gap-1.5 px-space-sm py-space-2xs rounded-full bg-surface-container-lowest/20 backdrop-blur-md">
+<span class="material-symbols-outlined text-secondary-fixed text-[14px]">local_pharmacy</span>
+<span class="font-label-sm text-label-sm text-on-primary leading-none tracking-tight">Verified Clinic &amp; Retail Buyer (Tier 2 Wholesale)</span>
+</div>
+</div>
+<button aria-label="Edit Profile" class="shrink-0 w-8 h-8 rounded-full bg-surface-container-lowest/15 hover:bg-surface-container-lowest/25 flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px] text-on-primary">edit</span>
+</button>
+</div>
+<!-- Wholesaler Status Quick-Notice Banner -->
+<div class="mt-space-base pt-space-sm flex items-center justify-between gap-space-sm bg-black/15 rounded-xl px-space-sm py-space-xs">
+<div class="flex items-center gap-space-xs min-w-0">
+<span class="material-symbols-outlined text-secondary-fixed text-[18px]">verified_user</span>
+<span class="font-label-sm text-label-sm text-on-primary/95 truncate">Discounts Active on 412 NAFDAC Formulary Items</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary-fixed uppercase tracking-wider shrink-0 font-bold">12% OFF</span>
+</div>
+</div>
+</div>
+<!-- Quick Health & Order Metric Grid -->
+<div class="px-screen-edge-mobile pt-space-xs pb-space-sm">
+<div class="grid grid-cols-2 gap-space-xs">
+<!-- Orders Metric -->
+<div class="bg-surface-container-lowest p-space-sm rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-space-2xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Orders</span>
+<div class="w-7 h-7 rounded-full bg-surface-container-low flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[16px]">receipt_long</span>
+</div>
+</div>
+<div class="flex items-baseline gap-1.5">
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">18</span>
+<span class="font-label-sm text-label-sm text-secondary font-semibold">Abuja hub</span>
+</div>
+</div>
+<!-- Active Refills Metric -->
+<div class="bg-surface-container-lowest p-space-sm rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-space-2xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Active Refills</span>
+<div class="w-7 h-7 rounded-full bg-surface-container-low flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[16px]">event_repeat</span>
+</div>
+</div>
+<div class="flex items-baseline gap-1.5">
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">2</span>
+<span class="font-label-sm text-label-sm text-primary font-semibold">Scheduled</span>
+</div>
+</div>
+<!-- ComfortCare Points -->
+<div class="bg-surface-container-lowest p-space-sm rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-space-2xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Points Balance</span>
+<div class="w-7 h-7 rounded-full bg-secondary-container/50 flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined text-[16px]">toll</span>
+</div>
+</div>
+<div>
+<div class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">1,450</div>
+<span class="font-label-sm text-label-sm text-secondary font-semibold">₦1,450 store credit</span>
+</div>
+</div>
+<!-- Saved Prescriptions -->
+<div class="bg-surface-container-lowest p-space-sm rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-space-2xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Prescriptions</span>
+<div class="w-7 h-7 rounded-full bg-surface-container-low flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[16px]">clinical_notes</span>
+</div>
+</div>
+<div class="flex items-baseline gap-1.5">
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">4</span>
+<span class="font-label-sm text-label-sm text-primary font-semibold">Verified</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Health & Family Profiles Selector -->
+<div class="px-screen-edge-mobile py-space-sm">
+<div class="bg-surface-container-lowest rounded-xl p-space-base shadow-sm">
+<div class="flex items-center justify-between mb-space-sm">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface leading-tight">Family Health Dossiers</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Switch profiles to view isolated prescriptions &amp; telemetry</p>
+</div>
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+</div>
+<!-- Profile Selector Pills -->
+<div class="flex flex-col gap-space-xs" id="family-profile-group">
+<!-- Self Profile (Active) -->
+<button class="profile-card w-full flex items-center justify-between p-space-sm rounded-xl bg-surface-container-high text-left transition-all" data-profile="self" type="button">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center font-label-lg font-bold shrink-0">
+              DF
+            </div>
+<div class="min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-label-lg text-label-lg text-on-surface truncate">Self (Dr. Farouk)</span>
+<span class="px-1.5 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-[10px]">Primary</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Clinician &amp; Wholesale Manager</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary text-[20px] shrink-0" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</button>
+<!-- Dad Profile -->
+<button class="profile-card w-full flex items-center justify-between p-space-sm rounded-xl bg-surface-container-low hover:bg-surface-container text-left transition-all" data-profile="dad" type="button">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-label-lg font-bold shrink-0">
+              AU
+            </div>
+<div class="min-w-0">
+<span class="font-label-lg text-label-lg text-on-surface truncate block">Dad (Alhaji Usman)</span>
+<span class="font-body-sm text-body-sm text-secondary font-medium">BP &amp; Diabetes Plan • Daily Vitals On</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px] shrink-0 opacity-40">radio_button_unchecked</span>
+</button>
+<!-- Daughter Profile -->
+<button class="profile-card w-full flex items-center justify-between p-space-sm rounded-xl bg-surface-container-low hover:bg-surface-container text-left transition-all" data-profile="amira" type="button">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-full bg-surface-variant text-on-surface flex items-center justify-center font-label-lg font-bold shrink-0">
+              AM
+            </div>
+<div class="min-w-0">
+<span class="font-label-lg text-label-lg text-on-surface truncate block">Amira (Daughter)</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Pediatric Multi-Vitamins Schedule</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px] shrink-0 opacity-40">radio_button_unchecked</span>
+</button>
+</div>
+<!-- Add Family Member Action -->
+<button class="mt-space-sm w-full py-space-sm px-space-base rounded-xl bg-surface-container-low hover:bg-surface-container text-primary font-label-lg text-label-lg flex items-center justify-center gap-space-xs transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">person_add</span>
+        + Add Family Member for Health Monitoring
+      </button>
+</div>
+</div>
+<!-- Core Health & Clinical Operations Group 1 -->
+<div class="px-screen-edge-mobile pt-space-xs pb-space-sm">
+<div class="mb-space-xs px-space-2xs">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-bold">Health &amp; Logistics Hub</span>
+</div>
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col">
+<!-- Orders & Tracking -->
+<a class="flex items-center justify-between p-space-base hover:bg-surface-container-low transition-colors group" href="#">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[20px]">local_shipping</span>
+</div>
+<div class="min-w-0">
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-label-lg text-on-surface truncate">My Orders &amp; Logistics</span>
+<span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-[10px] font-bold">1 In Transit</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Express dispatched from Comfort Mall Hub Abuja</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px] group-hover:translate-x-0.5 transition-transform shrink-0">chevron_right</span>
+</a>
+<!-- Digital Prescription Vault -->
+<div class="h-[1px] bg-surface-container-low mx-space-base"></div>
+<a class="flex items-center justify-between p-space-base hover:bg-surface-container-low transition-colors group" href="#">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[20px]">verified</span>
+</div>
+<div class="min-w-0">
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-label-lg text-on-surface truncate">Digital Prescription Vault</span>
+<span class="px-1.5 py-0.5 rounded-full bg-surface-container-high text-primary font-label-sm text-[10px] font-bold">NAFDAC Validated</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Signed scans certified by ComfortCare Pharmacists</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px] group-hover:translate-x-0.5 transition-transform shrink-0">chevron_right</span>
+</a>
+<!-- Connected Medical Devices -->
+<div class="h-[1px] bg-surface-container-low mx-space-base"></div>
+<a class="flex items-center justify-between p-space-base hover:bg-surface-container-low transition-colors group" href="#">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[20px]">devices_wearables</span>
+</div>
+<div class="min-w-0">
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-label-lg text-on-surface truncate">Connected Medical Devices</span>
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Omron BP Monitor • Accu-Chek Glucose Synced</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px] group-hover:translate-x-0.5 transition-transform shrink-0">chevron_right</span>
+</a>
+<!-- Auto-Refill & Subscription Manager -->
+<div class="h-[1px] bg-surface-container-low mx-space-base"></div>
+<a class="flex items-center justify-between p-space-base hover:bg-surface-container-low transition-colors group" href="#">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-secondary shrink-0">
+<span class="material-symbols-outlined text-[20px]">update</span>
+</div>
+<div class="min-w-0">
+<span class="font-label-lg text-label-lg text-on-surface truncate block">Auto-Refill &amp; Subscriptions</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Monthly recurring schedule (Next: 28th April)</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px] group-hover:translate-x-0.5 transition-transform shrink-0">chevron_right</span>
+</a>
+</div>
+</div>
+<!-- Telemetry Integration Mini-Card -->
+<div class="px-screen-edge-mobile py-space-xs">
+<div class="bg-gradient-to-r from-surface-container-low to-surface-container p-space-base rounded-xl flex items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-full bg-surface-container-lowest text-primary flex items-center justify-center shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-[22px]">vital_signs</span>
+</div>
+<div class="min-w-0">
+<span class="font-label-lg text-label-lg text-on-surface block truncate">Live Bio-Feed: Dad's BP</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Last reading: 122/81 mmHg • Normal</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-secondary font-bold px-2 py-1 rounded-md bg-surface-container-lowest shadow-sm">Synced</span>
+</div>
+</div>
+<!-- Settings & Clinical Administration Group 2 -->
+<div class="px-screen-edge-mobile pt-space-sm pb-space-sm">
+<div class="mb-space-xs px-space-2xs">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-bold">Preferences &amp; Clinical Credentials</span>
+</div>
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col">
+<!-- Abuja Delivery Addresses -->
+<a class="flex items-center justify-between p-space-base hover:bg-surface-container-low transition-colors group" href="#">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[20px]">pin_drop</span>
+</div>
+<div class="min-w-0">
+<span class="font-label-lg text-label-lg text-on-surface truncate block">Abuja Delivery Addresses</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Default: Plot 1044, Adetokunbo Ademola Cres, Wuse 2</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px] group-hover:translate-x-0.5 transition-transform shrink-0">chevron_right</span>
+</a>
+<!-- Wholesale License Verification -->
+<div class="h-[1px] bg-surface-container-low mx-space-base"></div>
+<a class="flex items-center justify-between p-space-base hover:bg-surface-container-low transition-colors group" href="#">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[20px]">badge</span>
+</div>
+<div class="min-w-0">
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-label-lg text-on-surface truncate">Wholesale / Clinic License</span>
+<span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded bg-secondary-fixed-dim text-on-secondary-fixed font-bold">Tier 2 Valid</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">PCN &amp; MDCN records on file for tax exemptions</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px] group-hover:translate-x-0.5 transition-transform shrink-0">chevron_right</span>
+</a>
+<!-- Payment Methods & Wallets -->
+<div class="h-[1px] bg-surface-container-low mx-space-base"></div>
+<a class="flex items-center justify-between p-space-base hover:bg-surface-container-low transition-colors group" href="#">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[20px]">account_balance_wallet</span>
+</div>
+<div class="min-w-0">
+<span class="font-label-lg text-label-lg text-on-surface truncate block">Payment Methods &amp; Wallets</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Paystack, Zenith Direct Debit, Pay on Delivery</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px] group-hover:translate-x-0.5 transition-transform shrink-0">chevron_right</span>
+</a>
+<!-- AI Health Assistant Notifications -->
+<div class="h-[1px] bg-surface-container-low mx-space-base"></div>
+<div class="flex items-center justify-between p-space-base">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[20px]">smart_toy</span>
+</div>
+<div class="min-w-0">
+<span class="font-label-lg text-label-lg text-on-surface truncate block">AI Health Reminders</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Predictive refills, dosage alerts &amp; vitals check</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer shrink-0">
+<input checked="" class="sr-only peer" id="ai-toggle" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<!-- Contact ComfortCare Abuja Hub -->
+<div class="h-[1px] bg-surface-container-low mx-space-base"></div>
+<a class="flex items-center justify-between p-space-base hover:bg-surface-container-low transition-colors group" href="tel:+2347046751467">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-10 h-10 rounded-full bg-secondary-container/50 flex items-center justify-center text-secondary shrink-0">
+<span class="material-symbols-outlined text-[20px]">support_agent</span>
+</div>
+<div class="min-w-0">
+<span class="font-label-lg text-label-lg text-on-surface truncate block">Contact Abuja Pharmacy Hub</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">+234 704 675 1467 • Comfort Mall, Life Camp</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary text-[20px] shrink-0">call</span>
+</a>
+</div>
+</div>
+<!-- Pharmacist Support Callout Card -->
+<div class="px-screen-edge-mobile pt-space-xs pb-space-md">
+<div class="bg-surface-container-low rounded-xl p-space-base flex items-center gap-space-md">
+<img class="w-12 h-12 rounded-full object-cover shrink-0 shadow-sm" data-alt="Warm and welcoming portrait of a Nigerian professional clinical pharmacist woman in a clean white medical coat with stethoscope in a modern Abuja retail pharmacy environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQXHd3cqfh6YrB3-G56I3VLYMK7CSdezyc4krH7A3OF-M1AN-1yfxnopAqv_8F6ltnnhfE6g0Q4-fvJN2Z_KAbliP90eGdvvzp9TZdfRA77nJpmbjzou6jL6-C0TOok6MHPpKdg0Lg8tAf5ZyUua5h0nWJzr9b7x8m9yxScGnLLI5Bb1VfgT3L1BPT-Gv9Tin9_y4xXrQ2N-79ETV2sUabcgtuGz_XZFm4yrIvcsKMYreoSOoTaCie"/>
+<div class="flex-1 min-w-0">
+<span class="font-label-md text-label-md text-on-surface block truncate">Dedicated Pharmacist Assigned</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Pharm. Halima Bello is reviewing Dr. Farouk's bulk orders.</p>
+</div>
+<button class="px-space-sm py-1.5 rounded-full bg-surface-container-lowest text-primary font-label-sm text-label-sm font-bold shadow-sm shrink-0 hover:bg-surface-container transition-colors" type="button">
+        Chat
+      </button>
+</div>
+</div>
+<!-- Sign Out & Build Info -->
+<div class="px-screen-edge-mobile pt-space-xs pb-space-xl flex flex-col items-center text-center">
+<button class="w-full py-space-sm rounded-xl bg-error-container text-on-error-container font-label-lg text-label-lg font-bold flex items-center justify-center gap-space-xs hover:opacity-95 transition-opacity shadow-sm" id="logout-btn" type="button">
+<span class="material-symbols-outlined text-[18px]">logout</span>
+      Sign Out of Account
+    </button>
+<div class="mt-space-md flex flex-col items-center gap-1">
+<p class="font-label-sm text-label-sm text-on-surface-variant">
+        Version 2.4.0 (ComfortCare Abuja Build 2408)
+      </p>
+<div class="flex items-center gap-2 font-body-sm text-[11px] text-on-surface-variant/80">
+<span>Licensed Clinical Portal</span>
+<span>•</span>
+<span>NAFDAC Reg No. F-1904</span>
+<span>•</span>
+<span>Privacy Policy</span>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function() {
+    // Micro-interaction for Family Dossier Profile Switcher
+    const profileButtons = document.querySelectorAll('#family-profile-group .profile-card');
+    
+    profileButtons.forEach(btn => {
+      btn.addEventListener('click', function() {
+        profileButtons.forEach(b => {
+          b.classList.remove('bg-surface-container-high');
+          b.classList.add('bg-surface-container-low');
+          const icon = b.querySelector('.material-symbols-outlined:last-child');
+          if (icon) {
+            icon.textContent = 'radio_button_unchecked';
+            icon.classList.remove('text-primary');
+            icon.classList.add('text-on-surface-variant', 'opacity-40');
+            icon.style.fontVariationSettings = "'FILL' 0";
+          }
+        });
+
+        this.classList.remove('bg-surface-container-low');
+        this.classList.add('bg-surface-container-high');
+        const activeIcon = this.querySelector('.material-symbols-outlined:last-child');
+        if (activeIcon) {
+          activeIcon.textContent = 'check_circle';
+          activeIcon.classList.remove('text-on-surface-variant', 'opacity-40');
+          activeIcon.classList.add('text-primary');
+          activeIcon.style.fontVariationSettings = "'FILL' 1";
+        }
+      });
+    });
+
+    // Logout confirmation micro-feedback
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', () => {
+        if (confirm('Are you sure you want to log out of Dr. Farouk Al-Mansur’s clinical account?')) {
+          logoutBtn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span> Signing out...';
+        }
+      });
+    }
+  })();
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container-lowest/95 backdrop-blur-xl shadow-[0_-4px_16px_rgba(19,27,46,0.05)]" data-active-classes="text-primary font-bold"><div class="flex justify-around items-center h-16 px-space-xs"><a class="flex flex-col items-center justify-center gap-1 w-14 h-14 rounded-xl text-on-surface-variant hover:text-on-surface transition-all" data-path="home" href="#"><span class="material-symbols-outlined text-[22px]">storefront</span><span class="font-label-sm text-label-sm">Home</span></a><a class="flex flex-col items-center justify-center gap-1 w-14 h-14 rounded-xl text-on-surface-variant hover:text-on-surface transition-all" data-path="catalog" href="#"><span class="material-symbols-outlined text-[22px]">medication</span><span class="font-label-sm text-label-sm">Catalog</span></a><a class="flex flex-col items-center justify-center gap-1 w-14 h-14 rounded-xl text-on-surface-variant hover:text-on-surface transition-all relative" data-path="ai-doctor" href="#"><div class="relative flex items-center justify-center"><span class="material-symbols-outlined text-[22px] text-primary">smart_toy</span><span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-secondary shadow-[0_0_8px_rgba(27,109,36,0.5)]"></span></div><span class="font-label-sm text-label-sm">AI Doctor</span></a><a class="flex flex-col items-center justify-center gap-1 w-14 h-14 rounded-xl text-on-surface-variant hover:text-on-surface transition-all" data-path="vitals" href="#"><span class="material-symbols-outlined text-[22px]">vital_signs</span><span class="font-label-sm text-label-sm">Vitals</span></a><a aria-current="page" class="flex flex-col items-center justify-center gap-1 w-14 h-14 rounded-xl transition-all text-primary font-bold" data-path="profile" href="#"><span class="material-symbols-outlined text-[22px]">person</span><span class="font-label-sm text-label-sm">Profile</span></a></div></nav></body></html>

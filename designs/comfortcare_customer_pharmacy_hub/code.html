@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-container-lowest": "#ffffff", "inverse-on-surface": "#eef0ff", "on-error-container": "#93000a", "on-secondary-fixed-variant": "#005312", "on-tertiary-container": "#fffbff", "surface-container-high": "#e2e7ff", "surface-bright": "#faf8ff", "primary": "#006194", "error-container": "#ffdad6", "inverse-primary": "#93ccff", "on-surface": "#131b2e", "on-tertiary-fixed": "#410002", "on-secondary-container": "#217128", "primary-container": "#007bb9", "on-background": "#131b2e", "on-primary-fixed-variant": "#004b73", "on-primary": "#ffffff", "tertiary-fixed-dim": "#ffb4ac", "tertiary": "#b7131a", "on-error": "#ffffff", "on-secondary-fixed": "#002204", "on-secondary": "#ffffff", "surface-dim": "#d2d9f4", "background": "#faf8ff", "on-tertiary": "#ffffff", "secondary-fixed-dim": "#88d982", "tertiary-fixed": "#ffdad6", "on-surface-variant": "#3f4850", "primary-fixed-dim": "#93ccff", "surface-variant": "#dae2fd", "primary-fixed": "#cce5ff", "error": "#ba1a1a", "surface-container-highest": "#dae2fd", "on-primary-fixed": "#001d31", "outline-variant": "#bfc7d2", "inverse-surface": "#283044", "surface-container": "#eaedff", "surface-container-low": "#f2f3ff", "surface-tint": "#006398", "on-tertiary-fixed-variant": "#93000d", "surface": "#faf8ff", "on-primary-container": "#fdfcff", "outline": "#707881", "tertiary-container": "#db322f", "secondary-fixed": "#a3f69c", "secondary-container": "#a0f399", "secondary": "#1b6d24" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "space-xl": "1.5rem", "space-xs": "0.25rem", "space-sm": "0.5rem", "gutter-mobile": "0.75rem", "space-2xs": "0.125rem", "space-md": "0.75rem", "card-padding-mobile": "1rem", "space-3xl": "3rem", "space-2xl": "2rem", "space-base": "1rem", "screen-edge-mobile": "1rem", "space-lg": "1.25rem" }, "fontFamily": { "label-md": ["Manrope"], "headline-md": ["Manrope"], "body-sm": ["Manrope"], "label-lg": ["Manrope"], "label-sm": ["Manrope"], "headline-lg-mobile": ["Manrope"], "headline-xl": ["Manrope"], "headline-xl-mobile": ["Manrope"], "headline-lg": ["Manrope"], "body-md": ["Manrope"], "body-lg": ["Manrope"] }, "fontSize": { "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "600" }], "headline-md": ["20px", { "lineHeight": "26px", "fontWeight": "700" }], "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }], "label-lg": ["14px", { "lineHeight": "18px", "fontWeight": "700" }], "label-sm": ["10px", { "lineHeight": "12px", "fontWeight": "700" }], "headline-lg-mobile": ["22px", { "lineHeight": "28px", "fontWeight": "700" }], "headline-xl": ["36px", { "lineHeight": "44px", "fontWeight": "800" }], "headline-xl-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "800" }], "headline-lg": ["28px", { "lineHeight": "36px", "fontWeight": "700" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "500" }] } } } }</script></head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,97,148,0.06)]"><div class="h-16 px-screen-edge-mobile flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0 flex-1"><button aria-label="Delivery location" class="flex items-center gap-space-xs px-space-sm py-space-xs rounded-full bg-surface-container-low hover:bg-surface-container transition-colors min-h-[44px] max-w-[200px]" type="button"><span class="material-symbols-outlined text-primary text-[20px] shrink-0">location_on</span><div class="flex flex-col text-left min-w-0"><span class="font-label-sm text-label-sm text-on-surface-variant leading-none uppercase tracking-wider">Deliver to</span><span class="font-label-md text-label-md text-on-surface truncate leading-tight">Comfort Mall, Life Camp, Abuja</span></div><span class="material-symbols-outlined text-on-surface-variant text-[16px] shrink-0">keyboard_arrow_down</span></button></div><div class="flex items-center gap-space-xs shrink-0"><button aria-label="Notifications" class="w-11 h-11 relative flex items-center justify-center rounded-full hover:bg-surface-container-low transition-colors text-on-surface-variant" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-tertiary ring-2 ring-surface-container-lowest"></span></button><button aria-label="Shopping Cart" class="w-11 h-11 relative flex items-center justify-center rounded-full hover:bg-surface-container-low transition-colors text-on-surface-variant" type="button"><span class="material-symbols-outlined text-[22px]">shopping_bag</span><span class="absolute top-1.5 right-1.5 min-w-[16px] h-4 px-1 rounded-full bg-primary text-on-primary font-label-sm text-[9px] font-bold flex items-center justify-center ring-2 ring-surface-container-lowest">2</span></button><div class="pl-space-2xs flex items-center"><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-1 ring-primary/20" src="https://lh3.googleusercontent.com/aida/AEtjO1WjFuU0Bkh-tRsd4vZtbY50RYc-26TYPCVsc_QvRdnshh94Wl0FHxfIRp_razpbA2uyyUqkdpvvGlkW87MIhoxuJqU8PYmn8uXQN7nUCzUXuUk0107p9lTxlrF9FlPgw5tCTusZ9rW1u2ScnRZaNGNMnVtYV-2YcVeMzsfaQ4zoMGYGF6CGkh5WpVo9U9E46ot9Sg1YbmahDKp5r7DWZHkhXGRu-fNsuRBzZVjmLSE-jxVQEbN_MX6KFSr_2EdM9Ed_YBystPwLoQ"/></div></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-24 bg-surface"><div class="flex flex-col w-full pb-8">
+<!-- Delivery Speed Sub-banner -->
+<section class="px-screen-edge-mobile pt-space-xs pb-space-sm">
+<div class="bg-surface-container-low rounded-xl px-space-base py-space-sm flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">bolt</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Fast-Route Express</span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+</div>
+<span class="font-label-md text-label-md text-on-surface truncate">Comfort Mall, Life Camp (25-35 mins)</span>
+</div>
+</div>
+<button class="text-primary font-label-md text-label-md hover:underline shrink-0" type="button">
+        Change
+      </button>
+</div>
+</section>
+<!-- Retail vs Wholesale Mode Switcher -->
+<section class="px-screen-edge-mobile py-space-xs">
+<div class="p-1 bg-surface-container rounded-full flex relative items-center" id="order-mode-toggle">
+<button class="flex-1 py-2 px-3 rounded-full flex items-center justify-center gap-1.5 text-center transition-all duration-300 bg-surface-container-lowest text-primary shadow-sm" id="mode-retail" onclick="toggleOrderMode('retail')" type="button">
+<span class="material-symbols-outlined text-[18px]">person</span>
+<span class="font-label-md text-label-md font-bold">Retail Delivery</span>
+</button>
+<button class="flex-1 py-2 px-3 rounded-full flex items-center justify-center gap-1.5 text-center transition-all duration-300 text-on-surface-variant" id="mode-wholesale" onclick="toggleOrderMode('wholesale')" type="button">
+<span class="material-symbols-outlined text-[18px]">domain</span>
+<span class="font-label-md text-label-md font-bold">Wholesale Bulk</span>
+<span class="bg-secondary text-on-secondary text-[9px] px-1.5 py-0.5 rounded-full font-label-sm leading-none uppercase">Up to 25% Off</span>
+</button>
+</div>
+</section>
+<!-- Prescription Fast Upload Card -->
+<section class="px-screen-edge-mobile py-space-sm">
+<div class="bg-gradient-to-br from-primary to-primary-container text-on-primary rounded-xl p-space-base shadow-md relative overflow-hidden">
+<div class="absolute -right-6 -bottom-6 w-32 h-32 rounded-full bg-surface-container-lowest/10 pointer-events-none"></div>
+<div class="relative z-10 flex items-start justify-between gap-space-sm">
+<div class="flex flex-col gap-1 max-w-[70%]">
+<div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container-lowest/20 w-fit backdrop-blur-sm">
+<span class="material-symbols-outlined text-[14px]">verified_user</span>
+<span class="font-label-sm text-label-sm">NAFDAC Regulated Rx</span>
+</div>
+<h2 class="font-headline-md text-headline-md font-bold leading-tight">Have a Prescription?</h2>
+<p class="font-body-sm text-body-sm text-primary-fixed leading-snug">Snap &amp; Send — verified by licensed clinical pharmacists in under 30 mins.</p>
+</div>
+<div class="flex flex-col items-center">
+<div class="w-12 h-12 rounded-full bg-surface-container-lowest text-primary flex items-center justify-center shadow-md">
+<span class="material-symbols-outlined text-[26px]">photo_camera</span>
+</div>
+</div>
+</div>
+<div class="mt-space-md pt-space-xs flex items-center justify-between gap-space-sm">
+<div class="flex items-center gap-1 text-primary-fixed">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+<span class="font-label-sm text-label-sm">Average match: 4 mins</span>
+</div>
+<button class="bg-surface-container-lowest text-primary hover:bg-surface-bright font-label-md text-label-md px-4 py-2 rounded-full shadow-sm flex items-center gap-1 transition-colors" type="button">
+<span>Upload Rx</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Search & Filter Bar -->
+<section class="px-screen-edge-mobile py-space-xs">
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-outline text-[20px] pointer-events-none">search</span>
+<input class="w-full pl-10 pr-10 py-3 bg-surface-container-low text-on-surface rounded-full font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary shadow-sm placeholder:text-outline" placeholder="Search medicines, devices, wholesale packs..." type="text"/>
+<button aria-label="Voice search or barcode" class="absolute right-3 text-primary flex items-center justify-center" type="button">
+<span class="material-symbols-outlined text-[20px]">barcode_scanner</span>
+</button>
+</div>
+<!-- Quick Pill Chips -->
+<div class="flex gap-2 overflow-x-auto pt-space-sm pb-space-xs no-scrollbar">
+<button class="px-3 py-1.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-md text-label-md whitespace-nowrap shrink-0 flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[14px]">coronavirus</span>
+        Malaria Meds
+      </button>
+<button class="px-3 py-1.5 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-label-md text-label-md whitespace-nowrap shrink-0" type="button">
+        Antibiotics
+      </button>
+<button class="px-3 py-1.5 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-label-md text-label-md whitespace-nowrap shrink-0" type="button">
+        BP Monitors
+      </button>
+<button class="px-3 py-1.5 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-label-md text-label-md whitespace-nowrap shrink-0" type="button">
+        Vitamins &amp; Zinc
+      </button>
+<button class="px-3 py-1.5 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-label-md text-label-md whitespace-nowrap shrink-0" type="button">
+        First Aid Kits
+      </button>
+<button class="px-3 py-1.5 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-label-md text-label-md whitespace-nowrap shrink-0" type="button">
+        Cold Chain Insulin
+      </button>
+</div>
+</section>
+<!-- Core Categories Grid -->
+<section class="px-screen-edge-mobile pt-space-base pb-space-xs">
+<div class="flex items-center justify-between mb-space-sm">
+<h3 class="font-headline-md text-headline-md text-on-surface">Categories</h3>
+<a class="font-label-md text-label-md text-primary flex items-center gap-0.5" href="#">
+        See All
+        <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</a>
+</div>
+<div class="grid grid-cols-2 gap-space-sm">
+<!-- 1. Quality Drugs -->
+<div class="bg-surface-container-lowest rounded-xl p-space-sm shadow-sm flex flex-col justify-between h-36 relative overflow-hidden group cursor-pointer">
+<div class="flex items-start justify-between">
+<div class="w-9 h-9 rounded-full bg-primary-fixed text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">medication</span>
+</div>
+<span class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm px-2 py-0.5 rounded-full">340+</span>
+</div>
+<div class="z-10">
+<h4 class="font-label-lg text-label-lg text-on-surface group-hover:text-primary transition-colors">Quality Drugs</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">Antimalarials, Pain, Chronic</p>
+</div>
+<img class="absolute -right-2 -bottom-2 w-16 h-16 object-contain opacity-25 group-hover:opacity-40 transition-opacity" data-alt="High-end blister pack of capsules and medication bottle placed on a clean surgical white backdrop with soft blue pharmaceutical lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBIvdm44-i3-i_lwOC2V7z8qMdDsLp6FHzBZCm18bCKeUqFX-0Iofkx7UCOiJlLYMPgNsi1IxZExJmM9W7M7IIWGDm9cT4oQ0whl7KyGpwDK-dfDJSy8XbJgi-z8JElb4QRGsUO0e1v57X1aok4jcwkzVNJxnkwnvCD-jCHiP6O-M9L7dyXL96l9Hswcb6KJ6maCUgAm_7nu_ivGpZIbgVFmCX1EZ7_4FG9P1fFHN28AVC4oPPjucyq"/>
+</div>
+<!-- 2. Medical & Health Devices -->
+<div class="bg-surface-container-lowest rounded-xl p-space-sm shadow-sm flex flex-col justify-between h-36 relative overflow-hidden group cursor-pointer">
+<div class="flex items-start justify-between">
+<div class="w-9 h-9 rounded-full bg-surface-container-high text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">monitor_heart</span>
+</div>
+<span class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm px-2 py-0.5 rounded-full">85+</span>
+</div>
+<div class="z-10">
+<h4 class="font-label-lg text-label-lg text-on-surface group-hover:text-primary transition-colors">Health Devices</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">BP Monitors, Oximeters</p>
+</div>
+<img class="absolute -right-2 -bottom-2 w-16 h-16 object-contain opacity-25 group-hover:opacity-40 transition-opacity" data-alt="Modern digital blood pressure monitor with glowing LCD display resting beside a medical cuff in a bright clinical setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjqTx85Vj5wQaJbwAxholmxJMs1R71VehCygyQUozON7l6DvL1bPVXSY5vdLoZ_n-EqZKTme32hnIrDH4hP3whG3hkp1sQ-wzySaSH2jgkWG4sljgg-qY3NDRltbXqMETu2KMpDKhRxb7jHudhwf8xxbDMel5jCyEpCm9wOuXRzEDtDP10NpTHAQcW94ivmbqtwvWHrWzHxiuk9JsNIS5kT72YmzklvefXmVEXyaFrzYu1HWhszboO"/>
+</div>
+<!-- 3. Hospital Care & Consumables -->
+<div class="bg-surface-container-lowest rounded-xl p-space-sm shadow-sm flex flex-col justify-between h-36 relative overflow-hidden group cursor-pointer">
+<div class="flex items-start justify-between">
+<div class="w-9 h-9 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">local_hospital</span>
+</div>
+<span class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm px-2 py-0.5 rounded-full">Bulk</span>
+</div>
+<div class="z-10">
+<h4 class="font-label-lg text-label-lg text-on-surface group-hover:text-primary transition-colors">Hospital Supplies</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">Gloves, Cannulas, Gauze</p>
+</div>
+<img class="absolute -right-2 -bottom-2 w-16 h-16 object-contain opacity-25 group-hover:opacity-40 transition-opacity" data-alt="Stack of sterile medical surgical gloves and packaged IV cannulas arranged neatly on a stainless steel clinical laboratory table." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYHKWYcHTSaOBuhXzlUvqtdsKNBYT9gdbK0MLeyFA0nfV4RPpr8w8X5CgfEjLljCmKRN8asWlcBbrBWq6CfReFU3xx9Zit9Cz3peZ-zAHg4tTvwaar1YF8uj6wzrG4ph5CysB_74TlyX-cTxy4q1LhvdPVgSgRGtykXGo_u0pOMA5-DEpWsdR6VzxJg9O0dUp4nG86Ikdm2ciKb2qIE6fyeDnGZJ78BhL7PA05zMovpOwp9irU-tX4"/>
+</div>
+<!-- 4. Personal & Wellness -->
+<div class="bg-surface-container-lowest rounded-xl p-space-sm shadow-sm flex flex-col justify-between h-36 relative overflow-hidden group cursor-pointer">
+<div class="flex items-start justify-between">
+<div class="w-9 h-9 rounded-full bg-surface-variant text-on-surface flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">spa</span>
+</div>
+<span class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm px-2 py-0.5 rounded-full">190+</span>
+</div>
+<div class="z-10">
+<h4 class="font-label-lg text-label-lg text-on-surface group-hover:text-primary transition-colors">Wellness &amp; Care</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">Vitamins, Mother &amp; Baby</p>
+</div>
+<img class="absolute -right-2 -bottom-2 w-16 h-16 object-contain opacity-25 group-hover:opacity-40 transition-opacity" data-alt="Amber glass vitamin bottles with premium skincare moisturizer tubes on a pure light blue aesthetic background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOYGPmsDX8RGc1qIv1Q6hUB9NoAus7PFWbxN4XeFZkpsoaKuv8fBBm0GtlQN98-oXmujIFmtsmsDmyLnuCBo9rHpANkxJWDV6iMyeU4Te8ZNSvRTXCdT61UCX3SUziVEoxF32JTnLa-O0fTbuDyBtiXEZUeIkofLUvuMSk_1GObMSGTl86IEWHd4uaSby-9_1oJL4YDQZn78_5hL2ZTxB3eeFv6zGAam_-Ieb1QTcbZ4mank358LdD"/>
+</div>
+</div>
+</section>
+<!-- Wholesale Branch Clinic Special Promo -->
+<section class="px-screen-edge-mobile py-space-sm">
+<div class="bg-surface-container-high rounded-xl p-space-base relative overflow-hidden shadow-sm">
+<div class="flex items-center gap-1.5 text-secondary font-label-sm text-label-sm uppercase tracking-wider mb-1">
+<span class="material-symbols-outlined text-[16px]">verified</span>
+<span>Clinic Wholesale Tier</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface font-bold">15% Off Bulk Paracetamol &amp; Amoxicillin</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 max-w-[80%]">Dedicated cartons for licensed Abuja clinics &amp; partner community pharmacies.</p>
+<div class="mt-space-sm flex items-center gap-space-sm">
+<span class="font-label-lg text-label-lg text-secondary bg-secondary-container px-2.5 py-1 rounded-full">Use Code: ABUJACLINIC15</span>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-4 py-1.5 rounded-full shadow-sm ml-auto" type="button">Claim</button>
+</div>
+</div>
+</section>
+<!-- Express Flash Abuja Hubs -->
+<section class="pt-space-sm pb-space-xs">
+<div class="px-screen-edge-mobile flex items-center justify-between mb-space-sm">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Flash Delivery Hubs</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Live riders ready across Abuja corridors</p>
+</div>
+<span class="material-symbols-outlined text-secondary text-[22px]">two_wheeler</span>
+</div>
+<!-- Horizontal scroll cards for Abuja branches -->
+<div class="flex gap-space-sm overflow-x-auto px-screen-edge-mobile no-scrollbar">
+<!-- Hub 1: Life Camp -->
+<div class="w-64 shrink-0 bg-surface-container-lowest rounded-xl p-space-sm shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="bg-secondary-container text-on-secondary-container font-label-sm text-label-sm px-2 py-0.5 rounded-full flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> 20m Express
+          </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[14px] text-amber-500" style="font-variation-settings: 'FILL' 1;">star</span> 4.9
+          </span>
+</div>
+<div class="my-space-xs">
+<h4 class="font-label-lg text-label-lg text-on-surface">ComfortCare Flagship</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Comfort Mall, Life Camp</p>
+</div>
+<div class="pt-space-xs flex items-center justify-between bg-surface-container-low rounded-lg p-2">
+<div class="flex items-center gap-1.5 text-on-surface">
+<span class="material-symbols-outlined text-primary text-[18px]">inventory_2</span>
+<span class="font-label-sm text-label-sm">Cold-Chain Stocked</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary font-bold">Open 24/7</span>
+</div>
+</div>
+<!-- Hub 2: Wuse 2 -->
+<div class="w-64 shrink-0 bg-surface-container-lowest rounded-xl p-space-sm shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="bg-secondary-container text-on-secondary-container font-label-sm text-label-sm px-2 py-0.5 rounded-full flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> 25m Express
+          </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[14px] text-amber-500" style="font-variation-settings: 'FILL' 1;">star</span> 4.8
+          </span>
+</div>
+<div class="my-space-xs">
+<h4 class="font-label-lg text-label-lg text-on-surface">Wuse 2 Central Dispenser</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Adetokunbo Ademola Cres</p>
+</div>
+<div class="pt-space-xs flex items-center justify-between bg-surface-container-low rounded-lg p-2">
+<div class="flex items-center gap-1.5 text-on-surface">
+<span class="material-symbols-outlined text-primary text-[18px]">vaccines</span>
+<span class="font-label-sm text-label-sm">Biologics Ready</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary font-bold">Open Now</span>
+</div>
+</div>
+<!-- Hub 3: Garki Hub -->
+<div class="w-64 shrink-0 bg-surface-container-lowest rounded-xl p-space-sm shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="bg-surface-container text-on-surface-variant font-label-sm text-label-sm px-2 py-0.5 rounded-full flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span> 30m Transit
+          </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[14px] text-amber-500" style="font-variation-settings: 'FILL' 1;">star</span> 4.7
+          </span>
+</div>
+<div class="my-space-xs">
+<h4 class="font-label-lg text-label-lg text-on-surface">Garki Hospital Supply Depot</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Area 11, Garki, Abuja</p>
+</div>
+<div class="pt-space-xs flex items-center justify-between bg-surface-container-low rounded-lg p-2">
+<div class="flex items-center gap-1.5 text-on-surface">
+<span class="material-symbols-outlined text-primary text-[18px]">local_shipping</span>
+<span class="font-label-sm text-label-sm">Wholesale Fleet</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary font-bold">Open Now</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Featured Products / In-Stock Essentials -->
+<section class="px-screen-edge-mobile pt-space-base">
+<div class="flex items-center justify-between mb-space-sm">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Fast-Moving Essentials</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Verified authentic with batch tracking</p>
+</div>
+<a class="font-label-md text-label-md text-primary" href="#">View More</a>
+</div>
+<div class="grid grid-cols-2 gap-space-sm">
+<!-- Product 1: Coartem Artemether/Lumefantrine -->
+<div class="bg-surface-container-lowest rounded-xl p-space-sm shadow-sm flex flex-col justify-between relative group">
+<div class="absolute top-2 left-2 z-10">
+<span class="bg-secondary-container text-on-secondary-container font-label-sm text-label-sm px-2 py-0.5 rounded-full">
+            In Stock
+          </span>
+</div>
+<div class="w-full h-32 rounded-lg bg-surface-container-low overflow-hidden relative flex items-center justify-center mb-space-xs">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform" data-alt="Pharmaceutical box of Coartem Artemether Lumefantrine antimalarial tablets neatly displayed on clinical light blue studio surface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCn3C_Cc-w7L-cFLw2KBBnTRadUkiVzTtT3lJFKKtjdIOPHKleTMD7C6SQ5Ec8bFYNkD71OyRiNDQP2Jxny1rO-9ipvUS2MgbIN7dTLjVK6go8DtB1tnPtbxnskpceQcy01SE5nK8Ehaj7uMUM7fdRyVQmTJlhMl2SttM2gCxf4l4Zeaok7inocLUw8GOKRSm8NXixF6dKWcBTnQ94ERbPJUXeQKmr7s6WipjPARNshEtSS9JWWAzY"/>
+<span class="absolute bottom-1 right-1 bg-surface-container-lowest/80 backdrop-blur-xs text-on-surface-variant text-[10px] font-label-sm px-1.5 py-0.5 rounded">NAFDAC: 04-2011</span>
+</div>
+<div>
+<span class="text-primary font-label-sm text-label-sm">Antimalarial</span>
+<h4 class="font-label-lg text-label-lg text-on-surface leading-tight mt-0.5">Coartem 80/480mg</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Novartis • 6 Tablets</p>
+</div>
+<div class="mt-space-sm pt-space-xs flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-headline-md text-headline-md text-on-surface font-bold leading-none">₦4,200</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant line-through">₦4,800</span>
+</div>
+<button aria-label="Add Coartem to Cart" class="w-9 h-9 rounded-full bg-primary text-on-primary hover:bg-primary-container flex items-center justify-center shadow-md active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[20px]">add</span>
+</button>
+</div>
+</div>
+<!-- Product 2: Omron M2 Blood Pressure Monitor -->
+<div class="bg-surface-container-lowest rounded-xl p-space-sm shadow-sm flex flex-col justify-between relative group">
+<div class="absolute top-2 left-2 z-10">
+<span class="bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm px-2 py-0.5 rounded-full">
+            Device
+          </span>
+</div>
+<div class="w-full h-32 rounded-lg bg-surface-container-low overflow-hidden relative flex items-center justify-center mb-space-xs">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform" data-alt="Omron upper arm digital automatic blood pressure monitor with white cuff on clean medical studio background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfeJ9P8DsuRtRebIymiNZzqJl_aSaCUgOTtUBaa60aiU9i8eHH8oyJ8XguBy-nxyNLfyDUHYiKygLx0TMC2WYvFgkS6GPIuFIIfDrG7MjKa_KPgFVmUbH1yQZS_v2OK7TAPPkMd6bqWHcf6alRiJpCaKfvcwSjFtRkT9J9XbluUtuQ5cABmRcbivIsVykLY5w_-6O7JA6CCALUqcBOw-juNPnXK3uzu0IgjRxibFhgs6lChFxaYXH_"/>
+<span class="absolute bottom-1 right-1 bg-surface-container-lowest/80 backdrop-blur-xs text-secondary text-[10px] font-label-sm px-1.5 py-0.5 rounded">3yr Warranty</span>
+</div>
+<div>
+<span class="text-primary font-label-sm text-label-sm">Health Monitor</span>
+<h4 class="font-label-lg text-label-lg text-on-surface leading-tight mt-0.5">Omron M2 Basic BP</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Upper Arm Digital</p>
+</div>
+<div class="mt-space-sm pt-space-xs flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-headline-md text-headline-md text-on-surface font-bold leading-none">₦38,500</span>
+<span class="font-label-sm text-label-sm text-secondary font-semibold">Free Delivery</span>
+</div>
+<button aria-label="Add Omron BP to Cart" class="w-9 h-9 rounded-full bg-primary text-on-primary hover:bg-primary-container flex items-center justify-center shadow-md active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[20px]">add</span>
+</button>
+</div>
+</div>
+<!-- Product 3: Amoxil 500mg (Amoxicillin) -->
+<div class="bg-surface-container-lowest rounded-xl p-space-sm shadow-sm flex flex-col justify-between relative group">
+<div class="absolute top-2 left-2 z-10">
+<span class="bg-tertiary-container text-on-tertiary-container font-label-sm text-label-sm px-2 py-0.5 rounded-full flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[12px]">prescriptions</span> Rx Required
+          </span>
+</div>
+<div class="w-full h-32 rounded-lg bg-surface-container-low overflow-hidden relative flex items-center justify-center mb-space-xs">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform" data-alt="GSK Amoxil Amoxicillin 500mg capsules red and yellow blister card packaging in clinical light." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBg4tiwzFJ9Be9Xb5jXQSWFpa2zCDA0nq6q2NpN8tZoxd8kqeBvIE_4zzMliyqMJRk9R5a5WnpyFQMUxoR-4PjW1yl90cJ1Qr2Qz5yShpmA86h8Lqnoqni_lLtSuJPEa5JolvMA-uNiFk61ZSjNwu5BV4iZ30ZQUDTDomu_ORalUaOX7roY2HTsSLFdjUmlyEunlZsa8g3xCq34EOojMKArh_MB5FQz3_efX5pVoywuvi5BwkZM0C4p"/>
+<span class="absolute bottom-1 right-1 bg-surface-container-lowest/80 backdrop-blur-xs text-on-surface-variant text-[10px] font-label-sm px-1.5 py-0.5 rounded">Wholesale Avail</span>
+</div>
+<div>
+<span class="text-primary font-label-sm text-label-sm">Antibiotic</span>
+<h4 class="font-label-lg text-label-lg text-on-surface leading-tight mt-0.5">Amoxil 500mg</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">GSK • 20 Capsules</p>
+</div>
+<div class="mt-space-sm pt-space-xs flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-headline-md text-headline-md text-on-surface font-bold leading-none">₦3,600</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Pack of 20</span>
+</div>
+<button aria-label="Add Amoxil to Cart" class="w-9 h-9 rounded-full bg-primary text-on-primary hover:bg-primary-container flex items-center justify-center shadow-md active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[20px]">add</span>
+</button>
+</div>
+</div>
+<!-- Product 4: Surgical Latex Examination Gloves (Box of 100) -->
+<div class="bg-surface-container-lowest rounded-xl p-space-sm shadow-sm flex flex-col justify-between relative group">
+<div class="absolute top-2 left-2 z-10">
+<span class="bg-secondary-container text-on-secondary-container font-label-sm text-label-sm px-2 py-0.5 rounded-full">
+            Bulk Deal
+          </span>
+</div>
+<div class="w-full h-32 rounded-lg bg-surface-container-low overflow-hidden relative flex items-center justify-center mb-space-xs">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform" data-alt="Clinical dispenser box of powder-free latex medical examination gloves on an analytical light background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6LESpYpe258VDsZJIkAL_5XRGvVP88nhTS3hXeSQGZAOozvdqXGpxG1r4LKIPpzoPv4e_MONDCjJaoWidGBkXiaXMHxlD9zMD--gZ6nSkbf7EzdC--wz8YGfcWfv8ZXqM1G3-X0xLMN1ksiUzy6ArNMpSRJjmvkml5xZ3mfjKWsnwGlzaOYQgF5XsYB-lpebVjpUu-TZfUMWDNkKAh5XNEafgayS6LhbPyzSqGEmJuq8sG2BA_Edx"/>
+<span class="absolute bottom-1 right-1 bg-surface-container-lowest/80 backdrop-blur-xs text-on-surface-variant text-[10px] font-label-sm px-1.5 py-0.5 rounded">Clinic Grade</span>
+</div>
+<div>
+<span class="text-primary font-label-sm text-label-sm">Consumables</span>
+<h4 class="font-label-lg text-label-lg text-on-surface leading-tight mt-0.5">Latex Gloves (100s)</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Powder-Free Medium</p>
+</div>
+<div class="mt-space-sm pt-space-xs flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-headline-md text-headline-md text-on-surface font-bold leading-none">₦6,500</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Carton: ₦58k</span>
+</div>
+<button aria-label="Add Gloves to Cart" class="w-9 h-9 rounded-full bg-primary text-on-primary hover:bg-primary-container flex items-center justify-center shadow-md active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[20px]">add</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Interactive Call Pharmacist Trigger -->
+<section class="px-screen-edge-mobile py-space-base">
+<div class="bg-surface-container-low rounded-xl p-space-base flex items-center justify-between gap-space-sm shadow-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-11 h-11 rounded-full bg-primary-fixed text-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[24px]">support_agent</span>
+</div>
+<div class="flex flex-col min-w-0">
+<h4 class="font-label-lg text-label-lg text-on-surface leading-tight">Need Dosage Consultation?</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Speak with an Abuja Resident Pharmacist</p>
+</div>
+</div>
+<button class="bg-surface-container-lowest hover:bg-surface-container text-primary font-label-md text-label-md px-3 py-2 rounded-full shadow-sm whitespace-nowrap flex items-center gap-1 shrink-0" type="button">
+<span class="material-symbols-outlined text-[16px]">call</span>
+<span>Call Desk</span>
+</button>
+</div>
+</section>
+<!-- Brand Trust & Authenticity Bar -->
+<section class="px-screen-edge-mobile pt-space-xs pb-space-lg">
+<div class="bg-surface-container-lowest rounded-xl p-space-base shadow-sm">
+<div class="flex items-center justify-center gap-2 mb-space-md">
+<div class="w-5 h-5 rounded-full bg-primary text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px]">shield</span>
+</div>
+<span class="font-label-lg text-label-lg text-on-surface tracking-wide uppercase">ComfortCare Trust Standard</span>
+</div>
+<div class="grid grid-cols-2 gap-space-md text-left">
+<div class="flex items-start gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[20px] shrink-0 mt-0.5">verified_user</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface leading-tight">100% Genuine</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Direct from certified global makers</span>
+</div>
+</div>
+<div class="flex items-start gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[20px] shrink-0 mt-0.5">approval</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface leading-tight">NAFDAC Verified</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Traceable batch regulatory serials</span>
+</div>
+</div>
+<div class="flex items-start gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[20px] shrink-0 mt-0.5">savings</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface leading-tight">Wholesale Rates</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Volume discounts for clinics</span>
+</div>
+</div>
+<div class="flex items-start gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[20px] shrink-0 mt-0.5">ac_unit</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface leading-tight">Cold-Chain Fleet</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">24/7 temperature controlled vans</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<script>
+  function toggleOrderMode(mode) {
+    const retailBtn = document.getElementById('mode-retail');
+    const wholesaleBtn = document.getElementById('mode-wholesale');
+    if (!retailBtn || !wholesaleBtn) return;
+
+    if (mode === 'retail') {
+      retailBtn.className = 'flex-1 py-2 px-3 rounded-full flex items-center justify-center gap-1.5 text-center transition-all duration-300 bg-surface-container-lowest text-primary shadow-sm';
+      wholesaleBtn.className = 'flex-1 py-2 px-3 rounded-full flex items-center justify-center gap-1.5 text-center transition-all duration-300 text-on-surface-variant';
+    } else {
+      wholesaleBtn.className = 'flex-1 py-2 px-3 rounded-full flex items-center justify-center gap-1.5 text-center transition-all duration-300 bg-surface-container-lowest text-primary shadow-sm';
+      retailBtn.className = 'flex-1 py-2 px-3 rounded-full flex items-center justify-center gap-1.5 text-center transition-all duration-300 text-on-surface-variant';
+    }
+  }
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container-lowest/95 backdrop-blur-xl shadow-[0_-4px_16px_rgba(19,27,46,0.05)]" data-active-classes="text-primary font-bold"><div class="flex justify-around items-center h-16 px-space-xs"><a aria-current="page" class="flex flex-col items-center justify-center gap-1 w-16 h-14 rounded-xl transition-all text-primary font-bold" data-path="home" href="#"><span class="material-symbols-outlined text-[22px]">storefront</span><span class="font-label-sm text-label-sm">Home</span></a><a class="flex flex-col items-center justify-center gap-1 w-16 h-14 rounded-xl text-on-surface-variant hover:text-on-surface transition-all relative" data-path="ai-doctor" href="#"><div class="relative flex items-center justify-center"><span class="material-symbols-outlined text-[22px] text-primary">smart_toy</span><span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-secondary shadow-[0_0_8px_rgba(27,109,36,0.5)]"></span></div><span class="font-label-sm text-label-sm">AI Doctor</span></a><a class="flex flex-col items-center justify-center gap-1 w-16 h-14 rounded-xl text-on-surface-variant hover:text-on-surface transition-all" data-path="vitals" href="#"><span class="material-symbols-outlined text-[22px]">vital_signs</span><span class="font-label-sm text-label-sm">Vitals</span></a><a class="flex flex-col items-center justify-center gap-1 w-16 h-14 rounded-xl text-on-surface-variant hover:text-on-surface transition-all" data-path="orders" href="#"><span class="material-symbols-outlined text-[22px]">local_shipping</span><span class="font-label-sm text-label-sm">Orders</span></a></div></nav></body></html>

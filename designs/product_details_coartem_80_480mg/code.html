@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-container-lowest": "#ffffff", "inverse-on-surface": "#eef0ff", "on-error-container": "#93000a", "on-secondary-fixed-variant": "#005312", "on-tertiary-container": "#fffbff", "surface-container-high": "#e2e7ff", "surface-bright": "#faf8ff", "primary": "#006194", "error-container": "#ffdad6", "inverse-primary": "#93ccff", "on-surface": "#131b2e", "on-tertiary-fixed": "#410002", "on-secondary-container": "#217128", "primary-container": "#007bb9", "on-background": "#131b2e", "on-primary-fixed-variant": "#004b73", "on-primary": "#ffffff", "tertiary-fixed-dim": "#ffb4ac", "tertiary": "#b7131a", "on-error": "#ffffff", "on-secondary-fixed": "#002204", "on-secondary": "#ffffff", "surface-dim": "#d2d9f4", "background": "#faf8ff", "on-tertiary": "#ffffff", "secondary-fixed-dim": "#88d982", "tertiary-fixed": "#ffdad6", "on-surface-variant": "#3f4850", "primary-fixed-dim": "#93ccff", "surface-variant": "#dae2fd", "primary-fixed": "#cce5ff", "error": "#ba1a1a", "surface-container-highest": "#dae2fd", "on-primary-fixed": "#001d31", "outline-variant": "#bfc7d2", "inverse-surface": "#283044", "surface-container": "#eaedff", "surface-container-low": "#f2f3ff", "surface-tint": "#006398", "on-tertiary-fixed-variant": "#93000d", "surface": "#faf8ff", "on-primary-container": "#fdfcff", "outline": "#707881", "tertiary-container": "#db322f", "secondary-fixed": "#a3f69c", "secondary-container": "#a0f399", "secondary": "#1b6d24" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "space-xl": "1.5rem", "space-xs": "0.25rem", "space-sm": "0.5rem", "gutter-mobile": "0.75rem", "space-2xs": "0.125rem", "space-md": "0.75rem", "card-padding-mobile": "1rem", "space-3xl": "3rem", "space-2xl": "2rem", "space-base": "1rem", "screen-edge-mobile": "1rem", "space-lg": "1.25rem" }, "fontFamily": { "label-md": ["Manrope"], "headline-md": ["Manrope"], "body-sm": ["Manrope"], "label-lg": ["Manrope"], "label-sm": ["Manrope"], "headline-lg-mobile": ["Manrope"], "headline-xl": ["Manrope"], "headline-xl-mobile": ["Manrope"], "headline-lg": ["Manrope"], "body-md": ["Manrope"], "body-lg": ["Manrope"] }, "fontSize": { "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "600" }], "headline-md": ["20px", { "lineHeight": "26px", "fontWeight": "700" }], "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }], "label-lg": ["14px", { "lineHeight": "18px", "fontWeight": "700" }], "label-sm": ["10px", { "lineHeight": "12px", "fontWeight": "700" }], "headline-lg-mobile": ["22px", { "lineHeight": "28px", "fontWeight": "700" }], "headline-xl": ["36px", { "lineHeight": "44px", "fontWeight": "800" }], "headline-xl-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "800" }], "headline-lg": ["28px", { "lineHeight": "36px", "fontWeight": "700" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "500" }] } } } }</script></head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,97,148,0.06)]"><div class="h-14 px-screen-edge-mobile flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0 flex-1"><button aria-label="Go back" class="w-11 h-11 flex items-center justify-center rounded-full hover:bg-surface-container-low transition-colors text-on-surface -ml-2" onclick="history.back()" type="button"><span class="material-symbols-outlined text-[24px]">arrow_back</span></button><h1 class="font-headline-md text-headline-md text-on-surface truncate">Product Details</h1></div><div class="flex items-center gap-space-xs shrink-0"><button aria-label="Shopping Cart" class="w-11 h-11 relative flex items-center justify-center rounded-full hover:bg-surface-container-low transition-colors text-on-surface-variant" type="button"><span class="material-symbols-outlined text-[22px]">shopping_bag</span><span class="absolute top-1.5 right-1.5 min-w-[16px] h-4 px-1 rounded-full bg-primary text-on-primary font-label-sm text-[9px] font-bold flex items-center justify-center ring-2 ring-surface-container-lowest">2</span></button></div></div></header><main class="flex-1 flex flex-col relative w-full pt-14 pb-safe bg-surface"><div class="flex flex-col w-full pb-28">
+<!-- Top Action Utility Bar (Secondary under shell header) -->
+<div class="px-screen-edge-mobile py-space-xs flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+        NAFDAC Reg: 04-2011
+      </span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container-high text-primary font-label-sm">
+        Prescription Rx
+      </span>
+</div>
+<div class="flex items-center gap-space-xs">
+<button aria-label="Share product" class="w-9 h-9 rounded-full bg-surface-container-lowest flex items-center justify-center text-on-surface-variant shadow-sm active:scale-95 transition-transform" id="btn-share">
+<span class="material-symbols-outlined text-[18px]">share</span>
+</button>
+<button aria-label="Save to favorites" class="w-9 h-9 rounded-full bg-surface-container-lowest flex items-center justify-center text-on-surface-variant shadow-sm active:scale-95 transition-transform" id="btn-wishlist">
+<span class="material-symbols-outlined text-[18px]" id="icon-wishlist">favorite</span>
+</button>
+</div>
+</div>
+<!-- Product Visual Stage Card -->
+<div class="px-screen-edge-mobile mb-space-base">
+<div class="relative bg-surface-container-lowest rounded-xl p-space-base shadow-sm overflow-hidden flex flex-col items-center">
+<!-- Top Badges inside card -->
+<div class="w-full flex items-center justify-between z-10 mb-2">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-low text-primary">
+<span class="material-symbols-outlined text-[15px] text-primary" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+<span class="font-label-sm tracking-tight text-on-surface">100% Genuine ComfortCare Tracked</span>
+</div>
+<button aria-label="Inspect packaging blister" class="w-8 h-8 rounded-full bg-surface-container-low flex items-center justify-center text-on-surface-variant shadow-sm active:scale-90 transition-transform" id="btn-zoom">
+<span class="material-symbols-outlined text-[16px]">zoom_in</span>
+</button>
+</div>
+<!-- Pharmaceutical Packaging Image Placeholder -->
+<div class="w-full h-52 relative flex items-center justify-center my-1">
+<img alt="Coartem 80/480mg packaging" class="h-full w-full object-contain drop-shadow-md rounded-lg" data-alt="Clean clinical studio photograph of Coartem 80/480mg Artemether Lumefantrine box by Novartis Pharma with hologram authenticity seal against an ultra clean soft medical sky blue gradient background, soft diffuse shadow, pristine pharmaceutical packaging, studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDi4tH_uQLzHWYSKL463B6FUdOEiTz2XL69TM9IzE8xpLUYzRbWDwsF3XiLly8QqIi-FMCFE5_IO_7NQBnVtlYzTtIWCAcb_HJ3_ZYDFOnbZuHM6YYr--acSZTlwYjKdF2bbunUPJG9nwltDE4muQGuo9EvJOBLi6pL461usIPG6uL1gbp1S5x8oXjfsLAdIdGrzDxLKIIDo-So7q3s97POmfiZvqp-RLUXpeFN6WwtWsOoRAsyMAE8"/>
+<div class="absolute bottom-1 right-2 bg-surface-container-lowest/90 backdrop-blur-sm px-2 py-0.5 rounded-full flex items-center gap-1 text-on-surface-variant shadow-sm">
+<span class="material-symbols-outlined text-[12px] text-secondary">inventory_2</span>
+<span class="font-label-sm">6 Film-Coated Tablets</span>
+</div>
+</div>
+<!-- Batch Authenticity Pill Indicator -->
+<div class="w-full mt-2 pt-2 bg-surface-container-low rounded-lg px-3 py-2 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span class="font-label-sm text-on-surface">Batch #NG-2024-8841</span>
+</div>
+<span class="font-label-sm text-on-surface-variant">Exp: 11/2026</span>
+</div>
+</div>
+</div>
+<!-- Primary Info Block -->
+<div class="px-screen-edge-mobile mb-space-base">
+<div class="flex items-baseline justify-between gap-2">
+<span class="font-label-md uppercase tracking-wider text-primary">Novartis Pharma</span>
+<span class="font-label-sm text-secondary flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+        Active Stock
+      </span>
+</div>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mt-0.5">
+      Coartem 80/480mg
+    </h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">
+      Artemether 80mg / Lumefantrine 480mg • Single-Dose Blister Strip (6 Tabs)
+    </p>
+<!-- Star rating & verified doctor reviews -->
+<div class="flex items-center gap-2 mt-2">
+<div class="flex items-center text-primary-container">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-md text-on-surface ml-1">4.9</span>
+</div>
+<span class="text-outline-variant text-[12px]">•</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">420+ Clinical dispensing logs</span>
+<span class="text-outline-variant text-[12px]">•</span>
+<span class="font-label-sm text-primary">WHO-Pre-qualified</span>
+</div>
+</div>
+<!-- Pricing Tier Selector (Retail vs Wholesale) -->
+<div class="px-screen-edge-mobile mb-space-base">
+<div class="bg-surface-container-low p-1.5 rounded-xl flex gap-1 mb-3">
+<button class="flex-1 py-2 rounded-lg font-label-md text-center transition-all bg-surface-container-lowest text-primary shadow-sm" id="mode-retail">
+        Single Patient Pack
+      </button>
+<button class="flex-1 py-2 rounded-lg font-label-md text-center transition-all text-on-surface-variant hover:text-on-surface" id="mode-wholesale">
+        Wholesale / Clinic Tier
+      </button>
+</div>
+<!-- Active Tier Display -->
+<div class="bg-surface-container-lowest p-space-base rounded-xl shadow-sm space-y-3" id="tier-details">
+<!-- Option A: Standard Single -->
+<div class="cursor-pointer p-space-sm rounded-lg bg-surface-container transition-colors flex items-center justify-between" id="card-retail">
+<div class="flex items-start gap-2">
+<input checked="" class="mt-1 text-primary focus:ring-0" id="tier-single" name="pack_tier" type="radio"/>
+<div>
+<div class="font-label-lg text-label-lg text-on-surface">1 Pack (Full Course)</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Recommended for acute malaria recovery</div>
+</div>
+</div>
+<div class="text-right">
+<div class="font-headline-md text-headline-md text-primary">₦4,200</div>
+<div class="font-label-sm text-on-surface-variant">Retail MRP</div>
+</div>
+</div>
+<!-- Option B: Wholesale 5+ Packs -->
+<div class="cursor-pointer p-space-sm rounded-lg bg-surface-bright transition-colors flex items-center justify-between" id="card-wholesale-5">
+<div class="flex items-start gap-2">
+<input class="mt-1 text-primary focus:ring-0" id="tier-bulk" name="pack_tier" type="radio"/>
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-label-lg text-label-lg text-on-surface">Caregiver Bundle (5+ Packs)</span>
+<span class="px-1.5 py-0.5 rounded bg-secondary-container text-on-secondary-container font-label-sm text-[9px]">Save 7%</span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Family &amp; First-Aid backup</div>
+</div>
+</div>
+<div class="text-right">
+<div class="font-headline-md text-headline-md text-on-surface">₦3,900<span class="text-xs font-normal text-on-surface-variant">/ea</span></div>
+<div class="font-label-sm text-secondary">Save ₦1,500 on 5</div>
+</div>
+</div>
+<!-- Option C: Clinic Carton (30 packs) -->
+<div class="cursor-pointer p-space-sm rounded-lg bg-surface-bright transition-colors flex items-center justify-between" id="card-carton">
+<div class="flex items-start gap-2">
+<input class="mt-1 text-primary focus:ring-0" id="tier-carton" name="pack_tier" type="radio"/>
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-label-lg text-label-lg text-on-surface">Clinic Carton (30 Packs)</span>
+<span class="px-1.5 py-0.5 rounded bg-primary-fixed text-on-primary-fixed font-label-sm text-[9px]">Best Value</span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Dispensary standard seal</div>
+</div>
+</div>
+<div class="text-right">
+<div class="font-headline-md text-headline-md text-on-surface">₦114,000</div>
+<div class="font-label-sm text-secondary">Save ₦12,000 Total</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Delivery & Cold-Chain Logistics Guarantee -->
+<div class="px-screen-edge-mobile mb-space-base">
+<div class="bg-surface-container-lowest p-space-base rounded-xl shadow-sm space-y-3">
+<!-- Hub & Speed -->
+<div class="flex items-start gap-3">
+<div class="w-9 h-9 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px]">electric_bolt</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Abuja Priority Express: 25 Mins</span>
+<span class="font-label-sm text-secondary font-bold">Fast Dispatch</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+            Fulfilled from ComfortCare Wholesale Branch (Comfort Mall, Life Camp).
+          </p>
+</div>
+</div>
+<!-- Cold Chain Log -->
+<div class="pt-2 flex items-start gap-3">
+<div class="w-9 h-9 rounded-full bg-surface-container-high flex items-center justify-center text-primary shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px]">thermostat</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Climate Monitored</span>
+<span class="font-label-sm text-primary">20°C - 25°C Logged</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+            Insulated ambient protective courier packing prevents humidity &amp; temperature degradation.
+          </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Clinical Information & Accordions -->
+<div class="px-screen-edge-mobile mb-space-base">
+<div class="flex items-center justify-between mb-2">
+<h3 class="font-headline-md text-headline-md text-on-surface">Clinical Dossier</h3>
+<span class="font-label-sm text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">shield</span>
+        Pharmacist Reviewed
+      </span>
+</div>
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+<!-- Accordion 1: Dosage & Administration (Expanded by default) -->
+<div class="accordion-item">
+<button class="accordion-trigger w-full px-space-base py-3.5 flex items-center justify-between text-left hover:bg-surface-container-low transition-colors" data-target="acc-dosage" type="button">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[20px] text-primary">schedule</span>
+<span class="font-label-lg text-label-lg text-on-surface">Dosage &amp; Administration</span>
+</div>
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant transition-transform transform rotate-180" id="icon-acc-dosage">keyboard_arrow_down</span>
+</button>
+<div class="px-space-base pb-space-base pt-1" id="acc-dosage">
+<div class="bg-surface-container-low p-space-sm rounded-lg mb-2">
+<p class="font-label-md text-primary">Standard 3-Day Regimen (Adults &gt; 35kg)</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+              Take exactly 1 tablet in the morning and 1 tablet in the evening (12 hours apart) for 3 consecutive days. Total course: 6 tablets.
+            </p>
+</div>
+<div class="flex items-start gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px] text-secondary shrink-0 mt-0.5">nutrition</span>
+<p class="font-body-sm text-body-sm">
+<strong class="font-semibold text-on-surface">Crucial:</strong> Take with high-fat meals or milk. Lumefantrine absorption increases significantly when consumed with food.
+            </p>
+</div>
+</div>
+</div>
+<!-- Accordion 2: Active Ingredients -->
+<div class="accordion-item">
+<button class="accordion-trigger w-full px-space-base py-3.5 flex items-center justify-between text-left hover:bg-surface-container-low transition-colors" data-target="acc-ingredients" type="button">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[20px] text-primary">science</span>
+<span class="font-label-lg text-label-lg text-on-surface">Active Ingredients &amp; Strength</span>
+</div>
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant transition-transform" id="icon-acc-ingredients">keyboard_arrow_down</span>
+</button>
+<div class="px-space-base pb-space-base pt-1 hidden" id="acc-ingredients">
+<div class="grid grid-cols-2 gap-2 text-left">
+<div class="p-2.5 rounded-lg bg-surface-container">
+<div class="font-label-sm text-on-surface-variant">Rapid Schizontocide</div>
+<div class="font-label-lg text-on-surface mt-0.5">Artemether</div>
+<div class="font-headline-md text-primary">80 mg</div>
+</div>
+<div class="p-2.5 rounded-lg bg-surface-container">
+<div class="font-label-sm text-on-surface-variant">Long-Acting Clearing</div>
+<div class="font-label-lg text-on-surface mt-0.5">Lumefantrine</div>
+<div class="font-headline-md text-primary">480 mg</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Accordion 3: Prescription & Precautions -->
+<div class="accordion-item">
+<button class="accordion-trigger w-full px-space-base py-3.5 flex items-center justify-between text-left hover:bg-surface-container-low transition-colors" data-target="acc-precautions" type="button">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[20px] text-tertiary">warning</span>
+<span class="font-label-lg text-label-lg text-on-surface">Prescription &amp; Precautions</span>
+</div>
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant transition-transform" id="icon-acc-precautions">keyboard_arrow_down</span>
+</button>
+<div class="px-space-base pb-space-base pt-1 hidden space-y-2" id="acc-precautions">
+<div class="p-space-sm rounded-lg bg-error-container/40 flex items-start gap-2">
+<span class="material-symbols-outlined text-[18px] text-tertiary shrink-0 mt-0.5">pregnant_woman</span>
+<p class="font-body-sm text-body-sm text-on-surface">
+<strong class="font-semibold text-tertiary">1st Trimester Alert:</strong> Artemether/lumefantrine should not be taken during the first trimester of pregnancy unless explicitly prescribed by an obstetrician.
+            </p>
+</div>
+<div class="p-space-sm rounded-lg bg-primary-fixed/30 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary">support_agent</span>
+<span class="font-body-sm text-body-sm text-on-surface">Resident Pharmacist on standby</span>
+</div>
+<button class="font-label-sm text-primary underline">Call Pharmacist</button>
+</div>
+</div>
+</div>
+<!-- Accordion 4: Side Effects & Storage -->
+<div class="accordion-item">
+<button class="accordion-trigger w-full px-space-base py-3.5 flex items-center justify-between text-left hover:bg-surface-container-low transition-colors" data-target="acc-side-effects" type="button">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[20px] text-primary">info</span>
+<span class="font-label-lg text-label-lg text-on-surface">Side Effects &amp; Storage</span>
+</div>
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant transition-transform" id="icon-acc-side-effects">keyboard_arrow_down</span>
+</button>
+<div class="px-space-base pb-space-base pt-1 hidden space-y-2" id="acc-side-effects">
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Common mild side effects include slight headache, dizziness, loss of appetite, or mild palpitations which typically resolve upon treatment completion.
+          </p>
+<div class="p-space-sm rounded-lg bg-surface-container-low flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">sunny</span>
+<span class="font-body-sm text-body-sm text-on-surface">Store in original blister foil below 30°C. Protect from moisture.</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- AI Care Recommendation & Frequently Bought Together -->
+<div class="px-screen-edge-mobile mb-6">
+<div class="bg-gradient-to-br from-surface-container-high via-surface-container-low to-surface-container-lowest p-space-base rounded-xl shadow-sm">
+<div class="flex items-center gap-2 mb-2">
+<div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[14px]">auto_awesome</span>
+</div>
+<h4 class="font-label-lg text-label-lg text-on-surface">ComfortCare AI Clinical Protocol</h4>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-3">
+        Patients recovering from acute uncomplicated malaria achieve faster fever clearance and reduced fatigue when co-administering paracetamol and hydration salts.
+      </p>
+<!-- Bundle Items Grid -->
+<div class="space-y-2 bg-surface-container-lowest/80 p-space-sm rounded-lg">
+<!-- Cross-sell 1 -->
+<label class="flex items-center justify-between p-1.5 rounded hover:bg-surface-container transition-colors cursor-pointer">
+<div class="flex items-center gap-2.5">
+<input checked="" class="rounded text-primary focus:ring-0 w-4 h-4" id="cross-para" type="checkbox"/>
+<img alt="Emzor Paracetamol" class="w-9 h-9 object-cover rounded bg-surface-container" data-alt="Small box of Emzor Paracetamol 500mg tablets clinical presentation on white backdrop pharmaceutical medicine product" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCUPIQuy0tsI9Xj5i87MbVgU6cZECrfxlYeXFZNilfUtSYHBvkoBsTVdJLKyodLRHGR-GMtc4w0miDI40oXLconszBIegfVdEuEHildIT8w8EmfREjNr7X8sgdh50Ql358R3IKuqib8deKnc1WnMJMOXyrH_3bzNlhEmrUXobx3Rvwt8KbsbDD3Hj9MCpaLonusCL35mvWV-fNNuFiPg8w4n6cjqEookprRU9L5Iaaun_toCeDL9Nu"/>
+<div>
+<div class="font-label-md text-label-md text-on-surface">Emzor Paracetamol 500mg</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Fever &amp; Body Ache Relief</div>
+</div>
+</div>
+<span class="font-label-md text-primary">+₦850</span>
+</label>
+<!-- Cross-sell 2 -->
+<label class="flex items-center justify-between p-1.5 rounded hover:bg-surface-container transition-colors cursor-pointer">
+<div class="flex items-center gap-2.5">
+<input checked="" class="rounded text-primary focus:ring-0 w-4 h-4" id="cross-ors" type="checkbox"/>
+<img alt="ORS Hydration" class="w-9 h-9 object-cover rounded bg-surface-container" data-alt="Pack of WHO formulation Oral Rehydration Salts sachets for fever hydration therapy on clean medical surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvA8mS4MyLP79z862t3bGFu8tVfR4lb_XRFLV7MiIany15TBagDZI559qdqK9eIrLGFCvtgVWj6WDZIbQ9XLrpUge-MkVEu6xYkCsjZl0TAkGk5RQagPWDuwoiie7E0FM3NsxIDVgoz4pZRm2CZ9xaWTkva-OZ3Pm4O7qGwE4C__SoIdF89X5cBDN1-2J0Tc2UecMXwhoHqenrkQZPHRU64m8EQ72KhqR9-cWV3Wze9sg9wisJlkqM"/>
+<div>
+<div class="font-label-md text-label-md text-on-surface">Oral Rehydration Salts (ORS)</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Restores Electrolyte Balance</div>
+</div>
+</div>
+<span class="font-label-md text-primary">+₦1,200</span>
+</label>
+</div>
+<button class="w-full mt-3 py-2 bg-surface-container-highest text-primary hover:bg-primary-fixed font-label-md rounded-lg flex items-center justify-center gap-1.5 transition-colors" id="btn-add-bundle">
+<span class="material-symbols-outlined text-[16px]">add_shopping_cart</span>
+        Add Complete Recovery Bundle (₦6,250)
+      </button>
+</div>
+</div>
+<!-- Bottom Sticky Action Dock -->
+<div class="fixed bottom-0 left-0 right-0 z-40 bg-surface-container-lowest/95 backdrop-blur-md shadow-[0_-4px_20px_rgba(0,0,0,0.06)] px-screen-edge-mobile pt-2 pb-safe">
+<!-- AI Quick Consult Helper Pill -->
+<div class="w-full flex items-center justify-between pb-2 mb-1">
+<button class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container text-primary font-label-sm active:scale-95 transition-transform" id="btn-ai-doctor">
+<span class="material-symbols-outlined text-[14px]">psychology</span>
+        Ask AI Pharmacist: "Can I take this with milk?"
+        <span class="material-symbols-outlined text-[12px]">chevron_right</span>
+</button>
+<span class="font-label-sm text-on-surface-variant">Instant Check</span>
+</div>
+<!-- Stepper & Main Add to Cart Trigger -->
+<div class="flex items-center gap-3">
+<!-- Tactile Quantity Stepper -->
+<div class="flex items-center bg-surface-container-low rounded-lg p-1">
+<button aria-label="Decrease quantity" class="w-9 h-9 flex items-center justify-center rounded bg-surface-container-lowest text-on-surface shadow-sm active:scale-90 transition-transform" id="qty-minus">
+<span class="material-symbols-outlined text-[18px]">remove</span>
+</button>
+<span class="w-8 text-center font-headline-md text-headline-md text-on-surface font-semibold" id="qty-display">1</span>
+<button aria-label="Increase quantity" class="w-9 h-9 flex items-center justify-center rounded bg-surface-container-lowest text-on-surface shadow-sm active:scale-90 transition-transform" id="qty-plus">
+<span class="material-symbols-outlined text-[18px]">add</span>
+</button>
+</div>
+<!-- Add to Cart CTA -->
+<button class="flex-1 h-12 bg-primary hover:bg-primary-container text-on-primary rounded-lg font-label-lg flex items-center justify-between px-4 shadow-[0_4px_14px_rgba(0,97,148,0.25)] active:scale-[0.98] transition-all" id="btn-add-cart">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">shopping_bag</span>
+<span>Add to Bag</span>
+</div>
+<span class="font-headline-md text-headline-md" id="cta-price">₦4,200</span>
+</button>
+</div>
+</div>
+<!-- Toast Feedback Component (Client Interactive) -->
+<div class="fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-inverse-surface text-inverse-on-surface px-4 py-2.5 rounded-full font-label-md shadow-lg flex items-center gap-2 pointer-events-none opacity-0 transition-opacity duration-300" id="toast-message">
+<span class="material-symbols-outlined text-secondary-fixed text-[18px]">check_circle</span>
+<span id="toast-text">Added to your order bag!</span>
+</div>
+</div>
+<script>
+  (function() {
+    // State
+    let quantity = 1;
+    let basePrice = 4200;
+    let isWholesale = false;
+    let selectedTier = 'single'; // 'single', 'bulk', 'carton'
+
+    const qtyDisplay = document.getElementById('qty-display');
+    const ctaPrice = document.getElementById('cta-price');
+    const qtyMinus = document.getElementById('qty-minus');
+    const qtyPlus = document.getElementById('qty-plus');
+    const toast = document.getElementById('toast-message');
+    const toastText = document.getElementById('toast-text');
+
+    function showToast(text) {
+      toastText.textContent = text;
+      toast.classList.remove('opacity-0');
+      setTimeout(() => {
+        toast.classList.add('opacity-0');
+      }, 2400);
+    }
+
+    function updatePrice() {
+      let unitPrice = 4200;
+      if (selectedTier === 'bulk') {
+        unitPrice = 3900;
+      } else if (selectedTier === 'carton') {
+        unitPrice = 114000;
+      }
+      const total = selectedTier === 'carton' ? unitPrice * quantity : unitPrice * quantity;
+      ctaPrice.textContent = '₦' + total.toLocaleString();
+    }
+
+    qtyMinus.addEventListener('click', () => {
+      if (quantity > 1) {
+        quantity--;
+        qtyDisplay.textContent = quantity;
+        updatePrice();
+      }
+    });
+
+    qtyPlus.addEventListener('click', () => {
+      quantity++;
+      qtyDisplay.textContent = quantity;
+      updatePrice();
+    });
+
+    // Tier Switching Logic
+    const radioSingle = document.getElementById('tier-single');
+    const radioBulk = document.getElementById('tier-bulk');
+    const radioCarton = document.getElementById('tier-carton');
+    const cardRetail = document.getElementById('card-retail');
+    const cardWholesale5 = document.getElementById('card-wholesale-5');
+    const cardCarton = document.getElementById('card-carton');
+
+    function selectTier(tier) {
+      selectedTier = tier;
+      cardRetail.className = 'cursor-pointer p-space-sm rounded-lg transition-colors flex items-center justify-between ' + (tier === 'single' ? 'bg-surface-container' : 'bg-surface-bright');
+      cardWholesale5.className = 'cursor-pointer p-space-sm rounded-lg transition-colors flex items-center justify-between ' + (tier === 'bulk' ? 'bg-surface-container' : 'bg-surface-bright');
+      cardCarton.className = 'cursor-pointer p-space-sm rounded-lg transition-colors flex items-center justify-between ' + (tier === 'carton' ? 'bg-surface-container' : 'bg-surface-bright');
+
+      radioSingle.checked = (tier === 'single');
+      radioBulk.checked = (tier === 'bulk');
+      radioCarton.checked = (tier === 'carton');
+      
+      if (tier === 'bulk' && quantity < 5) {
+        quantity = 5;
+        qtyDisplay.textContent = quantity;
+      }
+      updatePrice();
+    }
+
+    cardRetail.addEventListener('click', () => selectTier('single'));
+    cardWholesale5.addEventListener('click', () => selectTier('bulk'));
+    cardCarton.addEventListener('click', () => selectTier('carton'));
+
+    // Mode Selector Buttons
+    const modeRetail = document.getElementById('mode-retail');
+    const modeWholesale = document.getElementById('mode-wholesale');
+
+    modeRetail.addEventListener('click', () => {
+      modeRetail.className = 'flex-1 py-2 rounded-lg font-label-md text-center transition-all bg-surface-container-lowest text-primary shadow-sm';
+      modeWholesale.className = 'flex-1 py-2 rounded-lg font-label-md text-center transition-all text-on-surface-variant hover:text-on-surface';
+      selectTier('single');
+    });
+
+    modeWholesale.addEventListener('click', () => {
+      modeWholesale.className = 'flex-1 py-2 rounded-lg font-label-md text-center transition-all bg-surface-container-lowest text-primary shadow-sm';
+      modeRetail.className = 'flex-1 py-2 rounded-lg font-label-md text-center transition-all text-on-surface-variant hover:text-on-surface';
+      selectTier('bulk');
+    });
+
+    // Accordions
+    document.querySelectorAll('.accordion-trigger').forEach(trigger => {
+      trigger.addEventListener('click', () => {
+        const targetId = trigger.getAttribute('data-target');
+        const content = document.getElementById(targetId);
+        const icon = document.getElementById('icon-' + targetId);
+        
+        if (content.classList.contains('hidden')) {
+          content.classList.remove('hidden');
+          icon.classList.add('rotate-180');
+        } else {
+          content.classList.add('hidden');
+          icon.classList.remove('rotate-180');
+        }
+      });
+    });
+
+    // Wishlist Toggle
+    const btnWishlist = document.getElementById('btn-wishlist');
+    const iconWishlist = document.getElementById('icon-wishlist');
+    let isWishlisted = false;
+    btnWishlist.addEventListener('click', () => {
+      isWishlisted = !isWishlisted;
+      if (isWishlisted) {
+        iconWishlist.style.fontVariationSettings = "'FILL' 1";
+        iconWishlist.classList.add('text-tertiary');
+        showToast('Saved to your Clinical Cabinet');
+      } else {
+        iconWishlist.style.fontVariationSettings = "'FILL' 0";
+        iconWishlist.classList.remove('text-tertiary');
+      }
+    });
+
+    // Share action
+    document.getElementById('btn-share').addEventListener('click', () => {
+      if (navigator.share) {
+        navigator.share({
+          title: 'Coartem 80/480mg (Novartis Pharma)',
+          text: 'Verified Coartem from ComfortCare Wholesale Abuja',
+          url: window.location.href,
+        }).catch(() => {});
+      } else {
+        showToast('Link copied to clipboard!');
+      }
+    });
+
+    // Add to Cart Action
+    document.getElementById('btn-add-cart').addEventListener('click', () => {
+      showToast('Coartem 80/480mg added to your cart!');
+    });
+
+    // Bundle CTA
+    document.getElementById('btn-add-bundle').addEventListener('click', () => {
+      showToast('Complete 3-in-1 Malaria Recovery Kit added!');
+    });
+
+    // AI Doctor trigger
+    document.getElementById('btn-ai-doctor').addEventListener('click', () => {
+      showToast('Consulting ComfortCare AI Pharmacist...');
+    });
+  })();
+</script></main></body></html>
