@@ -448,6 +448,7 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
                         foregroundColor: Colors.white,
                         elevation: 2,
                         shadowColor: const Color(0xFF006194).withValues(alpha: 0.3),
+                        minimumSize: const Size(0, 42),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -472,6 +473,7 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
                     style: OutlinedButton.styleFrom(
                       foregroundColor: const Color(0xFF006194),
                       side: const BorderSide(color: Color(0xFF006194), width: 1.2),
+                      minimumSize: const Size(0, 42),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
