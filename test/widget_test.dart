@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:comfort_care/core/extensions/currency_extensions.dart';
 import 'package:comfort_care/core/utils/validators.dart';
 import 'package:comfort_care/core/theme/bloc/theme_bloc.dart';
@@ -7,10 +8,56 @@ import 'package:comfort_care/core/theme/bloc/theme_event.dart';
 import 'package:comfort_care/core/theme/bloc/theme_state.dart';
 import 'package:comfort_care/core/storage/local_storage_service.dart';
 import 'package:comfort_care/features/products/domain/entities/product.dart';
+import 'package:comfort_care/features/products/presentation/widgets/product_card.dart';
 import 'package:comfort_care/features/cart/domain/entities/cart_item.dart';
+import 'package:comfort_care/features/cart/domain/repositories/cart_repository.dart';
+import 'package:comfort_care/features/cart/domain/usecases/manage_cart.dart';
+import 'package:comfort_care/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:comfort_care/features/orders/domain/entities/order.dart';
 import 'package:comfort_care/core/widgets/cc_floating_ai_doctor_button.dart';
 import 'package:comfort_care/features/clinical/presentation/widgets/ai_clinical_regimen_card.dart';
+
+class FakeCartRepository implements CartRepository {
+  final List<CartItemEntity> items = [];
+
+  @override
+  Future<List<CartItemEntity>> getCartItems() async => items;
+
+  @override
+  Future<void> addToCart(ProductEntity product, int quantity) async {
+    final idx = items.indexWhere((i) => i.product.id == product.id);
+    if (idx != -1) {
+      items[idx] = items[idx].copyWith(quantity: items[idx].quantity + quantity);
+    } else {
+      items.add(CartItemEntity(product: product, quantity: quantity));
+    }
+  }
+
+  @override
+  Future<void> updateQuantity(String productId, int quantity) async {
+    final idx = items.indexWhere((i) => i.product.id == productId);
+    if (idx != -1) {
+      if (quantity <= 0) {
+        items.removeAt(idx);
+      } else {
+        items[idx] = items[idx].copyWith(quantity: quantity);
+      }
+    }
+  }
+
+  @override
+  Future<void> removeFromCart(String productId) async {
+    items.removeWhere((i) => i.product.id == productId);
+  }
+
+  @override
+  Future<void> attachPrescription(String productId) async {}
+
+  @override
+  Future<void> clearCart() async {
+    items.clear();
+  }
+}
 
 class FakeLocalStorageService implements LocalStorageService {
   String? themeMode;
@@ -161,6 +208,33 @@ void main() {
 
       await bloc.close();
     });
+
+    test('ThemeState isDark detects platform brightness when on ThemeMode.system', () {
+      const systemState = ThemeState(themeMode: ThemeMode.system);
+      expect(systemState.isDark(Brightness.dark), isTrue);
+      expect(systemState.isDark(Brightness.light), isFalse);
+
+      const explicitDark = ThemeState(themeMode: ThemeMode.dark);
+      expect(explicitDark.isDark(Brightness.light), isTrue);
+
+      const explicitLight = ThemeState(themeMode: ThemeMode.light);
+      expect(explicitLight.isDark(Brightness.dark), isFalse);
+    });
+
+    test('ThemeBloc toggles from system dark directly to light mode on first toggle', () async {
+      final storage = FakeLocalStorageService();
+      final bloc = ThemeBloc(storageService: storage);
+      expect(bloc.state.themeMode, ThemeMode.system);
+
+      // When currently visually in dark mode, first toggle should switch directly to light mode
+      bloc.add(const ToggleThemeMode(isCurrentDark: true));
+      await expectLater(
+        bloc.stream,
+        emits(predicate<ThemeState>((s) => s.themeMode == ThemeMode.light)),
+      );
+
+      await bloc.close();
+    });
   });
 
   group('AI Clinical Consultation & FAB Tests', () {
@@ -207,9 +281,9 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify Header & Badge
-      expect(find.text('AI Clinical Regimen'), findsOneWidget);
+      expect(find.text('Recommended Drugs'), findsOneWidget);
       expect(find.text('Rx Ready'), findsOneWidget);
-      expect(find.text('Tap to customize individual care items'), findsOneWidget);
+      expect(find.text('Tap any medication to view full clinical details'), findsOneWidget);
 
       // Verify 4 items
       expect(find.text('Coartem 80/480mg'), findsOneWidget);
@@ -223,19 +297,85 @@ void main() {
       expect(find.text('15-Min Results'), findsOneWidget);
       expect(find.text('Optional Add-on'), findsOneWidget);
 
-      // Verify Default 3 items checked state: Total ₦7,200
-      expect(find.text('Selected: 3 Items • Total: ₦7,200'), findsOneWidget);
+      // Verify Tail-end Action Buttons with 3 items selected by default (Total ₦7,200)
+      expect(find.text('Add Selected (3) • ₦7,200'), findsOneWidget);
+      expect(find.text('Add All'), findsOneWidget);
       expect(reportedCount, 3);
       expect(reportedTotal, 7200.0);
+    });
+  });
 
-      // Tap 4th item (ORS Hydration) to select it
-      await tester.tap(find.text('ORS Hydration ...'));
-      await tester.pumpAndSettle();
+  group('Medicines & Products Catalog Redesign Tests', () {
+    const coartemProduct = ProductEntity(
+      id: 'prod-coartem-80-480',
+      name: 'Coartem 80/480mg',
+      brand: 'Novartis',
+      genericName: 'Artemether & Lumefantrine (6 Tablets)',
+      packSize: '6 Tablets Blister Pack',
+      price: 4200.0,
+      wholesalePrice: 3833.33,
+      category: 'Antimalarials',
+      description: 'First line malaria treatment.',
+      dosageInstructions: 'Take 1 tablet twice daily for 3 days.',
+      activeIngredients: 'Artemether 80mg, Lumefantrine 480mg',
+      nafdacNumber: 'NAFDAC 04-2051',
+      badge1: '20m Express',
+      badge1Icon: 'timer',
+      badge2: 'NAFDAC 04-2051',
+      badge2Icon: 'verified',
+      packLabel: 'Retail Pack',
+      cartonText: 'Carton (30): ₦115,000',
+      isCartonHighlight: true,
+      stock: 140,
+      imageUrl: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500',
+    );
 
-      // Now 4 items selected: 7200 + 1400 = 8600
-      expect(find.text('Selected: 4 Items • Total: ₦8,600'), findsOneWidget);
-      expect(reportedCount, 4);
-      expect(reportedTotal, 8600.0);
+    testWidgets('ProductCard renders exact typography, badges, pack label, and carton note', (tester) async {
+      final fakeRepo = FakeCartRepository();
+      final cartBloc = CartBloc(manageCartUseCase: ManageCartUseCase(fakeRepo));
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: BlocProvider<CartBloc>.value(
+              value: cartBloc,
+              child: const ProductCard(
+                product: coartemProduct,
+                isWholesale: false,
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      // Verify Header Tag
+      expect(find.text('ANTIMALARIAL • NOVARTIS'), findsOneWidget);
+
+      // Verify Name & Subtitle
+      expect(find.text('Coartem 80/480mg'), findsOneWidget);
+      expect(find.text('Artemether & Lumefantrine (6 Tablets)'), findsOneWidget);
+
+      // Verify Badges
+      expect(find.text('20m Express'), findsOneWidget);
+      expect(find.text('NAFDAC 04-2051'), findsOneWidget);
+
+      // Verify Pricing Tray
+      expect(find.text('Retail Pack'), findsOneWidget);
+      expect(find.text('₦4,200'), findsOneWidget);
+      expect(find.text('Carton (30): ₦115,000'), findsOneWidget);
+
+      // Verify Add Button initially
+      expect(find.text('Add'), findsOneWidget);
+
+      // Tap Add button
+      await tester.tap(find.text('Add'));
+      await tester.pump();
+
+      // Verify pill stepper is now visible with quantity 1
+      expect(find.text('1'), findsOneWidget);
+      expect(find.byIcon(Icons.remove), findsOneWidget);
+      expect(find.byIcon(Icons.add), findsOneWidget);
     });
   });
 }

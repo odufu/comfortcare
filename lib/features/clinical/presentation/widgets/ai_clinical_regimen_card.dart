@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/extensions/context_extensions.dart';
 import '../../../../core/extensions/currency_extensions.dart';
+import '../../../cart/presentation/bloc/cart_bloc.dart';
+import '../../../cart/presentation/bloc/cart_event.dart';
+import '../../../products/data/models/product_model.dart';
 import '../../../products/domain/entities/product.dart';
+import '../../../products/presentation/pages/product_details_page.dart';
 
 class RegimenItemData {
   final String id;
@@ -12,7 +18,6 @@ class RegimenItemData {
   final IconData? icon;
   final String? badgeText;
   final List<RegimenTagData> tags;
-  final ProductEntity? productEntity;
 
   const RegimenItemData({
     required this.id,
@@ -24,7 +29,6 @@ class RegimenItemData {
     this.icon,
     this.badgeText,
     required this.tags,
-    this.productEntity,
   });
 }
 
@@ -177,6 +181,22 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
     _notifyTotals();
   }
 
+  void _showDrugDetailsModal(BuildContext context, String productId) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => ClipRRect(
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height * 0.88,
+          child: ProductDetailsPage(productId: productId),
+        ),
+      ),
+    );
+  }
+
   void _notifyTotals() {
     final count = _selectedItemIds.length;
     double currentTotal = 0;
@@ -189,7 +209,6 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
     final double originalTotal;
     final double savings;
     if (count >= 2) {
-      // 10% clinical bundle discount
       originalTotal = (currentTotal / 0.9).roundToDouble();
       savings = originalTotal - currentTotal;
     } else {
@@ -203,6 +222,117 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
       originalTotal,
       savings,
       _selectedItemIds.toList(),
+    );
+  }
+
+  ProductEntity _createProductEntity(RegimenItemData item) {
+    switch (item.id) {
+      case 'prod-coartem-80-480':
+        return const ProductModel(
+          id: 'prod-coartem-80-480',
+          name: 'Coartem 80/480mg',
+          brand: 'Novartis',
+          genericName: 'Artemether 80mg + Lumefantrine 480mg',
+          packSize: '6 Film-Coated Tablets',
+          price: 4200.0,
+          wholesalePrice: 3500.0,
+          category: 'Malaria Meds',
+          description: 'Primary ACT anti-malarial treatment.',
+          dosageInstructions: 'Take 1 tablet twice daily with meals for 3 days.',
+          activeIngredients: 'Artemether 80mg, Lumefantrine 480mg',
+          nafdacNumber: 'NAFDAC Reg. A4-0245',
+          imageUrl:
+              'https://lh3.googleusercontent.com/aida-public/AB6AXuCYoLw9r-RmsXTnOXgJM3rXNLOWTp4aNanpbJT4yg1dHRH5bh8wBJw_eZkLeWPOHuZZ_kVoP-UXzPUtD-sfGLck1C3w9gjm4SZ56JuI0g4F_HK7Ob0BQbZ3Bi0BW4x66DmgyxUZGJx_OLz-TnFNPyQg49zsaiNsncvjT35QqHDYEHcDPjQ54vxtV0J_wBbh5rV6n2cXy_EKqVhLe6jV77o16zZPiZGVmHho2akb6gLVW1oRjZXo8o5CaNgYsVNmVvK3mQ',
+        );
+      case 'prod-emzor-paracetamol':
+        return const ProductModel(
+          id: 'prod-emzor-paracetamol',
+          name: 'Emzor Paracetamol 500mg',
+          brand: 'Emzor Pharmaceuticals',
+          genericName: 'Paracetamol BP 500mg',
+          packSize: '20 Caplets',
+          price: 1200.0,
+          wholesalePrice: 950.0,
+          category: 'Vitamins & Zinc',
+          description: 'Antipyretic and analgesic for fever and chills relief.',
+          dosageInstructions: '2 tabs every 8 hrs. Fast Dissolve.',
+          activeIngredients: 'Paracetamol 500mg',
+          nafdacNumber: 'NAFDAC Reg. 04-0312',
+          imageUrl:
+              'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=60',
+        );
+      case 'prod-carestart-rdt':
+        return const ProductModel(
+          id: 'prod-carestart-rdt',
+          name: 'CareStart Malaria RDT Kit',
+          brand: 'Access Bio',
+          genericName: 'Single Antigen Cassette Test',
+          packSize: '1 Test Cassette + Lancet',
+          price: 1800.0,
+          wholesalePrice: 1400.0,
+          category: 'Medical Devices',
+          description: '15-Min rapid diagnostic test for Malaria antigen.',
+          dosageInstructions: 'Single use diagnostic test.',
+          activeIngredients: 'HRP2 Antigen Strip',
+          nafdacNumber: 'NAFDAC Reg. 03-8821',
+          imageUrl:
+              'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=500&auto=format&fit=crop&q=60',
+        );
+      case 'prod-ors-zinc':
+      default:
+        return const ProductModel(
+          id: 'prod-ors-zinc',
+          name: 'ORS Hydration + Zinc',
+          brand: 'Chi Pharmaceuticals',
+          genericName: 'Oral Rehydration Salts with Zinc Sulfate',
+          packSize: '5 Sachets',
+          price: 1400.0,
+          wholesalePrice: 1100.0,
+          category: 'Vitamins & Zinc',
+          description: 'Electrolyte restoration and anti-fatigue hydration therapy.',
+          dosageInstructions: 'Dissolve 1 sachet in 1 liter of drinking water.',
+          activeIngredients: 'Oral Rehydration Salts, Zinc Sulfate',
+          nafdacNumber: 'NAFDAC Reg. 04-5512',
+          imageUrl:
+              'https://images.unsplash.com/photo-1471864190281-a93a3070b6de?w=500&auto=format&fit=crop&q=60',
+        );
+    }
+  }
+
+  void _addSelectedToCart(BuildContext context) {
+    final selectedItems = _items.where((i) => _selectedItemIds.contains(i.id)).toList();
+    if (selectedItems.isEmpty) {
+      context.showSnackBar('Please select at least one drug to add.', isError: true);
+      return;
+    }
+
+    for (final item in selectedItems) {
+      final product = _createProductEntity(item);
+      context.read<CartBloc>().add(AddToCart(product: product));
+    }
+
+    context.showSnackBar(
+      'Added ${selectedItems.length} medication${selectedItems.length == 1 ? '' : 's'} to cart!',
+      isSuccess: true,
+    );
+  }
+
+  void _addAllRecommendedToCart(BuildContext context) {
+    for (final item in _items) {
+      final product = _createProductEntity(item);
+      context.read<CartBloc>().add(AddToCart(product: product));
+    }
+
+    setState(() {
+      for (final item in _items) {
+        _selectedItemIds.add(item.id);
+      }
+    });
+    _notifyTotals();
+
+    context.showSnackBar(
+      'Added all 4 recommended medications to cart!',
+      isSuccess: true,
     );
   }
 
@@ -242,7 +372,7 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Header Row
+              // Header Row: "Recommended Drugs"
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -252,7 +382,7 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: const [
                         Text(
-                          'AI Clinical Regimen',
+                          'Recommended Drugs',
                           style: TextStyle(
                             fontSize: 21,
                             fontWeight: FontWeight.w800,
@@ -262,7 +392,7 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
                         ),
                         SizedBox(height: 3),
                         Text(
-                          'Tap to customize individual care items',
+                          'Tap any medication to view full clinical details',
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w400,
@@ -303,106 +433,61 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
               ),
               const SizedBox(height: 14),
 
-              // 4 Regimen Drug Items
+              // 4 Regimen Drug Items (tapping pops up details, checkbox toggles selection)
               ..._items.map((item) => _buildRegimenItem(item)),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 14),
 
-              // Selected Summary Banner
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFCCE5FF).withValues(alpha: 0.55),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.local_offer,
-                      color: Color(0xFF006194),
-                      size: 20,
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Selected: $selectedCount Items • Total: ${currentTotal.toNaira()}',
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF001D31),
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 1),
-                          const Text(
-                            'Includes 10% AI Clinical Bundle Discount',
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFF004B73),
-                            ),
-                          ),
-                        ],
+              // Action Buttons at the Tail End of the Card to add to cart
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF006194),
+                        foregroundColor: Colors.white,
+                        elevation: 2,
+                        shadowColor: const Color(0xFF006194).withValues(alpha: 0.3),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
+                      ),
+                      onPressed: () => _addSelectedToCart(context),
+                      icon: const Icon(Icons.add_shopping_cart, size: 18),
+                      label: Text(
+                        selectedCount > 0
+                            ? 'Add Selected ($selectedCount) • ${currentTotal.toNaira()}'
+                            : 'Add to Cart',
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: -0.2,
+                        ),
                       ),
                     ),
-                    const Icon(
-                      Icons.verified,
-                      color: Color(0xFF006194),
-                      size: 18,
+                  ),
+                  const SizedBox(width: 8),
+                  OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF006194),
+                      side: const BorderSide(color: Color(0xFF006194), width: 1.2),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
                     ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 10),
-
-              // Delivery Speed Estimate Pill
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFE2E7FF).withValues(alpha: 0.45),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.bolt,
-                      color: Color(0xFF006194),
-                      size: 20,
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            '25–35 mins delivery estimate',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF131B2E),
-                            ),
-                          ),
-                          SizedBox(height: 1),
-                          Text(
-                            'Dispatching from Comfort Mall Depot • Abuja Central',
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xFF3F4850),
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
+                    onPressed: () => _addAllRecommendedToCart(context),
+                    icon: const Icon(Icons.checklist, size: 18),
+                    label: const Text(
+                      'Add All',
+                      style: TextStyle(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -421,55 +506,59 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
         borderRadius: BorderRadius.circular(14),
         child: InkWell(
           borderRadius: BorderRadius.circular(14),
-          onTap: () => _toggleItem(item.id),
+          // Tapping item pops up the product details screen!
+          onTap: () => _showDrugDetailsModal(context, item.id),
           child: AnimatedOpacity(
             duration: const Duration(milliseconds: 180),
-            opacity: isChecked ? 1.0 : 0.75,
+            opacity: isChecked ? 1.0 : 0.85,
             child: Padding(
               padding: const EdgeInsets.all(10),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Checkbox Visual
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 180),
-                      width: 20,
-                      height: 20,
-                      decoration: BoxDecoration(
-                        color: isChecked
-                            ? const Color(0xFF006194)
-                            : const Color(0xFFDAE2FD),
-                        borderRadius: BorderRadius.circular(6),
-                        border: Border.all(
+                  // Checkbox Visual - tapping toggles selection
+                  GestureDetector(
+                    onTap: () => _toggleItem(item.id),
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 4, right: 4),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 180),
+                        width: 20,
+                        height: 20,
+                        decoration: BoxDecoration(
                           color: isChecked
                               ? const Color(0xFF006194)
-                              : const Color(0xFFBFC7D2),
-                          width: 1.2,
+                              : const Color(0xFFDAE2FD),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color: isChecked
+                                ? const Color(0xFF006194)
+                                : const Color(0xFFBFC7D2),
+                            width: 1.2,
+                          ),
+                          boxShadow: isChecked
+                              ? [
+                                  BoxShadow(
+                                    color: const Color(0xFF006194).withValues(alpha: 0.25),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 1),
+                                  ),
+                                ]
+                              : null,
                         ),
-                        boxShadow: isChecked
-                            ? [
-                                BoxShadow(
-                                  color: const Color(0xFF006194).withValues(alpha: 0.25),
-                                  blurRadius: 4,
-                                  offset: const Offset(0, 1),
-                                ),
-                              ]
+                        child: isChecked
+                            ? const Icon(
+                                Icons.check,
+                                size: 14,
+                                color: Colors.white,
+                              )
                             : null,
                       ),
-                      child: isChecked
-                          ? const Icon(
-                              Icons.check,
-                              size: 14,
-                              color: Colors.white,
-                            )
-                          : null,
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: 8),
 
-                  // Image Thumbnail or Icon Container (w-14 h-16 / 56x64)
+                  // Image Thumbnail or Icon Container (w-14 h-16 / 54x62)
                   _buildThumbnail(item),
 
                   const SizedBox(width: 10),
@@ -500,28 +589,37 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
                             const SizedBox(width: 6),
                             Text(
                               item.price.toNaira(),
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w800,
-                                color: isChecked
-                                    ? const Color(0xFF006194)
-                                    : const Color(0xFF3F4850),
+                                color: Color(0xFF006194),
                               ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 2),
 
-                        // Subtitle
-                        Text(
-                          item.subtitle,
-                          style: const TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w400,
-                            color: Color(0xFF3F4850),
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                        // Subtitle & "Tap for details" hint
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                item.subtitle,
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w400,
+                                  color: Color(0xFF3F4850),
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            const Icon(
+                              Icons.arrow_forward_ios,
+                              size: 10,
+                              color: Color(0xFF006194),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 6),
 

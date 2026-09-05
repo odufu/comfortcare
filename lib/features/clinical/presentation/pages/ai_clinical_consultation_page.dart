@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/extensions/context_extensions.dart';
-import '../../../../core/extensions/currency_extensions.dart';
-import '../../../cart/presentation/bloc/cart_bloc.dart';
-import '../../../cart/presentation/bloc/cart_event.dart';
-import '../../../products/data/models/product_model.dart';
-import '../../../products/domain/entities/product.dart';
 import '../../domain/entities/consultation_message.dart';
 import '../bloc/clinical_bloc.dart';
 import '../bloc/clinical_event.dart';
@@ -23,16 +17,6 @@ class AiClinicalConsultationPage extends StatefulWidget {
 class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-
-  int _selectedCount = 3;
-  double _selectedTotal = 7200.0;
-  double _originalTotal = 8000.0;
-  double _savings = 800.0;
-  List<String> _selectedIds = [
-    'prod-coartem-80-480',
-    'prod-emzor-paracetamol',
-    'prod-carestart-rdt',
-  ];
 
   final List<String> _quickActionChips = [
     'Ask about food interactions',
@@ -69,128 +53,6 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
           );
         }
       });
-    }
-  }
-
-  void _onRegimenTotalsChanged(
-    int count,
-    double total,
-    double original,
-    double savings,
-    List<String> selectedIds,
-  ) {
-    setState(() {
-      _selectedCount = count;
-      _selectedTotal = total;
-      _originalTotal = original;
-      _savings = savings;
-      _selectedIds = selectedIds;
-    });
-  }
-
-  void _proceedToCheckout(ClinicalState state) {
-    if (_selectedIds.isEmpty) {
-      context.showSnackBar('Please select at least 1 care item.', isError: true);
-      return;
-    }
-
-    // Collect products from consultation recommendations or fallback models
-    final List<ProductEntity> availableProducts = [];
-    for (final msg in state.messages) {
-      if (msg.recommendedProducts != null) {
-        availableProducts.addAll(msg.recommendedProducts!);
-      }
-    }
-
-    for (final id in _selectedIds) {
-      final existing = availableProducts.where((p) => p.id == id).firstOrNull;
-      if (existing != null) {
-        context.read<CartBloc>().add(AddToCart(product: existing));
-      } else {
-        // Fallback product model
-        final fallback = _createFallbackProduct(id);
-        context.read<CartBloc>().add(AddToCart(product: fallback));
-      }
-    }
-
-    context.showSnackBar(
-      'Added $_selectedCount regimen items to cart with 10% AI Bundle discount!',
-      isSuccess: true,
-    );
-    context.push('/cart');
-  }
-
-  ProductEntity _createFallbackProduct(String id) {
-    switch (id) {
-      case 'prod-coartem-80-480':
-        return const ProductModel(
-          id: 'prod-coartem-80-480',
-          name: 'Coartem 80/480mg',
-          brand: 'Novartis',
-          genericName: 'Artemether 80mg + Lumefantrine 480mg',
-          packSize: '6 Film-Coated Tablets',
-          price: 4200.0,
-          wholesalePrice: 3500.0,
-          category: 'Malaria Meds',
-          description: 'Primary ACT anti-malarial treatment.',
-          dosageInstructions: 'Take 1 tablet twice daily with meals for 3 days.',
-          activeIngredients: 'Artemether 80mg, Lumefantrine 480mg',
-          nafdacNumber: 'NAFDAC Reg. A4-0245',
-          imageUrl:
-              'https://lh3.googleusercontent.com/aida-public/AB6AXuCYoLw9r-RmsXTnOXgJM3rXNLOWTp4aNanpbJT4yg1dHRH5bh8wBJw_eZkLeWPOHuZZ_kVoP-UXzPUtD-sfGLck1C3w9gjm4SZ56JuI0g4F_HK7Ob0BQbZ3Bi0BW4x66DmgyxUZGJx_OLz-TnFNPyQg49zsaiNsncvjT35QqHDYEHcDPjQ54vxtV0J_wBbh5rV6n2cXy_EKqVhLe6jV77o16zZPiZGVmHho2akb6gLVW1oRjZXo8o5CaNgYsVNmVvK3mQ',
-        );
-      case 'prod-emzor-paracetamol':
-        return const ProductModel(
-          id: 'prod-emzor-paracetamol',
-          name: 'Emzor Paracetamol 500mg',
-          brand: 'Emzor Pharmaceuticals',
-          genericName: 'Paracetamol BP 500mg',
-          packSize: '20 Caplets',
-          price: 1200.0,
-          wholesalePrice: 950.0,
-          category: 'Vitamins & Zinc',
-          description: 'Antipyretic and analgesic for fever and chills relief.',
-          dosageInstructions: '2 tabs every 8 hrs. Fast Dissolve.',
-          activeIngredients: 'Paracetamol 500mg',
-          nafdacNumber: 'NAFDAC Reg. 04-0312',
-          imageUrl:
-              'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=60',
-        );
-      case 'prod-carestart-rdt':
-        return const ProductModel(
-          id: 'prod-carestart-rdt',
-          name: 'CareStart Malaria RDT Kit',
-          brand: 'Access Bio',
-          genericName: 'Single Antigen Cassette Test',
-          packSize: '1 Test Cassette + Lancet',
-          price: 1800.0,
-          wholesalePrice: 1400.0,
-          category: 'Medical Devices',
-          description: '15-Min rapid diagnostic test for Malaria antigen.',
-          dosageInstructions: 'Single use diagnostic test.',
-          activeIngredients: 'HRP2 Antigen Strip',
-          nafdacNumber: 'NAFDAC Reg. 03-8821',
-          imageUrl:
-              'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=500&auto=format&fit=crop&q=60',
-        );
-      case 'prod-ors-zinc':
-      default:
-        return const ProductModel(
-          id: 'prod-ors-zinc',
-          name: 'ORS Hydration + Zinc',
-          brand: 'Chi Pharmaceuticals',
-          genericName: 'Oral Rehydration Salts with Zinc Sulfate',
-          packSize: '5 Sachets',
-          price: 1400.0,
-          wholesalePrice: 1100.0,
-          category: 'Vitamins & Zinc',
-          description: 'Electrolyte restoration and anti-fatigue hydration therapy.',
-          dosageInstructions: 'Dissolve 1 sachet in 1 liter of drinking water.',
-          activeIngredients: 'Oral Rehydration Salts, Zinc Sulfate',
-          nafdacNumber: 'NAFDAC Reg. 04-5512',
-          imageUrl:
-              'https://images.unsplash.com/photo-1471864190281-a93a3070b6de?w=500&auto=format&fit=crop&q=60',
-        );
     }
   }
 
@@ -684,10 +546,8 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
 
                               const SizedBox(height: 14),
 
-                              // Embedded Pixel-Perfect AI Clinical Regimen Card
-                              AiClinicalRegimenCard(
-                                onTotalsChanged: _onRegimenTotalsChanged,
-                              ),
+                              // Embedded Recommended Drugs Card (tappable details + tail-end cart buttons)
+                              const AiClinicalRegimenCard(),
 
                               const SizedBox(height: 12),
 
@@ -753,6 +613,37 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
                                             ),
                                           ),
                                         ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              const SizedBox(height: 10),
+
+                              // Safety & Regulatory Compliance Lockup in Message Stream
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 4),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Icon(
+                                      Icons.verified,
+                                      size: 13,
+                                      color: Color(0xFF1B6D24),
+                                    ),
+                                    SizedBox(width: 5),
+                                    Flexible(
+                                      child: Text(
+                                        'Supervised by Pharm. Halima Bello (PCN #44912) • NAFDAC Approved Formulary',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w500,
+                                          color: Color(0xFF3F4850),
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                   ],
@@ -841,189 +732,59 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
                 ),
               ),
 
-              // Bottom Fixed Action Bar & Single-Tap Checkout Tray
+              // Bottom Area: Dedicated to Chat Only!
               Container(
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.98),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF006194).withValues(alpha: 0.08),
-                      blurRadius: 20,
-                      offset: const Offset(0, -6),
+                      color: const Color(0xFF006194).withValues(alpha: 0.06),
+                      blurRadius: 16,
+                      offset: const Offset(0, -4),
                     ),
                   ],
                   border: const Border(
                     top: BorderSide(color: Color(0xFFE2E7FF), width: 1),
                   ),
                 ),
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
+                padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
                 child: SafeArea(
                   top: false,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Pricing & Savings Row
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.baseline,
-                        textBaseline: TextBaseline.alphabetic,
-                        children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.baseline,
-                            textBaseline: TextBaseline.alphabetic,
-                            children: [
-                              const Text(
-                                'REGIMEN TOTAL: ',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w800,
-                                  color: Color(0xFF3F4850),
-                                  letterSpacing: 0.5,
-                                ),
-                              ),
-                              Text(
-                                _selectedTotal.toNaira(),
-                                style: const TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w900,
-                                  color: Color(0xFF006194),
-                                  letterSpacing: -0.5,
-                                ),
-                              ),
-                              if (_savings > 0) ...[
-                                const SizedBox(width: 8),
-                                Text(
-                                  _originalTotal.toNaira(),
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    decoration: TextDecoration.lineThrough,
-                                    color: Color(0xFF707881),
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
-                          if (_savings > 0)
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFA0F399),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                'Save ${_savings.toNaira()} Applied',
-                                style: const TextStyle(
-                                  fontSize: 10.5,
-                                  fontWeight: FontWeight.w800,
-                                  color: Color(0xFF217128),
-                                ),
-                              ),
+                  child: Container(
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF2F3FF),
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: Row(
+                      children: [
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: TextField(
+                            controller: _messageController,
+                            style: const TextStyle(
+                              fontSize: 13.5,
+                              color: Color(0xFF131B2E),
                             ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-
-                      // Large Primary Action Button
-                      SizedBox(
-                        width: double.infinity,
-                        height: 48,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF006194),
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                            elevation: 3,
-                            shadowColor: const Color(0xFF006194).withValues(alpha: 0.35),
-                          ),
-                          onPressed: () => _proceedToCheckout(state),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(Icons.bolt, size: 20),
-                              const SizedBox(width: 8),
-                              Text(
-                                'Proceed to 1-Tap Checkout ($_selectedCount Item${_selectedCount == 1 ? '' : 's'})',
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: -0.2,
-                                ),
+                            decoration: const InputDecoration(
+                              hintText: 'Ask doctor follow-up question...',
+                              hintStyle: TextStyle(
+                                fontSize: 13,
+                                color: Color(0xFF707881),
                               ),
-                              const SizedBox(width: 8),
-                              const Icon(Icons.arrow_forward, size: 18),
-                            ],
+                              border: InputBorder.none,
+                              isDense: true,
+                              contentPadding: EdgeInsets.zero,
+                            ),
+                            onSubmitted: (_) => _sendMessage(),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 8),
-
-                      // Safety & Regulatory Compliance Lockup
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          Icon(
-                            Icons.verified,
-                            size: 13,
-                            color: Color(0xFF1B6D24),
-                          ),
-                          SizedBox(width: 5),
-                          Flexible(
-                            child: Text(
-                              'Supervised by Pharm. Halima Bello (PCN #44912) • NAFDAC Approved Formulary',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF3F4850),
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-
-                      // Chat Input Field for additional questions
-                      Container(
-                        height: 44,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF2F3FF),
-                          borderRadius: BorderRadius.circular(22),
+                        IconButton(
+                          icon: const Icon(Icons.send, size: 20, color: Color(0xFF006194)),
+                          onPressed: () => _sendMessage(),
                         ),
-                        child: Row(
-                          children: [
-                            const SizedBox(width: 14),
-                            Expanded(
-                              child: TextField(
-                                controller: _messageController,
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  color: Color(0xFF131B2E),
-                                ),
-                                decoration: const InputDecoration(
-                                  hintText: 'Ask doctor follow-up question...',
-                                  hintStyle: TextStyle(
-                                    fontSize: 12,
-                                    color: Color(0xFF707881),
-                                  ),
-                                  border: InputBorder.none,
-                                  isDense: true,
-                                  contentPadding: EdgeInsets.zero,
-                                ),
-                                onSubmitted: (_) => _sendMessage(),
-                              ),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.send, size: 18, color: Color(0xFF006194)),
-                              onPressed: () => _sendMessage(),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

@@ -19,4 +19,11 @@ class ChangeThemeMode extends ThemeEvent {
   List<Object?> get props => [themeMode];
 }
 
-class ToggleThemeMode extends ThemeEvent {}
+class ToggleThemeMode extends ThemeEvent {
+  final bool? isCurrentDark;
+
+  const ToggleThemeMode({this.isCurrentDark});
+
+  @override
+  List<Object?> get props => [isCurrentDark];
+}

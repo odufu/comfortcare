@@ -19,6 +19,13 @@ class ProductModel extends ProductEntity {
     super.storageTemp = 'Store below 30°C',
     super.stock = 50,
     required super.imageUrl,
+    super.badge1,
+    super.badge1Icon,
+    super.badge2,
+    super.badge2Icon,
+    super.packLabel,
+    super.cartonText,
+    super.isCartonHighlight = false,
   });
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
@@ -41,6 +48,13 @@ class ProductModel extends ProductEntity {
       storageTemp: json['storage_temp'] as String? ?? json['storageTemp'] as String? ?? 'Store below 30°C',
       stock: json['stock'] as int? ?? 50,
       imageUrl: json['image_url'] as String? ?? json['imageUrl'] as String? ?? '',
+      badge1: json['badge1'] as String?,
+      badge1Icon: json['badge1_icon'] as String? ?? json['badge1Icon'] as String?,
+      badge2: json['badge2'] as String?,
+      badge2Icon: json['badge2_icon'] as String? ?? json['badge2Icon'] as String?,
+      packLabel: json['pack_label'] as String? ?? json['packLabel'] as String?,
+      cartonText: json['carton_text'] as String? ?? json['cartonText'] as String?,
+      isCartonHighlight: json['is_carton_highlight'] as bool? ?? json['isCartonHighlight'] as bool? ?? false,
     );
   }
 
@@ -63,6 +77,13 @@ class ProductModel extends ProductEntity {
       'storage_temp': storageTemp,
       'stock': stock,
       'image_url': imageUrl,
+      'badge1': badge1,
+      'badge1_icon': badge1Icon,
+      'badge2': badge2,
+      'badge2_icon': badge2Icon,
+      'pack_label': packLabel,
+      'carton_text': cartonText,
+      'is_carton_highlight': isCartonHighlight,
     };
   }
 }

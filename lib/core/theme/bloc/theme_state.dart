@@ -12,6 +12,14 @@ class ThemeState extends Equatable {
     );
   }
 
+  bool isDark([Brightness? platformBrightness]) {
+    if (themeMode == ThemeMode.dark) return true;
+    if (themeMode == ThemeMode.light) return false;
+    final brightness =
+        platformBrightness ?? WidgetsBinding.instance.platformDispatcher.platformBrightness;
+    return brightness == Brightness.dark;
+  }
+
   @override
   List<Object?> get props => [themeMode];
 }

@@ -39,7 +39,8 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
   }
 
   Future<void> _onToggleThemeMode(ToggleThemeMode event, Emitter<ThemeState> emit) async {
-    final newMode = state.themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
+    final isDarkNow = event.isCurrentDark ?? state.isDark();
+    final newMode = isDarkNow ? ThemeMode.light : ThemeMode.dark;
     emit(state.copyWith(themeMode: newMode));
     await _storageService.saveThemeMode(newMode == ThemeMode.dark ? 'dark' : 'light');
   }

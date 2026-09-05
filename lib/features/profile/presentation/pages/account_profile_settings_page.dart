@@ -34,7 +34,7 @@ class _AccountProfileSettingsPageState extends State<AccountProfileSettingsPage>
     return BlocBuilder<ProfileBloc, ProfileState>(
       builder: (context, state) {
         final profile = state.profile;
-        final isDarkMode = themeState.themeMode == ThemeMode.dark;
+        final isDarkMode = context.isDarkMode;
 
         return Scaffold(
           appBar: AppBar(
@@ -292,7 +292,9 @@ class _AccountProfileSettingsPageState extends State<AccountProfileSettingsPage>
                           style: textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700),
                         ),
                         subtitle: Text(
-                          isDarkMode ? 'Night Mode Active' : 'Clinical Light Canvas',
+                          themeState.themeMode == ThemeMode.system
+                              ? (isDarkMode ? 'System Default (Dark)' : 'System Default (Light)')
+                              : (isDarkMode ? 'Night Mode Active' : 'Clinical Light Canvas'),
                           style: textTheme.bodySmall,
                         ),
                         onChanged: (val) {

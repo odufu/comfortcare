@@ -18,6 +18,13 @@ class ProductEntity extends Equatable {
   final String storageTemp;
   final int stock;
   final String imageUrl;
+  final String? badge1;
+  final String? badge1Icon;
+  final String? badge2;
+  final String? badge2Icon;
+  final String? packLabel;
+  final String? cartonText;
+  final bool isCartonHighlight;
 
   const ProductEntity({
     required this.id,
@@ -37,6 +44,13 @@ class ProductEntity extends Equatable {
     this.storageTemp = 'Store below 30°C',
     this.stock = 50,
     required this.imageUrl,
+    this.badge1,
+    this.badge1Icon,
+    this.badge2,
+    this.badge2Icon,
+    this.packLabel,
+    this.cartonText,
+    this.isCartonHighlight = false,
   });
 
   @override
@@ -58,5 +72,12 @@ class ProductEntity extends Equatable {
         storageTemp,
         stock,
         imageUrl,
+        badge1,
+        badge1Icon,
+        badge2,
+        badge2Icon,
+        packLabel,
+        cartonText,
+        isCartonHighlight,
       ];
 }
