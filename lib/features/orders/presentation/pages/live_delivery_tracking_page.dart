@@ -34,10 +34,12 @@ class _LiveDeliveryTrackingPageState extends State<LiveDeliveryTrackingPage> {
 
         return Scaffold(
           appBar: AppBar(
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () => context.pop(),
-            ),
+            leading: context.canPop()
+                ? IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    onPressed: () => context.pop(),
+                  )
+                : const Icon(Icons.receipt_long_outlined),
             title: const Text('Live Order Tracking'),
             actions: [
               IconButton(
@@ -51,9 +53,12 @@ class _LiveDeliveryTrackingPageState extends State<LiveDeliveryTrackingPage> {
           ),
           body: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1080),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                 // Status & ETA Banner
                 Container(
                   padding: const EdgeInsets.all(16),
@@ -448,7 +453,9 @@ class _LiveDeliveryTrackingPageState extends State<LiveDeliveryTrackingPage> {
               ],
             ),
           ),
-        );
+        ),
+      ),
+    );
       },
     );
   }

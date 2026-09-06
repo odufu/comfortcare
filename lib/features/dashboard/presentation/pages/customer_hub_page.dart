@@ -3,14 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/extensions/context_extensions.dart';
 import '../../../../core/widgets/cc_app_bar.dart';
-import '../../../../core/widgets/cc_chip.dart';
 import '../../../cart/presentation/bloc/cart_bloc.dart';
 import '../bloc/dashboard_bloc.dart';
 import '../bloc/dashboard_event.dart';
 import '../bloc/dashboard_state.dart';
-import '../widgets/categories_grid.dart';
 import '../widgets/express_delivery_banner.dart';
+import '../widgets/fast_moving_essentials_section.dart';
 import '../widgets/prescription_fast_upload_card.dart';
+import '../widgets/quick_actions_grid.dart';
 
 class CustomerHubPage extends StatefulWidget {
   const CustomerHubPage({super.key});
@@ -21,17 +21,6 @@ class CustomerHubPage extends StatefulWidget {
 
 class _CustomerHubPageState extends State<CustomerHubPage> {
   final TextEditingController _searchController = TextEditingController();
-  String _selectedFilter = 'All';
-
-  final List<String> _quickChips = [
-    'All',
-    'Malaria Meds',
-    'Antibiotics',
-    'BP Monitors',
-    'Vitamins & Zinc',
-    'Cold Chain Insulin',
-    'First Aid',
-  ];
 
   @override
   void initState() {
@@ -114,13 +103,16 @@ class _CustomerHubPageState extends State<CustomerHubPage> {
       builder: (context, state) {
         return Scaffold(
           appBar: CCAppBar(
+            showBrandLogo: true,
             showLocationSelector: true,
+            showProfileAvatar: true,
             selectedLocation: state.deliveryLocation,
             onLocationTap: () => _showLocationPicker(context, state),
             cartItemCount: context.watch<CartBloc>().state.totalItems,
             onNotificationsTap: () {
               context.showSnackBar('No new alerts. Cold-chain storage normal.');
             },
+            onProfileTap: () => context.go('/profile'),
           ),
           body: RefreshIndicator(
             onRefresh: () async {
@@ -128,292 +120,246 @@ class _CustomerHubPageState extends State<CustomerHubPage> {
             },
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Express Delivery Banner
-                  ExpressDeliveryBanner(
-                    destination: state.deliveryLocation.split(',').first,
-                    onChangeDestination: () => _showLocationPicker(context, state),
-                  ),
-                  const SizedBox(height: 14),
-
-                  // Retail vs Wholesale Mode Switcher
-                  Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: colorScheme.surfaceContainer,
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              context.read<DashboardBloc>().add(
-                                    const ToggleRetailWholesaleMode(false),
-                                  );
-                            },
-                            borderRadius: BorderRadius.circular(26),
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                              decoration: BoxDecoration(
-                                color: !state.isWholesaleMode
-                                    ? colorScheme.surfaceContainerLowest
-                                    : Colors.transparent,
-                                borderRadius: BorderRadius.circular(26),
-                                boxShadow: !state.isWholesaleMode
-                                    ? [
-                                        BoxShadow(
-                                          color: Colors.black.withValues(
-                                              alpha: context.isDarkMode ? 0.3 : 0.05),
-                                          blurRadius: 4,
-                                        ),
-                                      ]
-                                    : null,
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.person,
-                                    size: 16,
-                                    color: !state.isWholesaleMode
-                                        ? colorScheme.primary
-                                        : colorScheme.onSurfaceVariant,
-                                  ),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    'Retail Delivery',
-                                    style: textTheme.labelMedium?.copyWith(
-                                      fontWeight: FontWeight.w700,
-                                      color: !state.isWholesaleMode
-                                          ? colorScheme.primary
-                                          : colorScheme.onSurfaceVariant,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              context.read<DashboardBloc>().add(
-                                    const ToggleRetailWholesaleMode(true),
-                                  );
-                            },
-                            borderRadius: BorderRadius.circular(26),
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                              decoration: BoxDecoration(
-                                color: state.isWholesaleMode
-                                    ? colorScheme.surfaceContainerLowest
-                                    : Colors.transparent,
-                                borderRadius: BorderRadius.circular(26),
-                                boxShadow: state.isWholesaleMode
-                                    ? [
-                                        BoxShadow(
-                                          color: Colors.black.withValues(
-                                              alpha: context.isDarkMode ? 0.3 : 0.05),
-                                          blurRadius: 4,
-                                        ),
-                                      ]
-                                    : null,
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.domain,
-                                    size: 16,
-                                    color: state.isWholesaleMode
-                                        ? colorScheme.primary
-                                        : colorScheme.onSurfaceVariant,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    'Wholesale Bulk',
-                                    style: textTheme.labelMedium?.copyWith(
-                                      fontWeight: FontWeight.w700,
-                                      color: state.isWholesaleMode
-                                          ? colorScheme.primary
-                                          : colorScheme.onSurfaceVariant,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 6),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 5, vertical: 1.5),
-                                    decoration: BoxDecoration(
-                                      color: colorScheme.secondary,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: const Text(
-                                      'UP TO 25%',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 8,
-                                        fontWeight: FontWeight.w800,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Prescription Fast Upload Card
-                  const PrescriptionFastUploadCard(),
-                  const SizedBox(height: 18),
-
-                  // Search Bar
-                  Container(
-                    decoration: BoxDecoration(
-                      color: colorScheme.surfaceContainerLow,
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: colorScheme.surfaceContainerHigh),
-                    ),
-                    child: TextField(
-                      controller: _searchController,
-                      style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurface),
-                      decoration: InputDecoration(
-                        hintText: state.isWholesaleMode
-                            ? 'Search wholesale hospital cartons, clinical packs...'
-                            : 'Search medicines, cold-chain insulin, devices...',
-                        hintStyle: textTheme.bodyMedium?.copyWith(color: colorScheme.outline),
-                        prefixIcon: Icon(Icons.search, color: colorScheme.outline),
-                        suffixIcon: IconButton(
-                          icon: Icon(Icons.barcode_reader, color: colorScheme.primary),
-                          onPressed: () {
-                            context.showSnackBar('Barcode scanner ready for NAFDAC drug verify.');
-                          },
-                        ),
-                        border: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(vertical: 14),
-                      ),
-                      onSubmitted: (query) {
-                        context.push('/products');
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-
-                  // Quick Chips Filter List
-                  SizedBox(
-                    height: 34,
-                    child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: _quickChips.length,
-                      separatorBuilder: (context, index) => const SizedBox(width: 8),
-                      itemBuilder: (context, i) {
-                        final chip = _quickChips[i];
-                        final isSelected = _selectedFilter == chip;
-                        return CCChip(
-                          label: chip,
-                          isSelected: isSelected,
-                          onTap: () {
-                            setState(() {
-                              _selectedFilter = chip;
-                            });
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Categories Section Header
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 1080),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Categories',
-                        style: textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w800,
-                          color: colorScheme.onSurface,
+                      // Prescription Fast Upload Card (Have a Prescription? Snap & Send)
+                      const PrescriptionFastUploadCard(),
+                      const SizedBox(height: 14),
+
+                      // 4 Action Buttons in One Single Row (Compact & Minimalistic)
+                      const QuickActionsGrid(),
+                      const SizedBox(height: 18),
+
+                      // Express Delivery Banner
+                      ExpressDeliveryBanner(
+                        destination: state.deliveryLocation.split(',').first,
+                        onChangeDestination: () => _showLocationPicker(context, state),
+                      ),
+                      const SizedBox(height: 14),
+
+                      // Retail vs Wholesale Mode Switcher
+                      Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: colorScheme.surfaceContainer,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: InkWell(
+                                onTap: () {
+                                  context.read<DashboardBloc>().add(
+                                        const ToggleRetailWholesaleMode(false),
+                                      );
+                                },
+                                borderRadius: BorderRadius.circular(26),
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 200),
+                                  padding: const EdgeInsets.symmetric(vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: !state.isWholesaleMode
+                                        ? colorScheme.surfaceContainerLowest
+                                        : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(26),
+                                    boxShadow: !state.isWholesaleMode
+                                        ? [
+                                            BoxShadow(
+                                              color: Colors.black.withValues(
+                                                  alpha: context.isDarkMode ? 0.3 : 0.05),
+                                              blurRadius: 4,
+                                            ),
+                                          ]
+                                        : null,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.person,
+                                        size: 16,
+                                        color: !state.isWholesaleMode
+                                            ? colorScheme.primary
+                                            : colorScheme.onSurfaceVariant,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        'Retail Packs',
+                                        style: textTheme.labelMedium?.copyWith(
+                                          fontWeight: FontWeight.w700,
+                                          color: !state.isWholesaleMode
+                                            ? colorScheme.primary
+                                            : colorScheme.onSurfaceVariant,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: InkWell(
+                                onTap: () {
+                                  context.read<DashboardBloc>().add(
+                                        const ToggleRetailWholesaleMode(true),
+                                      );
+                                },
+                                borderRadius: BorderRadius.circular(26),
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 200),
+                                  padding: const EdgeInsets.symmetric(vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: state.isWholesaleMode
+                                        ? colorScheme.surfaceContainerLowest
+                                        : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(26),
+                                    boxShadow: state.isWholesaleMode
+                                        ? [
+                                            BoxShadow(
+                                              color: Colors.black.withValues(
+                                                  alpha: context.isDarkMode ? 0.3 : 0.05),
+                                              blurRadius: 4,
+                                            ),
+                                          ]
+                                        : null,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.domain,
+                                        size: 16,
+                                        color: state.isWholesaleMode
+                                            ? colorScheme.primary
+                                            : colorScheme.onSurfaceVariant,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        'Wholesale Bulk',
+                                        style: textTheme.labelMedium?.copyWith(
+                                          fontWeight: FontWeight.w700,
+                                          color: state.isWholesaleMode
+                                              ? colorScheme.primary
+                                              : colorScheme.onSurfaceVariant,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 5, vertical: 1.5),
+                                        decoration: BoxDecoration(
+                                          color: colorScheme.secondary,
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: const Text(
+                                          'UP TO 25%',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 8,
+                                            fontWeight: FontWeight.w800,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      TextButton.icon(
-                        onPressed: () => context.push('/products'),
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          minimumSize: Size.zero,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      const SizedBox(height: 14),
+
+                      // Modern Search Capsule with Barcode Scanner
+                      Container(
+                        decoration: BoxDecoration(
+                          color: colorScheme.surfaceContainerLow,
+                          borderRadius: BorderRadius.circular(24),
+                          border: Border.all(color: colorScheme.surfaceContainerHigh),
                         ),
-                        icon: Text(
-                          'See All',
-                          style: textTheme.labelMedium?.copyWith(
-                            color: colorScheme.primary,
-                            fontWeight: FontWeight.w700,
+                        child: TextField(
+                          controller: _searchController,
+                          style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurface),
+                          decoration: InputDecoration(
+                            hintText: state.isWholesaleMode
+                                ? 'Search wholesale hospital cartons, clinical packs...'
+                                : 'Search medicines, cold-chain insulin, devices...',
+                            hintStyle: textTheme.bodyMedium?.copyWith(color: colorScheme.outline),
+                            prefixIcon: Icon(Icons.search, color: colorScheme.outline),
+                            suffixIcon: IconButton(
+                              icon: Icon(Icons.barcode_reader, color: colorScheme.primary),
+                              onPressed: () {
+                                context.showSnackBar('Barcode scanner ready for NAFDAC verification.');
+                              },
+                            ),
+                            border: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            contentPadding: const EdgeInsets.symmetric(vertical: 14),
                           ),
+                          onSubmitted: (query) {
+                            context.push('/products');
+                          },
                         ),
-                        label: Icon(Icons.chevron_right, size: 16, color: colorScheme.primary),
                       ),
+                      const SizedBox(height: 24),
+
+                      // Fast-Moving Essentials Section (2x2 Grid matching Mockup)
+                      const FastMovingEssentialsSection(),
+                      const SizedBox(height: 24),
+
+                      // Abuja Cold-Chain Telemetry Status Notice
+                      Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: colorScheme.surfaceContainerLow,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: colorScheme.surfaceContainerHigh),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 36,
+                              height: 36,
+                              decoration: BoxDecoration(
+                                color: colorScheme.secondaryContainer.withValues(alpha: 0.3),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(Icons.ac_unit, color: colorScheme.secondary, size: 20),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Abuja Cold-Chain Certified',
+                                    style: textTheme.labelMedium?.copyWith(
+                                      fontWeight: FontWeight.w700,
+                                      color: colorScheme.onSurface,
+                                    ),
+                                  ),
+                                  Text(
+                                    'All biologics, insulins & vaccines stored at 2°C - 8°C in Life Camp Central Depot.',
+                                    style: textTheme.bodySmall?.copyWith(
+                                      fontSize: 11,
+                                      color: colorScheme.onSurfaceVariant,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
                     ],
                   ),
-                  const SizedBox(height: 12),
-
-                  // Categories Grid
-                  CategoriesGrid(categories: state.categories),
-                  const SizedBox(height: 24),
-
-                  // Telemetry Status Notice
-                  Container(
-                    padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                      color: colorScheme.surfaceContainerLow,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: colorScheme.surfaceContainerHigh),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 36,
-                          height: 36,
-                          decoration: BoxDecoration(
-                            color: colorScheme.secondaryContainer.withValues(alpha: 0.3),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(Icons.ac_unit, color: colorScheme.secondary, size: 20),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Abuja Cold-Chain Certified',
-                                style: textTheme.labelMedium?.copyWith(
-                                  fontWeight: FontWeight.w700,
-                                  color: colorScheme.onSurface,
-                                ),
-                              ),
-                              Text(
-                                'All biologics, insulins & vaccines stored at 2°C - 8°C in Life Camp Central Depot.',
-                                style: textTheme.bodySmall?.copyWith(
-                                  fontSize: 11,
-                                  color: colorScheme.onSurfaceVariant,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                ],
+                ),
               ),
             ),
           ),

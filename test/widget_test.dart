@@ -15,7 +15,96 @@ import 'package:comfort_care/features/cart/domain/usecases/manage_cart.dart';
 import 'package:comfort_care/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:comfort_care/features/orders/domain/entities/order.dart';
 import 'package:comfort_care/core/widgets/cc_floating_ai_doctor_button.dart';
+import 'package:comfort_care/core/widgets/cc_bottom_nav_bar.dart';
+import 'package:comfort_care/core/widgets/cc_app_bar.dart';
 import 'package:comfort_care/features/clinical/presentation/widgets/ai_clinical_regimen_card.dart';
+import 'package:comfort_care/features/dashboard/presentation/widgets/quick_actions_grid.dart';
+import 'package:comfort_care/features/dashboard/presentation/widgets/fast_moving_essentials_section.dart';
+import 'package:comfort_care/core/widgets/cc_side_nav.dart';
+import 'package:comfort_care/features/auth/presentation/pages/login_page.dart';
+import 'package:comfort_care/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:comfort_care/features/auth/domain/repositories/auth_repository.dart';
+import 'package:comfort_care/features/auth/domain/usecases/login.dart';
+import 'package:comfort_care/features/auth/domain/usecases/logout.dart';
+import 'package:comfort_care/features/auth/domain/usecases/get_current_user.dart';
+import 'package:comfort_care/features/auth/domain/entities/user.dart';
+import 'package:comfort_care/features/clinical/presentation/pages/health_vitals_monitor_page.dart';
+import 'package:comfort_care/features/clinical/presentation/bloc/clinical_bloc.dart';
+import 'package:comfort_care/features/clinical/domain/repositories/clinical_repository.dart';
+import 'package:comfort_care/features/clinical/domain/usecases/manage_clinical.dart';
+import 'package:comfort_care/features/clinical/domain/entities/health_vitals.dart';
+import 'package:comfort_care/features/clinical/domain/entities/consultation_message.dart';
+import 'package:comfort_care/features/cart/presentation/pages/cart_prescription_review_page.dart';
+import 'package:comfort_care/features/cart/presentation/bloc/cart_event.dart';
+
+class FakeAuthRepository implements AuthRepository {
+  UserEntity? currentUser;
+
+  @override
+  Future<UserEntity?> getCurrentUser() async => currentUser;
+
+  @override
+  Future<UserEntity> login({required String emailOrPhone, required String password, required UserRole role}) async {
+    return UserEntity(
+      id: 'test-user-1',
+      email: emailOrPhone,
+      fullName: 'Test User',
+      phoneNumber: '08012345678',
+      role: role,
+    );
+  }
+
+  @override
+  Future<void> logout() async {}
+
+  @override
+  Future<UserEntity> register({
+    required String fullName,
+    required String email,
+    required String phoneNumber,
+    required String password,
+    required UserRole role,
+    String? facilityName,
+    String? licenseNumber,
+  }) async {
+    return UserEntity(id: 'test-user-2', email: email, fullName: fullName, phoneNumber: phoneNumber, role: role);
+  }
+
+  @override
+  Future<void> sendPasswordReset(String emailOrPhone) async {}
+}
+
+class FakeClinicalRepository implements ClinicalRepository {
+  HealthVitalsEntity vitals = HealthVitalsEntity(
+    systolic: 120,
+    diastolic: 80,
+    heartRate: 72,
+    bloodGlucose: 95.0,
+    temperature: 36.7,
+    loggedAt: DateTime.now(),
+  );
+
+  @override
+  Future<List<ConsultationMessageEntity>> getConsultationHistory() async => [];
+
+  @override
+  Future<HealthVitalsEntity> getLatestVitals() async => vitals;
+
+  @override
+  Future<void> logVitals(HealthVitalsEntity v) async {
+    vitals = v;
+  }
+
+  @override
+  Future<ConsultationMessageEntity> sendMessage(String text) async {
+    return ConsultationMessageEntity(
+      id: 'msg-1',
+      text: 'Response to: $text',
+      isFromUser: false,
+      timestamp: DateTime.now(),
+    );
+  }
+}
 
 class FakeCartRepository implements CartRepository {
   final List<CartItemEntity> items = [];
@@ -339,9 +428,13 @@ void main() {
           home: Scaffold(
             body: BlocProvider<CartBloc>.value(
               value: cartBloc,
-              child: const ProductCard(
-                product: coartemProduct,
-                isWholesale: false,
+              child: const SizedBox(
+                width: 200,
+                height: 280,
+                child: ProductCard(
+                  product: coartemProduct,
+                  isWholesale: false,
+                ),
               ),
             ),
           ),
@@ -349,8 +442,8 @@ void main() {
       );
       await tester.pump();
 
-      // Verify Header Tag
-      expect(find.text('ANTIMALARIAL • NOVARTIS'), findsOneWidget);
+      // Verify Category Tag
+      expect(find.text('Antimalarial'), findsOneWidget);
 
       // Verify Name & Subtitle
       expect(find.text('Coartem 80/480mg'), findsOneWidget);
@@ -360,22 +453,434 @@ void main() {
       expect(find.text('20m Express'), findsOneWidget);
       expect(find.text('NAFDAC 04-2051'), findsOneWidget);
 
-      // Verify Pricing Tray
-      expect(find.text('Retail Pack'), findsOneWidget);
+      // Verify Pricing
       expect(find.text('₦4,200'), findsOneWidget);
-      expect(find.text('Carton (30): ₦115,000'), findsOneWidget);
 
-      // Verify Add Button initially
-      expect(find.text('Add'), findsOneWidget);
+      // Verify Circular Add Button initially
+      expect(find.byIcon(Icons.add), findsOneWidget);
 
       // Tap Add button
-      await tester.tap(find.text('Add'));
+      await tester.tap(find.byIcon(Icons.add));
       await tester.pump();
 
-      // Verify pill stepper is now visible with quantity 1
+      // Verify stepper is now visible with quantity 1
       expect(find.text('1'), findsOneWidget);
       expect(find.byIcon(Icons.remove), findsOneWidget);
       expect(find.byIcon(Icons.add), findsOneWidget);
     });
   });
+
+  group('Core Bottom Navigation Restructuring Tests', () {
+    testWidgets('CCBottomNavBar renders exact 5 core anchors: Home, Pharmacy, Orders, Profile, Health Vitals', (tester) async {
+      int tappedIndex = -1;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            bottomNavigationBar: CCBottomNavBar(
+              currentIndex: 0,
+              onTap: (index) {
+                tappedIndex = index;
+              },
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      // Verify all 5 core anchors exist
+      expect(find.text('Home'), findsOneWidget);
+      expect(find.text('Pharmacy'), findsOneWidget);
+      expect(find.text('Orders'), findsOneWidget);
+      expect(find.text('Profile'), findsOneWidget);
+      expect(find.text('Health Vitals'), findsOneWidget);
+
+      // Verify Icons
+      expect(find.byIcon(Icons.home), findsOneWidget);
+      expect(find.byIcon(Icons.local_pharmacy_outlined), findsOneWidget);
+      expect(find.byIcon(Icons.receipt_long_outlined), findsOneWidget);
+      expect(find.byIcon(Icons.person_outline), findsOneWidget);
+      expect(find.byIcon(Icons.monitor_heart_outlined), findsOneWidget);
+
+      // Tap Pharmacy tab (index 1)
+      await tester.tap(find.text('Pharmacy'));
+      await tester.pump();
+      expect(tappedIndex, 1);
+
+      // Tap Orders tab (index 2)
+      await tester.tap(find.text('Orders'));
+      await tester.pump();
+      expect(tappedIndex, 2);
+
+      // Tap Profile tab (index 3)
+      await tester.tap(find.text('Profile'));
+      await tester.pump();
+      expect(tappedIndex, 3);
+
+      // Tap Health Vitals tab (index 4)
+      await tester.tap(find.text('Health Vitals'));
+      await tester.pump();
+      expect(tappedIndex, 4);
+    });
+  });
+
+  group('Home Page Redesign Tests', () {
+    testWidgets('CCAppBar renders brand logo, deliver-to location, notifications, cart, and profile avatar', (tester) async {
+      bool profileTapped = false;
+      bool notificationsTapped = false;
+      bool locationTapped = false;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            appBar: CCAppBar(
+              showBrandLogo: true,
+              showLocationSelector: true,
+              showProfileAvatar: true,
+              selectedLocation: 'Comfort Mall, Life Camp, Abuja',
+              cartItemCount: 2,
+              onLocationTap: () => locationTapped = true,
+              onNotificationsTap: () => notificationsTapped = true,
+              onProfileTap: () => profileTapped = true,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      // Verify Location selector
+      expect(find.text('DELIVER TO'), findsOneWidget);
+      expect(find.text('Comfort Mall, Life Camp, Abuja'), findsOneWidget);
+
+      // Verify Cart count badge
+      expect(find.text('2'), findsOneWidget);
+
+      // Verify Notification Icon
+      expect(find.byIcon(Icons.notifications_outlined), findsOneWidget);
+
+      // Tap Notification
+      await tester.tap(find.byIcon(Icons.notifications_outlined));
+      expect(notificationsTapped, isTrue);
+
+      // Tap Location
+      await tester.tap(find.text('Comfort Mall, Life Camp, Abuja'));
+      expect(locationTapped, isTrue);
+
+      // Tap Profile Avatar
+      await tester.tap(find.byType(ClipOval).last);
+      expect(profileTapped, isTrue);
+    });
+
+    testWidgets('QuickActionsGrid renders 4 tactile quick action cards', (tester) async {
+      bool uploadTapped = false;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: QuickActionsGrid(
+                onUploadPrescriptionTap: () => uploadTapped = true,
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      // Verify all 4 action cards
+      expect(find.text('Upload Rx'), findsOneWidget);
+      expect(find.text('15-Min Pharmacist Verify'), findsOneWidget);
+      expect(find.text('Instant'), findsOneWidget);
+
+      expect(find.text('AI Doctor'), findsOneWidget);
+      expect(find.text('Instant Clinical Triage'), findsOneWidget);
+      expect(find.text('24/7 Live'), findsOneWidget);
+
+      expect(find.text('Track Orders'), findsOneWidget);
+      expect(find.text('Live Abuja Courier'), findsOneWidget);
+      expect(find.text('20-35m'), findsOneWidget);
+
+      expect(find.text('Health Vitals'), findsOneWidget);
+      expect(find.text('BP, Glucose & Heart Rate'), findsOneWidget);
+      expect(find.text('Monitor'), findsOneWidget);
+
+      // Tap Upload Rx
+      await tester.tap(find.text('Upload Rx'));
+      await tester.pump();
+      expect(uploadTapped, isTrue);
+    });
+
+    testWidgets('FastMovingEssentialsSection renders exact 4 products and adds to cart on + tap', (tester) async {
+      final fakeRepo = FakeCartRepository();
+      final cartBloc = CartBloc(manageCartUseCase: ManageCartUseCase(fakeRepo));
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: BlocProvider<CartBloc>.value(
+              value: cartBloc,
+              child: const SingleChildScrollView(
+                child: FastMovingEssentialsSection(),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      // Verify Header
+      expect(find.text('Fast-Moving Essentials'), findsOneWidget);
+      expect(find.text('Verified authentic with batch tracking'), findsOneWidget);
+      expect(find.text('View More'), findsOneWidget);
+
+      // Verify Products
+      expect(find.text('Coartem 80/480mg'), findsOneWidget);
+      expect(find.text('Omron M2 Basic BP'), findsOneWidget);
+      expect(find.text('Amoxil 500mg'), findsOneWidget);
+      expect(find.text('Latex Gloves (100s)'), findsOneWidget);
+
+      // Verify Badges
+      expect(find.text('In Stock'), findsOneWidget);
+      expect(find.text('NAFDAC: 04-2011'), findsOneWidget);
+      expect(find.text('Device'), findsOneWidget);
+      expect(find.text('3yr Warranty'), findsOneWidget);
+      expect(find.text('Rx Required'), findsOneWidget);
+      expect(find.text('Wholesale Avail'), findsOneWidget);
+      expect(find.text('Bulk Deal'), findsOneWidget);
+      expect(find.text('Clinic Grade'), findsOneWidget);
+
+      // Verify Prices
+      expect(find.text('₦4,200'), findsOneWidget);
+      expect(find.text('₦38,500'), findsOneWidget);
+      expect(find.text('₦3,600'), findsOneWidget);
+      expect(find.text('₦6,500'), findsOneWidget);
+
+      // Tap the first circular "+" button (Coartem)
+      final plusButtons = find.byIcon(Icons.add);
+      expect(plusButtons, findsWidgets);
+      await tester.tap(plusButtons.first);
+      await tester.pump();
+
+      // Verify item was added to CartBloc
+      expect(cartBloc.state.totalItems, 1);
+      expect(cartBloc.state.items.first.product.name, 'Coartem 80/480mg');
+    });
+  });
+
+  group('Desktop Collapsible Side Navigation Tests', () {
+    testWidgets('CCSideNav renders all 5 anchors, brand lockup, AI Doctor card, and collapses on toggle', (tester) async {
+      int tappedIndex = -1;
+      bool aiDoctorTapped = false;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: BlocProvider<ThemeBloc>(
+            create: (_) => ThemeBloc(storageService: FakeLocalStorageService()),
+            child: Scaffold(
+              body: CCSideNav(
+                currentIndex: 0,
+                onTap: (index) => tappedIndex = index,
+                onAiDoctorTap: () => aiDoctorTapped = true,
+                initialCollapsed: false,
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      // Verify Brand Lockup
+      expect(find.text('ComfortCare'), findsOneWidget);
+      expect(find.text('Abuja Health Hub'), findsOneWidget);
+
+      // Verify all 5 core navigation anchors exist in expanded state
+      expect(find.text('Home'), findsOneWidget);
+      expect(find.text('Pharmacy'), findsOneWidget);
+      expect(find.text('Orders'), findsOneWidget);
+      expect(find.text('Profile'), findsOneWidget);
+      expect(find.text('Health Vitals'), findsOneWidget);
+
+      // Verify AI Doctor Co-Pilot Card
+      expect(find.text('AI Doctor Co-Pilot'), findsOneWidget);
+      expect(find.text('Consult Now →'), findsOneWidget);
+
+      // Tap Pharmacy (index 1)
+      await tester.tap(find.text('Pharmacy'));
+      await tester.pump();
+      expect(tappedIndex, 1);
+
+      // Tap Health Vitals (index 4)
+      await tester.tap(find.text('Health Vitals'));
+      await tester.pump();
+      expect(tappedIndex, 4);
+
+      // Tap AI Doctor CTA
+      await tester.tap(find.text('Consult Now →'));
+      await tester.pump();
+      expect(aiDoctorTapped, isTrue);
+
+      // Tap Collapse Button
+      await tester.tap(find.byIcon(Icons.menu_open));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+
+      // Verify sidebar is now collapsed with expand button visible
+      expect(find.byIcon(Icons.menu), findsOneWidget);
+      expect(find.text('ComfortCare'), findsNothing);
+
+      // Tap Expand Button
+      await tester.tap(find.byIcon(Icons.menu));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(find.text('ComfortCare'), findsOneWidget);
+      expect(find.text('Health Vitals'), findsOneWidget);
+    });
+  });
+
+  group('Login Screen & Dual-Pane Layout Tests', () {
+    testWidgets('LoginPage renders role selector, demo pills, biometric trigger, and signs in', (tester) async {
+      final fakeAuthRepo = FakeAuthRepository();
+      final authBloc = AuthBloc(
+        loginUseCase: LoginUseCase(fakeAuthRepo),
+        logoutUseCase: LogoutUseCase(fakeAuthRepo),
+        getCurrentUserUseCase: GetCurrentUserUseCase(fakeAuthRepo),
+        authRepository: fakeAuthRepo,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: BlocProvider<AuthBloc>(
+            create: (_) => authBloc,
+            child: const Scaffold(
+              body: LoginPage(),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      // Verify regulatory badges & titles
+      expect(find.text('Sign In to Dispensary Hub'), findsOneWidget);
+      expect(find.text('Individual / Patient'), findsOneWidget);
+      expect(find.text('Clinic / Wholesale'), findsWidgets);
+
+      // Verify quick demo pills
+      expect(find.text('Quick Demo Logins:'), findsOneWidget);
+      expect(find.text('Patient'), findsOneWidget);
+      expect(find.text('Pharmacist'), findsOneWidget);
+
+      // Verify Biometric button
+      expect(find.text('Fast Biometric Sign In'), findsOneWidget);
+
+      // Tap Clinic / Wholesale demo pill
+      await tester.tap(find.text('Pharmacist'));
+      await tester.pump();
+
+      expect(authBloc.state.selectedRole, UserRole.pharmacist);
+    });
+  });
+
+  group('Health Vitals Monitor & Medical Charts Tests', () {
+    testWidgets('HealthVitalsMonitorPage renders telemetry timeline, 4 stat cards, BP trend, and ECG wave', (tester) async {
+      final fakeClinicalRepo = FakeClinicalRepository();
+      final clinicalBloc = ClinicalBloc(
+        manageClinicalUseCase: ManageClinicalUseCase(fakeClinicalRepo),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: BlocProvider<ClinicalBloc>(
+            create: (_) => clinicalBloc,
+            child: const HealthVitalsMonitorPage(),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      // Verify telemetry header & timeframe pills
+      expect(find.text('Health Vitals Telemetry'), findsOneWidget);
+      expect(find.text('Telemetry Timeline'), findsOneWidget);
+      expect(find.text('24 Hours'), findsOneWidget);
+      expect(find.text('7 Days'), findsOneWidget);
+      expect(find.text('30 Days'), findsOneWidget);
+
+      // Verify 4 vitals stat metric cards
+      expect(find.text('BLOOD PRESSURE'), findsOneWidget);
+      expect(find.text('FASTING GLUCOSE'), findsOneWidget);
+      expect(find.text('HEART RATE'), findsWidgets);
+      expect(find.text('BODY TEMP'), findsOneWidget);
+
+      // Verify medical chart cards
+      expect(find.text('Blood Pressure 7-Day Trend'), findsOneWidget);
+      expect(find.text('Live ECG Telemetry Waveform'), findsOneWidget);
+      expect(find.text('24-Hour Blood Glucose Profile'), findsOneWidget);
+      expect(find.text('Weekly Medication Adherence'), findsOneWidget);
+
+      // Verify prescription schedule reminders
+      expect(find.text('Prescription Adherence Schedule'), findsOneWidget);
+      expect(find.text('Coartem 80/480mg'), findsOneWidget);
+    });
+  });
+
+  group('Cart & Prescription Review Screen Tests', () {
+    testWidgets('CartPrescriptionReviewPage renders Step 1 tracker, Cold-Chain badge, Rx dossier, and summary', (tester) async {
+      final fakeCartRepo = FakeCartRepository();
+      final cartBloc = CartBloc(manageCartUseCase: ManageCartUseCase(fakeCartRepo));
+
+      // Add a test medication to cart
+      cartBloc.add(
+        const AddToCart(
+          product: ProductEntity(
+            id: 'prod-coartem',
+            name: 'Coartem 80/480mg',
+            brand: 'Novartis',
+            genericName: 'Artemether / Lumefantrine',
+            category: 'Antimalarial',
+            packSize: '6 Tablets',
+            price: 4200.0,
+            wholesalePrice: 3900.0,
+            description: 'Antimalarial ACT therapy',
+            dosageInstructions: '1 tablet with fatty food',
+            activeIngredients: 'Artemether 80mg, Lumefantrine 480mg',
+            nafdacNumber: '04-2011',
+            imageUrl: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500',
+            requiresPrescription: true,
+          ),
+          quantity: 2,
+        ),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: BlocProvider<CartBloc>(
+            create: (_) => cartBloc,
+            child: const CartPrescriptionReviewPage(),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      // Verify Step 1 progress bar
+      expect(find.text('Step 1 of 4'), findsOneWidget);
+      expect(find.text('Order & Rx Review'), findsOneWidget);
+
+      // Verify Cold Chain assurance banner
+      expect(find.text('NAFDAC & Cold-Chain Monitored'), findsOneWidget);
+      expect(find.text('2°C - 8°C Verified'), findsOneWidget);
+
+      // Verify prescription review
+      expect(find.text('Medications Review'), findsOneWidget);
+      expect(find.text('Coartem 80/480mg'), findsOneWidget);
+
+      // Verify Order summary and Dispatch methods
+      expect(find.text('Order Summary'), findsOneWidget);
+      expect(find.text('Standard Dispatch'), findsOneWidget);
+      expect(find.text('Priority Cold-Chain Express'), findsOneWidget);
+      expect(find.text('Proceed to Delivery Dispatch (Step 2 of 4)'), findsOneWidget);
+    });
+  });
 }
+

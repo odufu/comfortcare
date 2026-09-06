@@ -256,9 +256,12 @@ class _ProductsCatalogPageState extends State<ProductsCatalogPage> {
           backgroundColor: colorScheme.surface,
           body: SafeArea(
             bottom: false,
-            child: Stack(
-              children: [
-                CustomScrollView(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1100),
+                child: Stack(
+                  children: [
+                    CustomScrollView(
                   slivers: [
                     // 1. Top Bar Header
                     SliverToBoxAdapter(
@@ -945,29 +948,40 @@ class _ProductsCatalogPageState extends State<ProductsCatalogPage> {
                         ),
                       )
                     else
-                      SliverPadding(
-                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 110),
-                        sliver: SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                            (context, index) {
-                              final product = filteredProducts[index];
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 12),
-                                child: ProductCard(
-                                  product: product,
-                                  isWholesale: state.isWholesale,
-                                  onAddToCart: () {
-                                    context.showSnackBar(
-                                      '${product.name} added to cart',
-                                      isSuccess: true,
-                                    );
-                                  },
-                                ),
-                              );
-                            },
-                            childCount: filteredProducts.length,
-                          ),
-                        ),
+                      Builder(
+                        builder: (context) {
+                          final screenWidth = MediaQuery.sizeOf(context).width;
+                          final crossAxisCount = screenWidth >= 1024 ? 4 : (screenWidth >= 720 ? 3 : 2);
+                          final childAspectRatio = screenWidth >= 720 ? 0.72 : 0.66;
+
+                          return SliverPadding(
+                            padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
+                            sliver: SliverGrid(
+                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: crossAxisCount,
+                                childAspectRatio: childAspectRatio,
+                                crossAxisSpacing: 12,
+                                mainAxisSpacing: 12,
+                              ),
+                              delegate: SliverChildBuilderDelegate(
+                                (context, index) {
+                                  final product = filteredProducts[index];
+                                  return ProductCard(
+                                    product: product,
+                                    isWholesale: state.isWholesale,
+                                    onAddToCart: () {
+                                      context.showSnackBar(
+                                        '${product.name} added to cart',
+                                        isSuccess: true,
+                                      );
+                                    },
+                                  );
+                                },
+                                childCount: filteredProducts.length,
+                              ),
+                            ),
+                          );
+                        },
                       ),
                   ],
                 ),
@@ -1131,7 +1145,9 @@ class _ProductsCatalogPageState extends State<ProductsCatalogPage> {
               ],
             ),
           ),
-        );
+        ),
+      ),
+    );
       },
     );
   }

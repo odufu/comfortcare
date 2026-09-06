@@ -338,6 +338,8 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+    final isDark = context.isDarkMode;
     final selectedCount = _selectedItemIds.length;
     double currentTotal = 0;
     for (final item in _items) {
@@ -352,15 +354,15 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
           width: double.infinity,
           constraints: const BoxConstraints(maxWidth: 600),
           decoration: BoxDecoration(
-            color: const Color(0xFFFFFFFF),
+            color: colorScheme.surfaceContainerLowest,
             borderRadius: BorderRadius.circular(22),
             border: Border.all(
-              color: const Color(0xFFE2E7FF),
+              color: colorScheme.surfaceContainerHigh,
               width: 1,
             ),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF006194).withValues(alpha: 0.08),
+                color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
                 blurRadius: 18,
                 spreadRadius: 0,
                 offset: const Offset(0, 4),
@@ -380,23 +382,23 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Text(
                           'Recommended Drugs',
                           style: TextStyle(
                             fontSize: 21,
                             fontWeight: FontWeight.w800,
-                            color: Color(0xFF131B2E),
+                            color: colorScheme.onSurface,
                             letterSpacing: -0.4,
                           ),
                         ),
-                        SizedBox(height: 3),
+                        const SizedBox(height: 3),
                         Text(
                           'Tap any medication to view full clinical details',
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w400,
-                            color: Color(0xFF3F4850),
+                            color: colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ],
@@ -406,24 +408,30 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFA0F399),
+                      color: isDark
+                          ? colorScheme.secondaryContainer
+                          : const Color(0xFFA0F399),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
-                      children: const [
+                      children: [
                         Icon(
                           Icons.medication,
                           size: 13,
-                          color: Color(0xFF217128),
+                          color: isDark
+                              ? colorScheme.onSecondaryContainer
+                              : const Color(0xFF217128),
                         ),
-                        SizedBox(width: 4),
+                        const SizedBox(width: 4),
                         Text(
                           'Rx Ready',
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFF217128),
+                            color: isDark
+                              ? colorScheme.onSecondaryContainer
+                              : const Color(0xFF217128),
                           ),
                         ),
                       ],
@@ -434,7 +442,7 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
               const SizedBox(height: 14),
 
               // 4 Regimen Drug Items (tapping pops up details, checkbox toggles selection)
-              ..._items.map((item) => _buildRegimenItem(item)),
+              ..._items.map((item) => _buildRegimenItem(item, isDark, colorScheme)),
 
               const SizedBox(height: 14),
 
@@ -444,10 +452,10 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
                   Expanded(
                     child: ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF006194),
-                        foregroundColor: Colors.white,
+                        backgroundColor: colorScheme.primary,
+                        foregroundColor: colorScheme.onPrimary,
                         elevation: 2,
-                        shadowColor: const Color(0xFF006194).withValues(alpha: 0.3),
+                        shadowColor: colorScheme.primary.withValues(alpha: 0.3),
                         minimumSize: const Size(0, 42),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -471,8 +479,8 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
                   const SizedBox(width: 8),
                   OutlinedButton.icon(
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFF006194),
-                      side: const BorderSide(color: Color(0xFF006194), width: 1.2),
+                      foregroundColor: colorScheme.primary,
+                      side: BorderSide(color: colorScheme.primary, width: 1.2),
                       minimumSize: const Size(0, 42),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -498,13 +506,17 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
     );
   }
 
-  Widget _buildRegimenItem(RegimenItemData item) {
+  Widget _buildRegimenItem(
+    RegimenItemData item,
+    bool isDark,
+    ColorScheme colorScheme,
+  ) {
     final isChecked = _selectedItemIds.contains(item.id);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       child: Material(
-        color: const Color(0xFFF2F3FF),
+        color: colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(14),
         child: InkWell(
           borderRadius: BorderRadius.circular(14),
@@ -529,19 +541,23 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
                         height: 20,
                         decoration: BoxDecoration(
                           color: isChecked
-                              ? const Color(0xFF006194)
-                              : const Color(0xFFDAE2FD),
+                              ? colorScheme.primary
+                              : (isDark
+                                  ? colorScheme.surfaceContainerHighest
+                                  : const Color(0xFFDAE2FD)),
                           borderRadius: BorderRadius.circular(6),
                           border: Border.all(
                             color: isChecked
-                                ? const Color(0xFF006194)
-                                : const Color(0xFFBFC7D2),
+                                ? colorScheme.primary
+                                : (isDark
+                                    ? colorScheme.outline
+                                    : const Color(0xFFBFC7D2)),
                             width: 1.2,
                           ),
                           boxShadow: isChecked
                               ? [
                                   BoxShadow(
-                                    color: const Color(0xFF006194).withValues(alpha: 0.25),
+                                    color: colorScheme.primary.withValues(alpha: 0.25),
                                     blurRadius: 4,
                                     offset: const Offset(0, 1),
                                   ),
@@ -549,10 +565,10 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
                               : null,
                         ),
                         child: isChecked
-                            ? const Icon(
+                            ? Icon(
                                 Icons.check,
                                 size: 14,
-                                color: Colors.white,
+                                color: colorScheme.onPrimary,
                               )
                             : null,
                       ),
@@ -561,7 +577,7 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
                   const SizedBox(width: 8),
 
                   // Image Thumbnail or Icon Container (w-14 h-16 / 54x62)
-                  _buildThumbnail(item),
+                  _buildThumbnail(item, isDark, colorScheme),
 
                   const SizedBox(width: 10),
 
@@ -581,8 +597,8 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
                                   fontSize: 14,
                                   fontWeight: FontWeight.w700,
                                   color: isChecked
-                                      ? const Color(0xFF131B2E)
-                                      : const Color(0xFF3F4850),
+                                      ? colorScheme.onSurface
+                                      : colorScheme.onSurfaceVariant,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -591,10 +607,10 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
                             const SizedBox(width: 6),
                             Text(
                               item.price.toNaira(),
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w800,
-                                color: Color(0xFF006194),
+                                color: colorScheme.primary,
                               ),
                             ),
                           ],
@@ -607,19 +623,19 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
                             Expanded(
                               child: Text(
                                 item.subtitle,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w400,
-                                  color: Color(0xFF3F4850),
+                                  color: colorScheme.onSurfaceVariant,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            const Icon(
+                            Icon(
                               Icons.arrow_forward_ios,
                               size: 10,
-                              color: Color(0xFF006194),
+                              color: colorScheme.primary,
                             ),
                           ],
                         ),
@@ -630,13 +646,14 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
                           spacing: 6,
                           runSpacing: 4,
                           children: item.tags.map((tag) {
+                            final (bgColor, txtColor) = _getTagColors(tag, isDark, colorScheme);
                             return Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 7,
                                 vertical: 2.5,
                               ),
                               decoration: BoxDecoration(
-                                color: tag.backgroundColor,
+                                color: bgColor,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
@@ -646,7 +663,7 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
                                   fontWeight: tag.isBold
                                       ? FontWeight.w700
                                       : FontWeight.w500,
-                                  color: tag.textColor,
+                                  color: txtColor,
                                 ),
                               ),
                             );
@@ -664,7 +681,23 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
     );
   }
 
-  Widget _buildThumbnail(RegimenItemData item) {
+  (Color, Color) _getTagColors(RegimenTagData tag, bool isDark, ColorScheme colorScheme) {
+    if (!isDark) {
+      return (tag.backgroundColor, tag.textColor);
+    }
+    if (tag.isBold) {
+      return (
+        colorScheme.secondaryContainer,
+        colorScheme.onSecondaryContainer,
+      );
+    }
+    return (
+      colorScheme.surfaceContainerHighest,
+      colorScheme.onSurfaceVariant,
+    );
+  }
+
+  Widget _buildThumbnail(RegimenItemData item, bool isDark, ColorScheme colorScheme) {
     const double width = 54;
     const double height = 62;
 
@@ -674,10 +707,10 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
         height: height,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
-          color: Colors.white,
+          color: colorScheme.surfaceContainerLowest,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
+              color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.08),
               blurRadius: 4,
               offset: const Offset(0, 1),
             ),
@@ -692,10 +725,10 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
                 return Container(
-                  color: const Color(0xFFDAE2FD),
-                  child: const Icon(
+                  color: isDark ? colorScheme.surfaceContainerHigh : const Color(0xFFDAE2FD),
+                  child: Icon(
                     Icons.medical_services,
-                    color: Color(0xFF006194),
+                    color: colorScheme.primary,
                     size: 24,
                   ),
                 );
@@ -707,13 +740,13 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
                 left: 0,
                 right: 0,
                 child: Container(
-                  color: const Color(0xFF006194).withValues(alpha: 0.9),
+                  color: colorScheme.primary.withValues(alpha: 0.9),
                   padding: const EdgeInsets.symmetric(vertical: 1.5),
                   child: Text(
                     item.badgeText!,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: colorScheme.onPrimary,
                       fontSize: 9,
                       fontWeight: FontWeight.w800,
                       letterSpacing: 0.5,
@@ -730,13 +763,13 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: const Color(0xFFDAE2FD),
+        color: isDark ? colorScheme.surfaceContainerHigh : const Color(0xFFDAE2FD),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Center(
         child: Icon(
           item.icon ?? Icons.medication,
-          color: const Color(0xFF006194),
+          color: colorScheme.primary,
           size: 26,
         ),
       ),

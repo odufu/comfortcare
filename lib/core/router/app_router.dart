@@ -20,6 +20,7 @@ import '../../features/profile/presentation/pages/account_profile_settings_page.
 import '../storage/local_storage_service.dart';
 import '../widgets/cc_bottom_nav_bar.dart';
 import '../widgets/cc_floating_ai_doctor_button.dart';
+import '../widgets/cc_side_nav.dart';
 
 class AppRouter {
   static final GlobalKey<NavigatorState> _rootNavigatorKey =
@@ -86,11 +87,7 @@ class AppRouter {
           return LiveDeliveryTrackingPage(orderId: id);
         },
       ),
-      GoRoute(
-        path: '/vitals',
-        builder: (context, state) => const HealthVitalsMonitorPage(),
-      ),
-      // Shell Route for bottom navigation
+      // Shell Route for responsive navigation (Side Nav on Desktop >= 840px, Bottom Nav on Mobile)
       ShellRoute(
         navigatorKey: _shellNavigatorKey,
         builder: (context, state, child) {
@@ -103,37 +100,68 @@ class AppRouter {
             index = 2;
           } else if (location.startsWith('/profile')) {
             index = 3;
+          } else if (location.startsWith('/vitals')) {
+            index = 4;
           } else if (isAiConsult) {
             index = -1;
           }
 
-          return Scaffold(
-            body: child,
-            floatingActionButton: isAiConsult
-                ? null
-                : const CCFloatingAiDoctorButton(),
-            floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-            bottomNavigationBar: isAiConsult
-                ? null
-                : CCBottomNavBar(
-                    currentIndex: index,
-                    onTap: (newIndex) {
-                      switch (newIndex) {
-                        case 0:
-                          context.go('/dashboard');
-                          break;
-                        case 1:
-                          context.go('/products');
-                          break;
-                        case 2:
-                          context.go('/orders');
-                          break;
-                        case 3:
-                          context.go('/profile');
-                          break;
-                      }
-                    },
+          void handleNavigation(int newIndex) {
+            switch (newIndex) {
+              case 0:
+                context.go('/dashboard');
+                break;
+              case 1:
+                context.go('/products');
+                break;
+              case 2:
+                context.go('/orders');
+                break;
+              case 3:
+                context.go('/profile');
+                break;
+              case 4:
+                context.go('/vitals');
+                break;
+            }
+          }
+
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              final isDesktop = constraints.maxWidth >= 840;
+
+              if (isDesktop) {
+                return Scaffold(
+                  body: Row(
+                    children: [
+                      CCSideNav(
+                        currentIndex: index,
+                        onTap: handleNavigation,
+                        onAiDoctorTap: () => context.push('/ai-consult'),
+                        initialCollapsed: constraints.maxWidth < 1100,
+                      ),
+                      Expanded(
+                        child: child,
+                      ),
+                    ],
                   ),
+                );
+              }
+
+              return Scaffold(
+                body: child,
+                floatingActionButton: isAiConsult
+                    ? null
+                    : const CCFloatingAiDoctorButton(),
+                floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+                bottomNavigationBar: isAiConsult
+                    ? null
+                    : CCBottomNavBar(
+                        currentIndex: index,
+                        onTap: handleNavigation,
+                      ),
+              );
+            },
           );
         },
         routes: [
@@ -156,6 +184,10 @@ class AppRouter {
           GoRoute(
             path: '/profile',
             builder: (context, state) => const AccountProfileSettingsPage(),
+          ),
+          GoRoute(
+            path: '/vitals',
+            builder: (context, state) => const HealthVitalsMonitorPage(),
           ),
         ],
       ),

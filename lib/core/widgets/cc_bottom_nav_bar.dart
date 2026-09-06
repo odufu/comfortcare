@@ -36,21 +36,20 @@ class CCBottomNavBar extends StatelessWidget {
         child: SizedBox(
           height: 62,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildNavItem(
                 context,
                 index: 0,
-                icon: Icons.local_pharmacy_outlined,
-                activeIcon: Icons.local_pharmacy,
-                label: 'Pharmacy',
+                icon: Icons.home_outlined,
+                activeIcon: Icons.home,
+                label: 'Home',
               ),
               _buildNavItem(
                 context,
                 index: 1,
-                icon: Icons.medication_outlined,
-                activeIcon: Icons.medication,
-                label: 'Catalog',
+                icon: Icons.local_pharmacy_outlined,
+                activeIcon: Icons.local_pharmacy,
+                label: 'Pharmacy',
               ),
               _buildNavItem(
                 context,
@@ -65,6 +64,13 @@ class CCBottomNavBar extends StatelessWidget {
                 icon: Icons.person_outline,
                 activeIcon: Icons.person,
                 label: 'Profile',
+              ),
+              _buildNavItem(
+                context,
+                index: 4,
+                icon: Icons.monitor_heart_outlined,
+                activeIcon: Icons.monitor_heart,
+                label: 'Health Vitals',
               ),
             ],
           ),
@@ -88,45 +94,52 @@ class CCBottomNavBar extends StatelessWidget {
     final selectedColor = isSpecial ? colorScheme.primary : colorScheme.primary;
     final unselectedColor = colorScheme.onSurfaceVariant;
 
-    return InkWell(
-      onTap: () => onTap(index),
-      borderRadius: BorderRadius.circular(16),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (isSpecial)
-              Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? colorScheme.primary
-                      : colorScheme.primaryContainer.withValues(alpha: 0.2),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
+    return Expanded(
+      child: InkWell(
+        onTap: () => onTap(index),
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 5),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (isSpecial)
+                Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? colorScheme.primary
+                        : colorScheme.primaryContainer.withValues(alpha: 0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    isSelected ? activeIcon : icon,
+                    size: 20,
+                    color: isSelected ? colorScheme.onPrimary : colorScheme.primary,
+                  ),
+                )
+              else
+                Icon(
                   isSelected ? activeIcon : icon,
-                  size: 20,
-                  color: isSelected ? colorScheme.onPrimary : colorScheme.primary,
+                  size: 22,
+                  color: isSelected ? selectedColor : unselectedColor,
                 ),
-              )
-            else
-              Icon(
-                isSelected ? activeIcon : icon,
-                size: 22,
-                color: isSelected ? selectedColor : unselectedColor,
+              const SizedBox(height: 3),
+              Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: textTheme.labelSmall?.copyWith(
+                  fontSize: 9.5,
+                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                  color: isSelected ? selectedColor : unselectedColor,
+                  letterSpacing: -0.2,
+                ),
               ),
-            const SizedBox(height: 3),
-            Text(
-              label,
-              style: textTheme.labelSmall?.copyWith(
-                fontSize: 10,
-                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                color: isSelected ? selectedColor : unselectedColor,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

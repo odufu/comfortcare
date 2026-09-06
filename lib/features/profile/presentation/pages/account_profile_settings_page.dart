@@ -52,9 +52,12 @@ class _AccountProfileSettingsPageState extends State<AccountProfileSettingsPage>
           ),
           body: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 840),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                 // Ambient Top Profile Card
                 Container(
                   padding: const EdgeInsets.all(20),
@@ -438,7 +441,9 @@ class _AccountProfileSettingsPageState extends State<AccountProfileSettingsPage>
               ],
             ),
           ),
-        );
+        ),
+      ),
+    );
       },
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/extensions/context_extensions.dart';
 import '../../domain/entities/consultation_message.dart';
 import '../bloc/clinical_bloc.dart';
 import '../bloc/clinical_event.dart';
@@ -58,14 +59,19 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+    final isDark = context.isDarkMode;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFFAF8FF),
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: Colors.white.withValues(alpha: 0.95),
+        backgroundColor: colorScheme.surfaceContainerLowest.withValues(
+          alpha: isDark ? 0.98 : 0.95,
+        ),
         surfaceTintColor: Colors.transparent,
         elevation: 0.5,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF006194)),
+          icon: Icon(Icons.arrow_back, color: colorScheme.primary),
           tooltip: 'Back',
           onPressed: () {
             if (context.canPop()) {
@@ -82,17 +88,17 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: const Color(0xFF006194),
+                color: colorScheme.primary,
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF006194).withValues(alpha: 0.25),
+                    color: colorScheme.primary.withValues(alpha: 0.25),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
                 ],
               ),
-              child: const Icon(Icons.local_pharmacy, color: Colors.white, size: 20),
+              child: Icon(Icons.local_pharmacy, color: colorScheme.onPrimary, size: 20),
             ),
             const SizedBox(width: 10),
             Column(
@@ -101,12 +107,12 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
               children: [
                 Row(
                   children: [
-                    const Text(
+                    Text(
                       'ComfortCare',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w800,
-                        color: Color(0xFF006194),
+                        color: colorScheme.primary,
                         letterSpacing: -0.3,
                       ),
                     ),
@@ -114,20 +120,20 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFA0F399),
+                        color: colorScheme.secondaryContainer,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
-                        children: const [
-                          Icon(Icons.verified, size: 11, color: Color(0xFF217128)),
-                          SizedBox(width: 2),
+                        children: [
+                          Icon(Icons.verified, size: 11, color: colorScheme.onSecondaryContainer),
+                          const SizedBox(width: 2),
                           Text(
                             'Abuja',
                             style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.w700,
-                              color: Color(0xFF217128),
+                              color: colorScheme.onSecondaryContainer,
                             ),
                           ),
                         ],
@@ -135,12 +141,12 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
                     ),
                   ],
                 ),
-                const Text(
+                Text(
                   'Pharmacist Consult',
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w500,
-                    color: Color(0xFF3F4850),
+                    color: colorScheme.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -149,14 +155,14 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.notifications_none, color: Color(0xFF3F4850)),
+            icon: Icon(Icons.notifications_none, color: colorScheme.onSurfaceVariant),
             onPressed: () {},
           ),
           Padding(
             padding: const EdgeInsets.only(right: 14),
             child: CircleAvatar(
               radius: 16,
-              backgroundColor: const Color(0xFFDAE2FD),
+              backgroundColor: colorScheme.surfaceContainerHigh,
               backgroundImage: const NetworkImage(
                 'https://lh3.googleusercontent.com/aida/AEtjO1WjFuU0Bkh-tRsd4vZtbY50RYc-26TYPCVsc_QvRdnshh94Wl0FHxfIRp_razpbA2uyyUqkdpvvGlkW87MIhoxuJqU8PYmn8uXQN7nUCzUXuUk0107p9lTxlrF9FlPgw5tCTusZ9rW1u2ScnRZaNGNMnVtYV-2YcVeMzsfaQ4zoMGYGF6CGkh5WpVo9U9E46ot9Sg1YbmahDKp5r7DWZHkhXGRu-fNsuRBzZVjmLSE-jxVQEbN_MX6KFSr_2EdM9Ed_YBystPwLoQ',
               ),
@@ -172,9 +178,14 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE2E7FF).withValues(alpha: 0.65),
-                  border: const Border(
-                    bottom: BorderSide(color: Color(0xFFDAE2FD), width: 1),
+                  color: colorScheme.surfaceContainerHigh.withValues(
+                    alpha: isDark ? 0.5 : 0.65,
+                  ),
+                  border: Border(
+                    bottom: BorderSide(
+                      color: colorScheme.surfaceContainerHighest,
+                      width: 1,
+                    ),
                   ),
                 ),
                 child: Row(
@@ -189,18 +200,18 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
                               width: 38,
                               height: 38,
                               decoration: BoxDecoration(
-                                color: const Color(0xFF006194),
+                                color: colorScheme.primaryContainer,
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(0xFF006194).withValues(alpha: 0.25),
+                                    color: colorScheme.primaryContainer.withValues(alpha: 0.25),
                                     blurRadius: 6,
                                   ),
                                 ],
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.smart_toy,
-                                color: Colors.white,
+                                color: colorScheme.onPrimaryContainer,
                                 size: 20,
                               ),
                             ),
@@ -211,9 +222,12 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
                                 width: 10,
                                 height: 10,
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF88D982),
+                                  color: colorScheme.secondary,
                                   shape: BoxShape.circle,
-                                  border: Border.all(color: Colors.white, width: 2),
+                                  border: Border.all(
+                                    color: colorScheme.surface,
+                                    width: 2,
+                                  ),
                                 ),
                               ),
                             ),
@@ -225,12 +239,12 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
                           children: [
                             Row(
                               children: [
-                                const Text(
+                                Text(
                                   'ComfortCare AI Doctor',
                                   style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.w700,
-                                    color: Color(0xFF131B2E),
+                                    color: colorScheme.onSurface,
                                   ),
                                 ),
                                 const SizedBox(width: 6),
@@ -240,24 +254,30 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
                                     vertical: 2,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFFCCE5FF),
+                                    color: isDark
+                                        ? colorScheme.surfaceContainerHighest
+                                        : const Color(0xFFCCE5FF),
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
-                                    children: const [
+                                    children: [
                                       Icon(
                                         Icons.verified_user,
                                         size: 10,
-                                        color: Color(0xFF001D31),
+                                        color: isDark
+                                            ? colorScheme.primary
+                                            : const Color(0xFF001D31),
                                       ),
-                                      SizedBox(width: 2),
+                                      const SizedBox(width: 2),
                                       Text(
                                         'PCN Regulated',
                                         style: TextStyle(
                                           fontSize: 9,
                                           fontWeight: FontWeight.w700,
-                                          color: Color(0xFF001D31),
+                                          color: isDark
+                                              ? colorScheme.primary
+                                              : const Color(0xFF001D31),
                                         ),
                                       ),
                                     ],
@@ -271,18 +291,18 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
                                 Container(
                                   width: 6,
                                   height: 6,
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFF1B6D24),
+                                  decoration: BoxDecoration(
+                                    color: colorScheme.secondary,
                                     shape: BoxShape.circle,
                                   ),
                                 ),
                                 const SizedBox(width: 4),
-                                const Text(
+                                Text(
                                   'Live Pharmacist Co-Pilot Active',
                                   style: TextStyle(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w600,
-                                    color: Color(0xFF1B6D24),
+                                    color: colorScheme.secondary,
                                   ),
                                 ),
                               ],
@@ -294,26 +314,26 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: colorScheme.surfaceContainerLowest,
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.04),
+                            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
                             blurRadius: 4,
                           ),
                         ],
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
-                        children: const [
-                          Icon(Icons.local_shipping, size: 13, color: Color(0xFF006194)),
-                          SizedBox(width: 4),
+                        children: [
+                          Icon(Icons.local_shipping, size: 13, color: colorScheme.primary),
+                          const SizedBox(width: 4),
                           Text(
                             'Abuja Depot',
                             style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
-                              color: Color(0xFF3F4850),
+                              color: colorScheme.onSurfaceVariant,
                             ),
                           ),
                         ],
@@ -335,15 +355,15 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
                         margin: const EdgeInsets.only(bottom: 14),
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF2F3FF),
+                          color: colorScheme.surfaceContainerLow,
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        child: const Text(
+                        child: Text(
                           'Today, 14:28 • Protocol #CC-ABJ-8942',
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w500,
-                            color: Color(0xFF3F4850),
+                            color: colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ),
@@ -355,9 +375,9 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
                       child: Container(
                         margin: const EdgeInsets.only(bottom: 16, left: 40),
                         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF006194),
-                          borderRadius: BorderRadius.only(
+                        decoration: BoxDecoration(
+                          color: colorScheme.primary,
+                          borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(18),
                             topRight: Radius.circular(4),
                             bottomLeft: Radius.circular(18),
@@ -365,41 +385,41 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: Color(0x22006194),
+                              color: colorScheme.primary.withValues(alpha: 0.2),
                               blurRadius: 8,
-                              offset: Offset(0, 3),
+                              offset: const Offset(0, 3),
                             ),
                           ],
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            const Text(
+                            Text(
                               "Good afternoon. I've had intense headache, chills, fever of 38.6°C, and fatigue since last night. What should I take?",
                               style: TextStyle(
                                 fontSize: 13.5,
                                 height: 1.45,
-                                color: Colors.white,
+                                color: colorScheme.onPrimary,
                                 fontWeight: FontWeight.w400,
                               ),
                             ),
                             const SizedBox(height: 4),
                             Row(
                               mainAxisSize: MainAxisSize.min,
-                              children: const [
+                              children: [
                                 Text(
                                   '14:28',
                                   style: TextStyle(
                                     fontSize: 10,
-                                    color: Color(0xFFCCE5FF),
+                                    color: colorScheme.onPrimary.withValues(alpha: 0.8),
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
-                                SizedBox(width: 4),
+                                const SizedBox(width: 4),
                                 Icon(
                                   Icons.done_all,
                                   size: 13,
-                                  color: Color(0xFFCCE5FF),
+                                  color: colorScheme.onPrimary.withValues(alpha: 0.8),
                                 ),
                               ],
                             ),
@@ -417,18 +437,18 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
                           height: 32,
                           margin: const EdgeInsets.only(top: 2, right: 10),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF007BB9),
+                            color: colorScheme.primaryContainer,
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFF007BB9).withValues(alpha: 0.25),
+                                color: colorScheme.primaryContainer.withValues(alpha: 0.25),
                                 blurRadius: 6,
                               ),
                             ],
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.psychology,
-                            color: Colors.white,
+                            color: colorScheme.onPrimaryContainer,
                             size: 18,
                           ),
                         ),
@@ -440,7 +460,7 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
                               Container(
                                 padding: const EdgeInsets.all(14),
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  color: colorScheme.surfaceContainerLowest,
                                   borderRadius: const BorderRadius.only(
                                     topLeft: Radius.circular(4),
                                     topRight: Radius.circular(18),
@@ -448,12 +468,12 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
                                     bottomRight: Radius.circular(18),
                                   ),
                                   border: Border.all(
-                                    color: const Color(0xFFE2E7FF),
+                                    color: colorScheme.surfaceContainerHigh,
                                     width: 1,
                                   ),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withValues(alpha: 0.04),
+                                      color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
                                       blurRadius: 8,
                                       offset: const Offset(0, 2),
                                     ),
@@ -466,19 +486,19 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         Row(
-                                          children: const [
+                                          children: [
                                             Icon(
                                               Icons.medical_services,
                                               size: 15,
-                                              color: Color(0xFF006194),
+                                              color: colorScheme.primary,
                                             ),
-                                            SizedBox(width: 6),
+                                            const SizedBox(width: 6),
                                             Text(
                                               'Clinical Diagnostic Assessment',
                                               style: TextStyle(
                                                 fontSize: 12.5,
                                                 fontWeight: FontWeight.w700,
-                                                color: Color(0xFF006194),
+                                                color: colorScheme.primary,
                                               ),
                                             ),
                                           ],
@@ -489,50 +509,50 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
                                             vertical: 2,
                                           ),
                                           decoration: BoxDecoration(
-                                            color: const Color(0xFFFFDAD6),
+                                            color: colorScheme.errorContainer,
                                             borderRadius: BorderRadius.circular(10),
                                           ),
-                                          child: const Text(
+                                          child: Text(
                                             'High Priority',
                                             style: TextStyle(
                                               fontSize: 9.5,
                                               fontWeight: FontWeight.w700,
-                                              color: Color(0xFF93000A),
+                                              color: colorScheme.onErrorContainer,
                                             ),
                                           ),
                                         ),
                                       ],
                                     ),
                                     const SizedBox(height: 8),
-                                    const Text(
+                                    Text(
                                       'Hello, based on your acute febrile symptoms and prevalence in the Abuja area, this indicates uncomplicated malaria accompanied by febrile pain. I have generated a personalized recovery protocol formulated for fast symptom clearance.',
                                       style: TextStyle(
                                         fontSize: 13,
                                         height: 1.45,
-                                        color: Color(0xFF131B2E),
+                                        color: colorScheme.onSurface,
                                       ),
                                     ),
                                     const SizedBox(height: 10),
                                     Container(
                                       padding: const EdgeInsets.all(9),
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFFF2F3FF),
+                                        color: colorScheme.surfaceContainerLow,
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Row(
-                                        children: const [
+                                        children: [
                                           Icon(
                                             Icons.verified,
                                             size: 16,
-                                            color: Color(0xFF1B6D24),
+                                            color: colorScheme.secondary,
                                           ),
-                                          SizedBox(width: 8),
+                                          const SizedBox(width: 8),
                                           Expanded(
                                             child: Text(
                                               'Reviewed against PCN malaria management guidelines & temperature record (38.6°C).',
                                               style: TextStyle(
                                                 fontSize: 11,
-                                                color: Color(0xFF3F4850),
+                                                color: colorScheme.onSurfaceVariant,
                                                 fontWeight: FontWeight.w500,
                                               ),
                                             ),
@@ -555,10 +575,10 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
                               Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFF2F3FF),
+                                  color: colorScheme.surfaceContainerLow,
                                   borderRadius: BorderRadius.circular(16),
                                   border: Border.all(
-                                    color: const Color(0xFFE2E7FF),
+                                    color: colorScheme.surfaceContainerHigh,
                                     width: 1,
                                   ),
                                 ),
@@ -569,8 +589,8 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
                                       width: 28,
                                       height: 28,
                                       margin: const EdgeInsets.only(top: 2, right: 10),
-                                      decoration: const BoxDecoration(
-                                        color: Color(0xFF1B6D24),
+                                      decoration: BoxDecoration(
+                                        color: colorScheme.secondary,
                                         shape: BoxShape.circle,
                                       ),
                                       child: const Icon(
@@ -582,7 +602,7 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: const [
+                                        children: [
                                           Row(
                                             children: [
                                               Text(
@@ -590,26 +610,26 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
                                                 style: TextStyle(
                                                   fontSize: 12,
                                                   fontWeight: FontWeight.w700,
-                                                  color: Color(0xFF131B2E),
+                                                  color: colorScheme.onSurface,
                                                 ),
                                               ),
-                                              SizedBox(width: 4),
+                                              const SizedBox(width: 4),
                                               Text(
                                                 '• 1 min ago',
                                                 style: TextStyle(
                                                   fontSize: 11,
-                                                  color: Color(0xFF3F4850),
+                                                  color: colorScheme.onSurfaceVariant,
                                                 ),
                                               ),
                                             ],
                                           ),
-                                          SizedBox(height: 3),
+                                          const SizedBox(height: 3),
                                           Text(
                                             '"If temperature rises above 39.2°C or persists past 48 hours post-dose, utilize the instant pharmacist consultation link on this screen for clinical escalation."',
                                             style: TextStyle(
                                               fontSize: 11.5,
                                               height: 1.4,
-                                              color: Color(0xFF3F4850),
+                                              color: colorScheme.onSurfaceVariant,
                                             ),
                                           ),
                                         ],
@@ -626,13 +646,13 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
                                 padding: const EdgeInsets.symmetric(horizontal: 4),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
+                                  children: [
                                     Icon(
                                       Icons.verified,
                                       size: 13,
-                                      color: Color(0xFF1B6D24),
+                                      color: colorScheme.secondary,
                                     ),
-                                    SizedBox(width: 5),
+                                    const SizedBox(width: 5),
                                     Flexible(
                                       child: Text(
                                         'Supervised by Pharm. Halima Bello (PCN #44912) • NAFDAC Approved Formulary',
@@ -640,7 +660,7 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
                                         style: TextStyle(
                                           fontSize: 10,
                                           fontWeight: FontWeight.w500,
-                                          color: Color(0xFF3F4850),
+                                          color: colorScheme.onSurfaceVariant,
                                         ),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
@@ -660,10 +680,12 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
                                     return Padding(
                                       padding: const EdgeInsets.only(right: 8),
                                       child: Material(
-                                        color: Colors.white,
+                                        color: colorScheme.surfaceContainerLowest,
                                         borderRadius: BorderRadius.circular(20),
                                         elevation: 1,
-                                        shadowColor: Colors.black.withValues(alpha: 0.1),
+                                        shadowColor: Colors.black.withValues(
+                                          alpha: isDark ? 0.25 : 0.08,
+                                        ),
                                         child: InkWell(
                                           borderRadius: BorderRadius.circular(20),
                                           onTap: () => _sendMessage(chipText),
@@ -674,10 +696,10 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
                                             ),
                                             child: Text(
                                               chipText,
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.w600,
-                                                color: Color(0xFF006194),
+                                                color: colorScheme.primary,
                                               ),
                                             ),
                                           ),
@@ -705,24 +727,28 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
                           margin: const EdgeInsets.only(top: 10, bottom: 10),
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF2F3FF),
+                            color: colorScheme.surfaceContainerLow,
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
-                            children: const [
+                            children: [
                               SizedBox(
                                 width: 14,
                                 height: 14,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  color: Color(0xFF006194),
+                                  color: colorScheme.primary,
                                 ),
                               ),
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                               Text(
                                 'AI Doctor evaluating symptoms against formulary...',
-                                style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic),
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontStyle: FontStyle.italic,
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
                               ),
                             ],
                           ),
@@ -735,16 +761,18 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
               // Bottom Area: Dedicated to Chat Only!
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.98),
+                  color: colorScheme.surfaceContainerLowest.withValues(
+                    alpha: isDark ? 0.98 : 0.95,
+                  ),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF006194).withValues(alpha: 0.06),
+                      color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.05),
                       blurRadius: 16,
                       offset: const Offset(0, -4),
                     ),
                   ],
-                  border: const Border(
-                    top: BorderSide(color: Color(0xFFE2E7FF), width: 1),
+                  border: Border(
+                    top: BorderSide(color: colorScheme.surfaceContainerHigh, width: 1),
                   ),
                 ),
                 padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
@@ -753,8 +781,12 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
                   child: Container(
                     height: 48,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF2F3FF),
+                      color: colorScheme.surfaceContainerLow,
                       borderRadius: BorderRadius.circular(24),
+                      border: Border.all(
+                        color: colorScheme.surfaceContainerHigh.withValues(alpha: 0.5),
+                        width: 1,
+                      ),
                     ),
                     child: Row(
                       children: [
@@ -762,15 +794,15 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
                         Expanded(
                           child: TextField(
                             controller: _messageController,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 13.5,
-                              color: Color(0xFF131B2E),
+                              color: colorScheme.onSurface,
                             ),
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               hintText: 'Ask doctor follow-up question...',
                               hintStyle: TextStyle(
                                 fontSize: 13,
-                                color: Color(0xFF707881),
+                                color: colorScheme.outline,
                               ),
                               border: InputBorder.none,
                               isDense: true,
@@ -780,7 +812,7 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
                           ),
                         ),
                         IconButton(
-                          icon: const Icon(Icons.send, size: 20, color: Color(0xFF006194)),
+                          icon: Icon(Icons.send, size: 20, color: colorScheme.primary),
                           onPressed: () => _sendMessage(),
                         ),
                       ],
@@ -796,15 +828,18 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
   }
 
   Widget _buildAdditionalMessage(BuildContext context, ConsultationMessageEntity msg) {
+    final colorScheme = context.colorScheme;
+    final isDark = context.isDarkMode;
+
     if (msg.isFromUser) {
       return Align(
         alignment: Alignment.centerRight,
         child: Container(
           margin: const EdgeInsets.only(bottom: 12, left: 40),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-          decoration: const BoxDecoration(
-            color: Color(0xFF006194),
-            borderRadius: BorderRadius.only(
+          decoration: BoxDecoration(
+            color: colorScheme.primary,
+            borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(16),
               topRight: Radius.circular(4),
               bottomLeft: Radius.circular(16),
@@ -813,7 +848,7 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
           ),
           child: Text(
             msg.text,
-            style: const TextStyle(fontSize: 13, color: Colors.white),
+            style: TextStyle(fontSize: 13, color: colorScheme.onPrimary),
           ),
         ),
       );
@@ -823,13 +858,20 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
       margin: const EdgeInsets.only(bottom: 12, right: 30),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colorScheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFE2E7FF)),
+        border: Border.all(color: colorScheme.surfaceContainerHigh),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
+            blurRadius: 4,
+            offset: const Offset(0, 1),
+          ),
+        ],
       ),
       child: Text(
         msg.text,
-        style: const TextStyle(fontSize: 13, color: Color(0xFF131B2E)),
+        style: TextStyle(fontSize: 13, color: colorScheme.onSurface),
       ),
     );
   }
