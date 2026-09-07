@@ -18,6 +18,7 @@ import 'package:comfort_care/core/widgets/cc_floating_ai_doctor_button.dart';
 import 'package:comfort_care/core/widgets/cc_bottom_nav_bar.dart';
 import 'package:comfort_care/core/widgets/cc_app_bar.dart';
 import 'package:comfort_care/features/clinical/presentation/widgets/ai_clinical_regimen_card.dart';
+import 'package:comfort_care/features/clinical/presentation/pages/ai_clinical_consultation_page.dart';
 import 'package:comfort_care/features/dashboard/presentation/widgets/quick_actions_grid.dart';
 import 'package:comfort_care/features/dashboard/presentation/widgets/fast_moving_essentials_section.dart';
 import 'package:comfort_care/core/widgets/cc_side_nav.dart';
@@ -85,7 +86,41 @@ class FakeClinicalRepository implements ClinicalRepository {
   );
 
   @override
-  Future<List<ConsultationMessageEntity>> getConsultationHistory() async => [];
+  Future<List<ConsultationMessageEntity>> getConsultationHistory() async => [
+        ConsultationMessageEntity(
+          id: 'msg-01',
+          text: "Good afternoon. I've had intense headache and fever of 38.6°C.",
+          isFromUser: true,
+          timestamp: DateTime.now().subtract(const Duration(minutes: 5)),
+        ),
+        ConsultationMessageEntity(
+          id: 'msg-02',
+          text: "Hello, based on your symptoms this indicates acute uncomplicated malaria.",
+          isFromUser: false,
+          timestamp: DateTime.now().subtract(const Duration(minutes: 4)),
+          priority: TriagePriority.high,
+          clinicalNotes: 'Reviewed against PCN malaria management guidelines.',
+          vitalsSnapshot: vitals,
+          recommendedProducts: const [
+            ProductEntity(
+              id: 'prod-coartem-80-480',
+              name: 'Coartem 80/480mg',
+              brand: 'Novartis',
+              genericName: 'Artemether 80mg + Lumefantrine 480mg',
+              category: 'Antimalarial',
+              packSize: '6 Tablets',
+              price: 4200.0,
+              wholesalePrice: 3900.0,
+              description: 'Antimalarial ACT therapy',
+              dosageInstructions: '1 tablet with fatty food',
+              activeIngredients: 'Artemether 80mg, Lumefantrine 480mg',
+              nafdacNumber: '04-2011',
+              imageUrl: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500',
+              requiresPrescription: true,
+            ),
+          ],
+        ),
+      ];
 
   @override
   Future<HealthVitalsEntity> getLatestVitals() async => vitals;
@@ -98,10 +133,31 @@ class FakeClinicalRepository implements ClinicalRepository {
   @override
   Future<ConsultationMessageEntity> sendMessage(String text) async {
     return ConsultationMessageEntity(
-      id: 'msg-1',
+      id: 'msg-${DateTime.now().millisecondsSinceEpoch}',
       text: 'Response to: $text',
       isFromUser: false,
       timestamp: DateTime.now(),
+      priority: TriagePriority.normal,
+      vitalsSnapshot: vitals,
+      recommendedProducts: const [
+        ProductEntity(
+          id: 'prod-coartem-80-480',
+          name: 'Coartem 80/480mg',
+          brand: 'Novartis',
+          genericName: 'Artemether 80mg + Lumefantrine 480mg',
+          category: 'Antimalarial',
+          packSize: '6 Tablets',
+          price: 4200.0,
+          wholesalePrice: 3900.0,
+          description: 'Antimalarial ACT therapy',
+          dosageInstructions: '1 tablet with fatty food',
+          activeIngredients: 'Artemether 80mg, Lumefantrine 480mg',
+          nafdacNumber: '04-2011',
+          imageUrl: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500',
+          requiresPrescription: true,
+        ),
+      ],
+      clinicalNotes: 'Verified under PCN guidelines.',
     );
   }
 }
@@ -880,6 +936,108 @@ void main() {
       expect(find.text('Standard Dispatch'), findsOneWidget);
       expect(find.text('Priority Cold-Chain Express'), findsOneWidget);
       expect(find.text('Proceed to Delivery Dispatch (Step 2 of 4)'), findsOneWidget);
+    });
+  });
+
+  group('AI Clinical Consultation Chat & Desktop Telehealth Tests', () {
+    testWidgets('AiClinicalConsultationPage desktop layout constraints width to max 840px', (tester) async {
+      tester.view.physicalSize = const Size(1280, 900);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() => tester.view.resetPhysicalSize());
+
+      final clinicalRepository = FakeClinicalRepository();
+      final manageClinicalUseCase = ManageClinicalUseCase(clinicalRepository);
+      final clinicalBloc = ClinicalBloc(manageClinicalUseCase: manageClinicalUseCase);
+      final cartRepository = FakeCartRepository();
+      final manageCartUseCase = ManageCartUseCase(cartRepository);
+      final cartBloc = CartBloc(manageCartUseCase: manageCartUseCase);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MultiBlocProvider(
+            providers: [
+              BlocProvider<ClinicalBloc>.value(value: clinicalBloc),
+              BlocProvider<CartBloc>.value(value: cartBloc),
+            ],
+            child: const AiClinicalConsultationPage(),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      // Verify centered container is constrained to maxWidth: 840
+      final containerFinder = find.byWidgetPredicate((widget) {
+        if (widget is Container && widget.constraints != null) {
+          return widget.constraints!.maxWidth == 840.0;
+        }
+        return false;
+      });
+      expect(containerFinder, findsOneWidget);
+
+      // Verify header branding and PCN badge
+      expect(find.text('ComfortCare AI Doctor'), findsOneWidget);
+      expect(find.text('PCN Regulated'), findsOneWidget);
+      expect(find.text('Live Pharmacist Co-Pilot Active'), findsOneWidget);
+    });
+
+    testWidgets('Sending a message simulates doctor reply with health stats and prescriptions', (tester) async {
+      tester.view.physicalSize = const Size(800, 1600);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() => tester.view.resetPhysicalSize());
+
+      final clinicalRepository = FakeClinicalRepository();
+      final manageClinicalUseCase = ManageClinicalUseCase(clinicalRepository);
+      final clinicalBloc = ClinicalBloc(manageClinicalUseCase: manageClinicalUseCase);
+      final cartRepository = FakeCartRepository();
+      final manageCartUseCase = ManageCartUseCase(cartRepository);
+      final cartBloc = CartBloc(manageCartUseCase: manageCartUseCase);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MultiBlocProvider(
+            providers: [
+              BlocProvider<ClinicalBloc>.value(value: clinicalBloc),
+              BlocProvider<CartBloc>.value(value: cartBloc),
+            ],
+            child: const AiClinicalConsultationPage(),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      // Verify initial message history loaded
+      expect(find.text("Good afternoon. I've had intense headache and fever of 38.6°C."), findsOneWidget);
+      expect(find.text('Patient Biometric Telemetry'), findsOneWidget);
+      expect(find.text('120/80'), findsOneWidget); // Blood pressure reading
+      expect(find.text('Recommended Drugs'), findsOneWidget); // Prescriptions
+
+      // Send message via quick action chip
+      final chipFinder = find.text('Ask about food interactions');
+      await tester.ensureVisible(chipFinder);
+      await tester.pumpAndSettle();
+      await tester.tap(chipFinder);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      // User message is rendered in the chat (found in user message bubble and in chip list)
+      expect(find.text('Ask about food interactions'), findsNWidgets(2));
+
+      // Settle async thinking simulation
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pumpAndSettle();
+
+      // Verify simulated reply arrived
+      expect(find.text('Response to: Ask about food interactions'), findsOneWidget);
+
+      // Verify Health Vitals are represented in the conversation
+      expect(find.text('Patient Biometric Telemetry'), findsWidgets);
+      expect(find.text('View 7-Day Trend Telemetry & ECG Waveforms'), findsWidgets);
+
+      // Verify Prescriptions Regimen is represented in the conversation
+      expect(find.text('Recommended Drugs'), findsWidgets);
+      expect(find.text('Coartem 80/480mg'), findsWidgets);
     });
   });
 }

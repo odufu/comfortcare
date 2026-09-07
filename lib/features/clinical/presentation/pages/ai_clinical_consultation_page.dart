@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/extensions/context_extensions.dart';
 import '../../domain/entities/consultation_message.dart';
+import '../../domain/entities/health_vitals.dart';
 import '../bloc/clinical_bloc.dart';
 import '../bloc/clinical_event.dart';
 import '../bloc/clinical_state.dart';
@@ -23,6 +24,7 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
     'Ask about food interactions',
     'Swap Paracetamol for Ibuprofen?',
     'Request dispatch photo',
+    'Check blood pressure advice',
   ];
 
   @override
@@ -45,31 +47,41 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
       if (presetText == null) {
         _messageController.clear();
       }
-      Future.delayed(const Duration(milliseconds: 150), () {
-        if (_scrollController.hasClients) {
-          _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent + 200,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOut,
-          );
-        }
-      });
+      _scrollToBottom();
     }
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent + 400,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = context.colorScheme;
     final isDark = context.isDarkMode;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isDesktop = screenWidth >= 800;
 
     return Scaffold(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: isDesktop
+          ? (isDark ? colorScheme.surfaceContainerLowest : const Color(0xFFF1F5F9))
+          : colorScheme.surface,
       appBar: AppBar(
         backgroundColor: colorScheme.surfaceContainerLowest.withValues(
           alpha: isDark ? 0.98 : 0.95,
         ),
         surfaceTintColor: Colors.transparent,
         elevation: 0.5,
+        centerTitle: false,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: colorScheme.primary),
           tooltip: 'Back',
@@ -142,7 +154,7 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
                   ],
                 ),
                 Text(
-                  'Pharmacist Consult',
+                  'Pharmacist Consult • Telehealth',
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w500,
@@ -155,723 +167,1099 @@ class _AiClinicalConsultationPageState extends State<AiClinicalConsultationPage>
         ),
         actions: [
           IconButton(
+            icon: Icon(Icons.show_chart, color: colorScheme.primary),
+            tooltip: 'Health Vitals Telemetry',
+            onPressed: () => context.push('/vitals-monitor'),
+          ),
+          IconButton(
             icon: Icon(Icons.notifications_none, color: colorScheme.onSurfaceVariant),
             onPressed: () {},
           ),
           Padding(
             padding: const EdgeInsets.only(right: 14),
-            child: CircleAvatar(
-              radius: 16,
-              backgroundColor: colorScheme.surfaceContainerHigh,
-              backgroundImage: const NetworkImage(
-                'https://lh3.googleusercontent.com/aida/AEtjO1WjFuU0Bkh-tRsd4vZtbY50RYc-26TYPCVsc_QvRdnshh94Wl0FHxfIRp_razpbA2uyyUqkdpvvGlkW87MIhoxuJqU8PYmn8uXQN7nUCzUXuUk0107p9lTxlrF9FlPgw5tCTusZ9rW1u2ScnRZaNGNMnVtYV-2YcVeMzsfaQ4zoMGYGF6CGkh5WpVo9U9E46ot9Sg1YbmahDKp5r7DWZHkhXGRu-fNsuRBzZVjmLSE-jxVQEbN_MX6KFSr_2EdM9Ed_YBystPwLoQ',
+            child: Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: colorScheme.primaryContainer,
+              ),
+              child: ClipOval(
+                child: Image.network(
+                  'https://lh3.googleusercontent.com/aida/AEtjO1WjFuU0Bkh-tRsd4vZtbY50RYc-26TYPCVsc_QvRdnshh94Wl0FHxfIRp_razpbA2uyyUqkdpvvGlkW87MIhoxuJqU8PYmn8uXQN7nUCzUXuUk0107p9lTxlrF9FlPgw5tCTusZ9rW1u2ScnRZaNGNMnVtYV-2YcVeMzsfaQ4zoMGYGF6CGkh5WpVo9U9E46ot9Sg1YbmahDKp5r7DWZHkhXGRu-fNsuRBzZVjmLSE-jxVQEbN_MX6KFSr_2EdM9Ed_YBystPwLoQ',
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, _, _) => Icon(
+                    Icons.person,
+                    size: 18,
+                    color: colorScheme.primary,
+                  ),
+                ),
               ),
             ),
           ),
         ],
       ),
-      body: BlocBuilder<ClinicalBloc, ClinicalState>(
-        builder: (context, state) {
-          return Column(
-            children: [
-              // Medical Care Protocol Header Ribbon
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                decoration: BoxDecoration(
-                  color: colorScheme.surfaceContainerHigh.withValues(
-                    alpha: isDark ? 0.5 : 0.65,
-                  ),
-                  border: Border(
-                    bottom: BorderSide(
-                      color: colorScheme.surfaceContainerHighest,
+      body: Center(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 840),
+          decoration: isDesktop
+              ? BoxDecoration(
+                  color: colorScheme.surface,
+                  border: Border.symmetric(
+                    vertical: BorderSide(
+                      color: colorScheme.surfaceContainerHigh.withValues(alpha: 0.6),
                       width: 1,
                     ),
                   ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Stack(
-                          clipBehavior: Clip.none,
-                          children: [
-                            Container(
-                              width: 38,
-                              height: 38,
-                              decoration: BoxDecoration(
-                                color: colorScheme.primaryContainer,
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: colorScheme.primaryContainer.withValues(alpha: 0.25),
-                                    blurRadius: 6,
-                                  ),
-                                ],
-                              ),
-                              child: Icon(
-                                Icons.smart_toy,
-                                color: colorScheme.onPrimaryContainer,
-                                size: 20,
-                              ),
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: Container(
-                                width: 10,
-                                height: 10,
-                                decoration: BoxDecoration(
-                                  color: colorScheme.secondary,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: colorScheme.surface,
-                                    width: 2,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(width: 10),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  'ComfortCare AI Doctor',
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w700,
-                                    color: colorScheme.onSurface,
-                                  ),
-                                ),
-                                const SizedBox(width: 6),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 6,
-                                    vertical: 2,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: isDark
-                                        ? colorScheme.surfaceContainerHighest
-                                        : const Color(0xFFCCE5FF),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        Icons.verified_user,
-                                        size: 10,
-                                        color: isDark
-                                            ? colorScheme.primary
-                                            : const Color(0xFF001D31),
-                                      ),
-                                      const SizedBox(width: 2),
-                                      Text(
-                                        'PCN Regulated',
-                                        style: TextStyle(
-                                          fontSize: 9,
-                                          fontWeight: FontWeight.w700,
-                                          color: isDark
-                                              ? colorScheme.primary
-                                              : const Color(0xFF001D31),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 1),
-                            Row(
-                              children: [
-                                Container(
-                                  width: 6,
-                                  height: 6,
-                                  decoration: BoxDecoration(
-                                    color: colorScheme.secondary,
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  'Live Pharmacist Co-Pilot Active',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w600,
-                                    color: colorScheme.secondary,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: colorScheme.surfaceContainerLowest,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
-                            blurRadius: 4,
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.local_shipping, size: 13, color: colorScheme.primary),
-                          const SizedBox(width: 4),
-                          Text(
-                            'Abuja Depot',
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w600,
-                              color: colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Chat Stream
-              Expanded(
-                child: ListView(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  children: [
-                    // Timestamp & Triage Badge
-                    Center(
-                      child: Container(
-                        margin: const EdgeInsets.only(bottom: 14),
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: colorScheme.surfaceContainerLow,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Text(
-                          'Today, 14:28 • Protocol #CC-ABJ-8942',
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w500,
-                            color: colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    // User Message Bubble
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Container(
-                        margin: const EdgeInsets.only(bottom: 16, left: 40),
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                        decoration: BoxDecoration(
-                          color: colorScheme.primary,
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(18),
-                            topRight: Radius.circular(4),
-                            bottomLeft: Radius.circular(18),
-                            bottomRight: Radius.circular(18),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: colorScheme.primary.withValues(alpha: 0.2),
-                              blurRadius: 8,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              "Good afternoon. I've had intense headache, chills, fever of 38.6°C, and fatigue since last night. What should I take?",
-                              style: TextStyle(
-                                fontSize: 13.5,
-                                height: 1.45,
-                                color: colorScheme.onPrimary,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  '14:28',
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    color: colorScheme.onPrimary.withValues(alpha: 0.8),
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                const SizedBox(width: 4),
-                                Icon(
-                                  Icons.done_all,
-                                  size: 13,
-                                  color: colorScheme.onPrimary.withValues(alpha: 0.8),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    // AI Clinical Diagnostic Bubble
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: 32,
-                          height: 32,
-                          margin: const EdgeInsets.only(top: 2, right: 10),
-                          decoration: BoxDecoration(
-                            color: colorScheme.primaryContainer,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: colorScheme.primaryContainer.withValues(alpha: 0.25),
-                                blurRadius: 6,
-                              ),
-                            ],
-                          ),
-                          child: Icon(
-                            Icons.psychology,
-                            color: colorScheme.onPrimaryContainer,
-                            size: 18,
-                          ),
-                        ),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Diagnostic Assessment Box
-                              Container(
-                                padding: const EdgeInsets.all(14),
-                                decoration: BoxDecoration(
-                                  color: colorScheme.surfaceContainerLowest,
-                                  borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(4),
-                                    topRight: Radius.circular(18),
-                                    bottomLeft: Radius.circular(18),
-                                    bottomRight: Radius.circular(18),
-                                  ),
-                                  border: Border.all(
-                                    color: colorScheme.surfaceContainerHigh,
-                                    width: 1,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Icon(
-                                              Icons.medical_services,
-                                              size: 15,
-                                              color: colorScheme.primary,
-                                            ),
-                                            const SizedBox(width: 6),
-                                            Text(
-                                              'Clinical Diagnostic Assessment',
-                                              style: TextStyle(
-                                                fontSize: 12.5,
-                                                fontWeight: FontWeight.w700,
-                                                color: colorScheme.primary,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 7,
-                                            vertical: 2,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: colorScheme.errorContainer,
-                                            borderRadius: BorderRadius.circular(10),
-                                          ),
-                                          child: Text(
-                                            'High Priority',
-                                            style: TextStyle(
-                                              fontSize: 9.5,
-                                              fontWeight: FontWeight.w700,
-                                              color: colorScheme.onErrorContainer,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      'Hello, based on your acute febrile symptoms and prevalence in the Abuja area, this indicates uncomplicated malaria accompanied by febrile pain. I have generated a personalized recovery protocol formulated for fast symptom clearance.',
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        height: 1.45,
-                                        color: colorScheme.onSurface,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Container(
-                                      padding: const EdgeInsets.all(9),
-                                      decoration: BoxDecoration(
-                                        color: colorScheme.surfaceContainerLow,
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            Icons.verified,
-                                            size: 16,
-                                            color: colorScheme.secondary,
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Expanded(
-                                            child: Text(
-                                              'Reviewed against PCN malaria management guidelines & temperature record (38.6°C).',
-                                              style: TextStyle(
-                                                fontSize: 11,
-                                                color: colorScheme.onSurfaceVariant,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-
-                              const SizedBox(height: 14),
-
-                              // Embedded Recommended Drugs Card (tappable details + tail-end cart buttons)
-                              const AiClinicalRegimenCard(),
-
-                              const SizedBox(height: 12),
-
-                              // Micro Pharmacist Follow-up Note
-                              Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: colorScheme.surfaceContainerLow,
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(
-                                    color: colorScheme.surfaceContainerHigh,
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      width: 28,
-                                      height: 28,
-                                      margin: const EdgeInsets.only(top: 2, right: 10),
-                                      decoration: BoxDecoration(
-                                        color: colorScheme.secondary,
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: const Icon(
-                                        Icons.medical_information,
-                                        size: 15,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Text(
-                                                'Pharm. Note & Guidance',
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w700,
-                                                  color: colorScheme.onSurface,
-                                                ),
-                                              ),
-                                              const SizedBox(width: 4),
-                                              Text(
-                                                '• 1 min ago',
-                                                style: TextStyle(
-                                                  fontSize: 11,
-                                                  color: colorScheme.onSurfaceVariant,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 3),
-                                          Text(
-                                            '"If temperature rises above 39.2°C or persists past 48 hours post-dose, utilize the instant pharmacist consultation link on this screen for clinical escalation."',
-                                            style: TextStyle(
-                                              fontSize: 11.5,
-                                              height: 1.4,
-                                              color: colorScheme.onSurfaceVariant,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-
-                              const SizedBox(height: 10),
-
-                              // Safety & Regulatory Compliance Lockup in Message Stream
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 4),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.verified,
-                                      size: 13,
-                                      color: colorScheme.secondary,
-                                    ),
-                                    const SizedBox(width: 5),
-                                    Flexible(
-                                      child: Text(
-                                        'Supervised by Pharm. Halima Bello (PCN #44912) • NAFDAC Approved Formulary',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w500,
-                                          color: colorScheme.onSurfaceVariant,
-                                        ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-
-                              const SizedBox(height: 12),
-
-                              // Suggested Quick Action Chips
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: _quickActionChips.map((chipText) {
-                                    return Padding(
-                                      padding: const EdgeInsets.only(right: 8),
-                                      child: Material(
-                                        color: colorScheme.surfaceContainerLowest,
-                                        borderRadius: BorderRadius.circular(20),
-                                        elevation: 1,
-                                        shadowColor: Colors.black.withValues(
-                                          alpha: isDark ? 0.25 : 0.08,
-                                        ),
-                                        child: InkWell(
-                                          borderRadius: BorderRadius.circular(20),
-                                          onTap: () => _sendMessage(chipText),
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 14,
-                                              vertical: 8,
-                                            ),
-                                            child: Text(
-                                              chipText,
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w600,
-                                                color: colorScheme.primary,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    // Additional dynamic messages from state
-                    ...state.messages.where((m) => m.id != 'msg-01' && m.id != 'msg-02').map((msg) {
-                      return _buildAdditionalMessage(context, msg);
-                    }),
-
-                    if (state.isThinking)
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Container(
-                          margin: const EdgeInsets.only(top: 10, bottom: 10),
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: colorScheme.surfaceContainerLow,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SizedBox(
-                                width: 14,
-                                height: 14,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: colorScheme.primary,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                'AI Doctor evaluating symptoms against formulary...',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontStyle: FontStyle.italic,
-                                  color: colorScheme.onSurfaceVariant,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-
-              // Bottom Area: Dedicated to Chat Only!
-              Container(
-                decoration: BoxDecoration(
-                  color: colorScheme.surfaceContainerLowest.withValues(
-                    alpha: isDark ? 0.98 : 0.95,
-                  ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.05),
-                      blurRadius: 16,
-                      offset: const Offset(0, -4),
+                      color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.05),
+                      blurRadius: 24,
+                      offset: const Offset(0, 4),
                     ),
                   ],
-                  border: Border(
-                    top: BorderSide(color: colorScheme.surfaceContainerHigh, width: 1),
-                  ),
-                ),
-                padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
-                child: SafeArea(
-                  top: false,
-                  child: Container(
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: colorScheme.surfaceContainerLow,
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(
-                        color: colorScheme.surfaceContainerHigh.withValues(alpha: 0.5),
-                        width: 1,
-                      ),
-                    ),
-                    child: Row(
+                )
+              : null,
+          child: BlocConsumer<ClinicalBloc, ClinicalState>(
+            listener: (context, state) {
+              _scrollToBottom();
+            },
+            builder: (context, state) {
+              final messages = state.messages;
+
+              return Column(
+                children: [
+                  // Top Protocol Header Ribbon
+                  _buildProtocolHeader(context, isDark, colorScheme),
+
+                  // Scrollable Message Stream
+                  Expanded(
+                    child: ListView(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                       children: [
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: TextField(
-                            controller: _messageController,
-                            style: TextStyle(
-                              fontSize: 13.5,
-                              color: colorScheme.onSurface,
-                            ),
-                            decoration: InputDecoration(
-                              hintText: 'Ask doctor follow-up question...',
-                              hintStyle: TextStyle(
-                                fontSize: 13,
-                                color: colorScheme.outline,
-                              ),
-                              border: InputBorder.none,
-                              isDense: true,
-                              contentPadding: EdgeInsets.zero,
-                            ),
-                            onSubmitted: (_) => _sendMessage(),
-                          ),
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.send, size: 20, color: colorScheme.primary),
-                          onPressed: () => _sendMessage(),
-                        ),
+                        _buildDateHeader(context, colorScheme),
+                        ...messages.asMap().entries.map((entry) {
+                          final idx = entry.key;
+                          final msg = entry.value;
+                          final isLastDoctorMsg = !msg.isFromUser &&
+                              (idx == messages.length - 1 ||
+                                  (state.isThinking && idx == messages.length - 2));
+
+                          return _buildMessageItem(
+                            context: context,
+                            msg: msg,
+                            isDark: isDark,
+                            colorScheme: colorScheme,
+                            isLastDoctorMsg: isLastDoctorMsg,
+                          );
+                        }),
+                        if (state.isThinking)
+                          _buildThinkingBubble(context, isDark, colorScheme),
                       ],
                     ),
                   ),
-                ),
-              ),
-            ],
-          );
-        },
+
+                  // Bottom Chat Input Box
+                  _buildChatInputBar(context, isDark, colorScheme),
+                ],
+              );
+            },
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildAdditionalMessage(BuildContext context, ConsultationMessageEntity msg) {
-    final colorScheme = context.colorScheme;
-    final isDark = context.isDarkMode;
+  Widget _buildProtocolHeader(BuildContext context, bool isDark, ColorScheme colorScheme) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHigh.withValues(
+          alpha: isDark ? 0.5 : 0.65,
+        ),
+        border: Border(
+          bottom: BorderSide(
+            color: colorScheme.surfaceContainerHighest,
+            width: 1,
+          ),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Container(
+                    width: 38,
+                    height: 38,
+                    decoration: BoxDecoration(
+                      color: colorScheme.primaryContainer,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: colorScheme.primaryContainer.withValues(alpha: 0.25),
+                          blurRadius: 6,
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      Icons.smart_toy,
+                      color: colorScheme.onPrimaryContainer,
+                      size: 20,
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      width: 10,
+                      height: 10,
+                      decoration: BoxDecoration(
+                        color: colorScheme.secondary,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: colorScheme.surface,
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(width: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        'ComfortCare AI Doctor',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: colorScheme.onSurface,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? colorScheme.surfaceContainerHighest
+                              : const Color(0xFFCCE5FF),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.verified_user,
+                              size: 10,
+                              color: isDark
+                                  ? colorScheme.primary
+                                  : const Color(0xFF001D31),
+                            ),
+                            const SizedBox(width: 2),
+                            Text(
+                              'PCN Regulated',
+                              style: TextStyle(
+                                fontSize: 9,
+                                fontWeight: FontWeight.w700,
+                                color: isDark
+                                    ? colorScheme.primary
+                                    : const Color(0xFF001D31),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 1),
+                  Row(
+                    children: [
+                      Container(
+                        width: 6,
+                        height: 6,
+                        decoration: BoxDecoration(
+                          color: colorScheme.secondary,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Live Pharmacist Co-Pilot Active',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: colorScheme.secondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerLowest,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
+                  blurRadius: 4,
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.local_shipping, size: 13, color: colorScheme.primary),
+                const SizedBox(width: 4),
+                Text(
+                  'Abuja Depot',
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
+  Widget _buildDateHeader(BuildContext context, ColorScheme colorScheme) {
+    return Center(
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainerLow,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Text(
+          'Today • Abuja Clinical Protocol #CC-ABJ-8942',
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w500,
+            color: colorScheme.onSurfaceVariant,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMessageItem({
+    required BuildContext context,
+    required ConsultationMessageEntity msg,
+    required bool isDark,
+    required ColorScheme colorScheme,
+    required bool isLastDoctorMsg,
+  }) {
     if (msg.isFromUser) {
       return Align(
         alignment: Alignment.centerRight,
         child: Container(
-          margin: const EdgeInsets.only(bottom: 12, left: 40),
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          margin: const EdgeInsets.only(bottom: 16, left: 40),
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
           decoration: BoxDecoration(
             color: colorScheme.primary,
             borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(16),
+              topLeft: Radius.circular(18),
               topRight: Radius.circular(4),
-              bottomLeft: Radius.circular(16),
-              bottomRight: Radius.circular(16),
+              bottomLeft: Radius.circular(18),
+              bottomRight: Radius.circular(18),
             ),
+            boxShadow: [
+              BoxShadow(
+                color: colorScheme.primary.withValues(alpha: 0.22),
+                blurRadius: 8,
+                offset: const Offset(0, 3),
+              ),
+            ],
           ),
-          child: Text(
-            msg.text,
-            style: TextStyle(fontSize: 13, color: colorScheme.onPrimary),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                msg.text,
+                style: TextStyle(
+                  fontSize: 13.5,
+                  height: 1.45,
+                  color: colorScheme.onPrimary,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '${msg.timestamp.hour.toString().padLeft(2, '0')}:${msg.timestamp.minute.toString().padLeft(2, '0')}',
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: colorScheme.onPrimary.withValues(alpha: 0.8),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Icon(
+                    Icons.done_all,
+                    size: 13,
+                    color: colorScheme.onPrimary.withValues(alpha: 0.8),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       );
     }
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12, right: 30),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: colorScheme.surfaceContainerHigh),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
-            blurRadius: 4,
-            offset: const Offset(0, 1),
+    // AI Doctor Message Bubble
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 18),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 32,
+            height: 32,
+            margin: const EdgeInsets.only(top: 2, right: 10),
+            decoration: BoxDecoration(
+              color: colorScheme.primaryContainer,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: colorScheme.primaryContainer.withValues(alpha: 0.25),
+                  blurRadius: 6,
+                ),
+              ],
+            ),
+            child: Icon(
+              Icons.psychology,
+              color: colorScheme.onPrimaryContainer,
+              size: 18,
+            ),
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Diagnostic Assessment Box
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceContainerLowest,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(4),
+                      topRight: Radius.circular(18),
+                      bottomLeft: Radius.circular(18),
+                      bottomRight: Radius.circular(18),
+                    ),
+                    border: Border.all(
+                      color: colorScheme.surfaceContainerHigh,
+                      width: 1,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.medical_services,
+                                size: 15,
+                                color: colorScheme.primary,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                'Clinical Consultation Assessment',
+                                style: TextStyle(
+                                  fontSize: 12.5,
+                                  fontWeight: FontWeight.w700,
+                                  color: colorScheme.primary,
+                                ),
+                              ),
+                            ],
+                          ),
+                          _buildPriorityBadge(msg.priority, colorScheme),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        msg.text,
+                        style: TextStyle(
+                          fontSize: 13,
+                          height: 1.45,
+                          color: colorScheme.onSurface,
+                        ),
+                      ),
+                      if (msg.clinicalNotes != null && msg.clinicalNotes!.isNotEmpty) ...[
+                        const SizedBox(height: 10),
+                        Container(
+                          padding: const EdgeInsets.all(9),
+                          decoration: BoxDecoration(
+                            color: colorScheme.surfaceContainerLow,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.verified,
+                                size: 16,
+                                color: colorScheme.secondary,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  msg.clinicalNotes!,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: colorScheme.onSurfaceVariant,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+
+                // Embedded Health Vitals Telemetry Card
+                if (msg.vitalsSnapshot != null) ...[
+                  const SizedBox(height: 12),
+                  _buildEmbeddedVitalsCard(context, msg.vitalsSnapshot!, isDark, colorScheme),
+                ],
+
+                // Embedded Recommended Regimen Card (Prescriptions)
+                if (msg.recommendedProducts != null && msg.recommendedProducts!.isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  AiClinicalRegimenCard(products: msg.recommendedProducts),
+                ],
+
+                // Micro Pharmacist Follow-up Note & PCN Regulatory Compliance Lockup
+                const SizedBox(height: 10),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceContainerLow,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: colorScheme.surfaceContainerHigh,
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 28,
+                        height: 28,
+                        margin: const EdgeInsets.only(top: 2, right: 10),
+                        decoration: BoxDecoration(
+                          color: colorScheme.secondary,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.medical_information,
+                          size: 15,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  'Pharm. Halima Bello (PCN #44912)',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700,
+                                    color: colorScheme.onSurface,
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  '• Abuja Central',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 3),
+                            Text(
+                              '"All treatments reviewed against NAFDAC drug safety databases and temperature-verified cold chain depot logs. Tap any product above for detailed dosage sheets."',
+                              style: TextStyle(
+                                fontSize: 11.5,
+                                height: 1.4,
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Suggested Quick Action Chips (shown below the latest AI message)
+                if (isLastDoctorMsg) ...[
+                  const SizedBox(height: 12),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: _quickActionChips.map((chipText) {
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: Material(
+                            color: colorScheme.surfaceContainerLowest,
+                            borderRadius: BorderRadius.circular(20),
+                            elevation: 1,
+                            shadowColor: Colors.black.withValues(
+                              alpha: isDark ? 0.25 : 0.08,
+                            ),
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(20),
+                              onTap: () => _sendMessage(chipText),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 14,
+                                  vertical: 8,
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.chat_bubble_outline,
+                                      size: 13,
+                                      color: colorScheme.primary,
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Text(
+                                      chipText,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        color: colorScheme.primary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
+              ],
+            ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildEmbeddedVitalsCard(
+    BuildContext context,
+    HealthVitalsEntity vitals,
+    bool isDark,
+    ColorScheme colorScheme,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerLowest,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: colorScheme.surfaceContainerHigh,
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header Row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 28,
+                    height: 28,
+                    decoration: BoxDecoration(
+                      color: colorScheme.primaryContainer,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.monitor_heart,
+                      size: 16,
+                      color: colorScheme.primary,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Patient Biometric Telemetry',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w800,
+                          color: colorScheme.onSurface,
+                          letterSpacing: -0.2,
+                        ),
+                      ),
+                      Text(
+                        'Live Synchronized Docket • Abuja Health Link',
+                        style: TextStyle(
+                          fontSize: 10.5,
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? colorScheme.secondaryContainer
+                      : const Color(0xFFA3F69C),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 6,
+                      height: 6,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFF002204),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    const Text(
+                      'Live Sync',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF002204),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 12),
+
+          // 4 Vitals Stat Metrics
+          Row(
+            children: [
+              Expanded(
+                child: _buildVitalTile(
+                  icon: Icons.favorite,
+                  iconColor: const Color(0xFFE53935),
+                  label: 'Blood Pressure',
+                  value: '${vitals.systolic}/${vitals.diastolic}',
+                  unit: 'mmHg',
+                  status: vitals.bpStatus,
+                  statusColor: vitals.systolic > 130
+                      ? const Color(0xFFE53935)
+                      : const Color(0xFF2E7D32),
+                  colorScheme: colorScheme,
+                  isDark: isDark,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _buildVitalTile(
+                  icon: Icons.speed,
+                  iconColor: const Color(0xFF0288D1),
+                  label: 'Heart Rate',
+                  value: '${vitals.heartRate}',
+                  unit: 'bpm',
+                  status: vitals.heartRate > 100 ? 'Elevated' : 'Normal',
+                  statusColor: vitals.heartRate > 100
+                      ? const Color(0xFFE53935)
+                      : const Color(0xFF0288D1),
+                  colorScheme: colorScheme,
+                  isDark: isDark,
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 8),
+
+          Row(
+            children: [
+              Expanded(
+                child: _buildVitalTile(
+                  icon: Icons.thermostat,
+                  iconColor: const Color(0xFFFB8C00),
+                  label: 'Body Temp',
+                  value: vitals.temperature.toStringAsFixed(1),
+                  unit: '°C',
+                  status: vitals.temperature >= 38.0
+                      ? 'Febrile Alert'
+                      : (vitals.temperature >= 37.5 ? 'Mild Warmth' : 'Afebrile'),
+                  statusColor: vitals.temperature >= 38.0
+                      ? const Color(0xFFE53935)
+                      : const Color(0xFF2E7D32),
+                  colorScheme: colorScheme,
+                  isDark: isDark,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _buildVitalTile(
+                  icon: Icons.bloodtype,
+                  iconColor: const Color(0xFF7B1FA2),
+                  label: 'Blood Glucose',
+                  value: vitals.bloodGlucose.toStringAsFixed(0),
+                  unit: 'mg/dL',
+                  status: vitals.glucoseStatus,
+                  statusColor: vitals.bloodGlucose >= 120
+                      ? const Color(0xFFE53935)
+                      : const Color(0xFF2E7D32),
+                  colorScheme: colorScheme,
+                  isDark: isDark,
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 12),
+
+          // Interactive Link to Full Telemetry Charts
+          InkWell(
+            borderRadius: BorderRadius.circular(10),
+            onTap: () => context.push('/vitals-monitor'),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: colorScheme.surfaceContainerLow,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: colorScheme.primary.withValues(alpha: 0.2),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.show_chart, size: 16, color: colorScheme.primary),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'View 7-Day Trend Telemetry & ECG Waveforms',
+                      style: TextStyle(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w600,
+                        color: colorScheme.primary,
+                      ),
+                    ),
+                  ),
+                  Icon(
+                    Icons.arrow_forward,
+                    size: 14,
+                    color: colorScheme.primary,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildVitalTile({
+    required IconData icon,
+    required Color iconColor,
+    required String label,
+    required String value,
+    required String unit,
+    required String status,
+    required Color statusColor,
+    required ColorScheme colorScheme,
+    required bool isDark,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 14, color: iconColor),
+              const SizedBox(width: 4),
+              Expanded(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w500,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                  color: colorScheme.onSurface,
+                  letterSpacing: -0.3,
+                ),
+              ),
+              const SizedBox(width: 3),
+              Text(
+                unit,
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 2),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+            decoration: BoxDecoration(
+              color: statusColor.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Text(
+              status,
+              style: TextStyle(
+                fontSize: 9.5,
+                fontWeight: FontWeight.w700,
+                color: statusColor,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPriorityBadge(TriagePriority priority, ColorScheme colorScheme) {
+    final (bg, fg, label) = switch (priority) {
+      TriagePriority.critical => (
+          colorScheme.errorContainer,
+          colorScheme.onErrorContainer,
+          'Critical Priority'
+        ),
+      TriagePriority.high => (
+          const Color(0xFFFFDBCF),
+          const Color(0xFF8B1D00),
+          'High Priority'
+        ),
+      TriagePriority.normal => (
+          colorScheme.secondaryContainer,
+          colorScheme.onSecondaryContainer,
+          'Standard Triage'
+        ),
+    };
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(10),
+      ),
       child: Text(
-        msg.text,
-        style: TextStyle(fontSize: 13, color: colorScheme.onSurface),
+        label,
+        style: TextStyle(
+          fontSize: 9.5,
+          fontWeight: FontWeight.w700,
+          color: fg,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildThinkingBubble(BuildContext context, bool isDark, ColorScheme colorScheme) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        margin: const EdgeInsets.only(top: 6, bottom: 12, left: 42),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainerLowest,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: colorScheme.surfaceContainerHigh,
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
+              blurRadius: 6,
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: 14,
+              height: 14,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: colorScheme.primary,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Text(
+              'Dr. AI is assessing symptoms, active vitals & PCN formulary...',
+              style: TextStyle(
+                fontSize: 11.5,
+                fontStyle: FontStyle.italic,
+                fontWeight: FontWeight.w500,
+                color: colorScheme.primary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildChatInputBar(BuildContext context, bool isDark, ColorScheme colorScheme) {
+    return Container(
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerLowest.withValues(
+          alpha: isDark ? 0.98 : 0.95,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.05),
+            blurRadius: 16,
+            offset: const Offset(0, -4),
+          ),
+        ],
+        border: Border(
+          top: BorderSide(color: colorScheme.surfaceContainerHigh, width: 1),
+        ),
+      ),
+      padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+      child: SafeArea(
+        top: false,
+        child: Container(
+          height: 50,
+          decoration: BoxDecoration(
+            color: colorScheme.surfaceContainerLow,
+            borderRadius: BorderRadius.circular(25),
+            border: Border.all(
+              color: colorScheme.surfaceContainerHigh.withValues(alpha: 0.8),
+              width: 1,
+            ),
+          ),
+          child: Row(
+            children: [
+              const SizedBox(width: 16),
+              Expanded(
+                child: TextField(
+                  controller: _messageController,
+                  style: TextStyle(
+                    fontSize: 13.5,
+                    color: colorScheme.onSurface,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'Ask doctor follow-up question or report symptoms...',
+                    hintStyle: TextStyle(
+                      fontSize: 13,
+                      color: colorScheme.outline,
+                    ),
+                    border: InputBorder.none,
+                    isDense: true,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  textInputAction: TextInputAction.send,
+                  onSubmitted: (_) => _sendMessage(),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 4),
+                child: IconButton(
+                  icon: Container(
+                    width: 34,
+                    height: 34,
+                    decoration: BoxDecoration(
+                      color: colorScheme.primary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(Icons.arrow_upward, size: 18, color: colorScheme.onPrimary),
+                  ),
+                  tooltip: 'Send Consultation Message',
+                  onPressed: () => _sendMessage(),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

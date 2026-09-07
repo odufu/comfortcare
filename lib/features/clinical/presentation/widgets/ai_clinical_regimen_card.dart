@@ -78,6 +78,39 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
   }
 
   void _initItems() {
+    if (widget.products != null && widget.products!.isNotEmpty) {
+      _items = widget.products!.map((p) {
+        final dosageBrief = p.dosageInstructions.length > 28
+            ? '${p.dosageInstructions.substring(0, 26)}...'
+            : p.dosageInstructions;
+        return RegimenItemData(
+          id: p.id,
+          title: p.name,
+          subtitle: '${p.brand} • ${p.packSize}',
+          price: p.price,
+          isCheckedByDefault: true,
+          badgeText: (p.badge1 != null && p.badge1!.isNotEmpty)
+              ? p.badge1
+              : (p.requiresPrescription ? 'Rx' : null),
+          imageUrl: p.imageUrl,
+          tags: [
+            RegimenTagData(
+              text: p.category,
+              backgroundColor: const Color(0xFFA3F69C),
+              textColor: const Color(0xFF002204),
+              isBold: true,
+            ),
+            RegimenTagData(
+              text: dosageBrief.isNotEmpty ? dosageBrief : 'PCN Regulated',
+              backgroundColor: const Color(0xFFDAE2FD),
+              textColor: const Color(0xFF3F4850),
+            ),
+          ],
+        );
+      }).toList();
+      return;
+    }
+
     _items = [
       // Item 1: Coartem
       const RegimenItemData(
@@ -226,6 +259,10 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
   }
 
   ProductEntity _createProductEntity(RegimenItemData item) {
+    if (widget.products != null) {
+      final match = widget.products!.where((p) => p.id == item.id).firstOrNull;
+      if (match != null) return match;
+    }
     switch (item.id) {
       case 'prod-coartem-80-480':
         return const ProductModel(

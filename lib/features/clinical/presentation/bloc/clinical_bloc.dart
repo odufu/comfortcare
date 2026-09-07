@@ -52,6 +52,7 @@ class ClinicalBloc extends Bloc<ClinicalEvent, ClinicalState> {
       emit(state.copyWith(
         status: ClinicalStatus.messageSent,
         messages: finalMessages,
+        vitals: reply.vitalsSnapshot ?? state.vitals,
         isThinking: false,
       ));
     } catch (e) {
