@@ -14,6 +14,78 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
     on<SearchProducts>(_onSearchProducts);
     on<SelectCategoryFilter>(_onSelectCategoryFilter);
     on<LoadProductDetails>(_onLoadProductDetails);
+    on<CreateProductEvent>(_onCreateProduct);
+    on<UpdateProductEvent>(_onUpdateProduct);
+    on<DeleteProductEvent>(_onDeleteProduct);
+    on<UpdateProductStockEvent>(_onUpdateProductStock);
+  }
+
+  Future<void> _onCreateProduct(
+      CreateProductEvent event, Emitter<ProductsState> emit) async {
+    try {
+      await _getProductsUseCase.createProduct(event.product);
+      add(LoadProducts(
+        category: state.selectedCategory,
+        query: state.searchQuery,
+        isWholesale: state.isWholesale,
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        status: ProductsStatus.error,
+        errorMessage: 'Failed to create product: $e',
+      ));
+    }
+  }
+
+  Future<void> _onUpdateProduct(
+      UpdateProductEvent event, Emitter<ProductsState> emit) async {
+    try {
+      await _getProductsUseCase.updateProduct(event.product);
+      add(LoadProducts(
+        category: state.selectedCategory,
+        query: state.searchQuery,
+        isWholesale: state.isWholesale,
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        status: ProductsStatus.error,
+        errorMessage: 'Failed to update product: $e',
+      ));
+    }
+  }
+
+  Future<void> _onDeleteProduct(
+      DeleteProductEvent event, Emitter<ProductsState> emit) async {
+    try {
+      await _getProductsUseCase.deleteProduct(event.productId);
+      add(LoadProducts(
+        category: state.selectedCategory,
+        query: state.searchQuery,
+        isWholesale: state.isWholesale,
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        status: ProductsStatus.error,
+        errorMessage: 'Failed to delete product: $e',
+      ));
+    }
+  }
+
+  Future<void> _onUpdateProductStock(
+      UpdateProductStockEvent event, Emitter<ProductsState> emit) async {
+    try {
+      await _getProductsUseCase.updateStock(event.productId, event.newStock);
+      add(LoadProducts(
+        category: state.selectedCategory,
+        query: state.searchQuery,
+        isWholesale: state.isWholesale,
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        status: ProductsStatus.error,
+        errorMessage: 'Failed to update stock: $e',
+      ));
+    }
   }
 
   Future<void> _onLoadProducts(

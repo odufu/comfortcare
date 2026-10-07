@@ -21,4 +21,20 @@ class GetProductsUseCase {
   Future<ProductEntity?> getById(String id) {
     return _repository.getProductById(id);
   }
+
+  Future<ProductEntity> createProduct(ProductEntity product) {
+    return _repository.createProduct(product);
+  }
+
+  Future<ProductEntity> updateProduct(ProductEntity product) {
+    return _repository.updateProduct(product);
+  }
+
+  Future<void> deleteProduct(String id) {
+    return _repository.deleteProduct(id);
+  }
+
+  Future<void> updateStock(String id, int stock) {
+    return _repository.updateStock(id, stock);
+  }
 }

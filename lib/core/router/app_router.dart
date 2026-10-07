@@ -14,6 +14,7 @@ import '../../features/orders/presentation/pages/delivery_dispatch_page.dart';
 import '../../features/orders/presentation/pages/live_delivery_tracking_page.dart';
 import '../../features/orders/presentation/pages/order_confirmed_page.dart';
 import '../../features/payments/presentation/pages/payment_clinical_authorization_page.dart';
+import '../../features/products/presentation/pages/admin_product_management_page.dart';
 import '../../features/products/presentation/pages/product_details_page.dart';
 import '../../features/products/presentation/pages/products_catalog_page.dart';
 import '../../features/profile/presentation/pages/account_profile_settings_page.dart';
@@ -57,6 +58,10 @@ class AppRouter {
         builder: (context, state) => const ForgotPasswordPage(),
       ),
       // Direct Top-level Pages
+      GoRoute(
+        path: '/admin/products',
+        builder: (context, state) => const AdminProductManagementPage(),
+      ),
       GoRoute(
         path: '/products/:id',
         builder: (context, state) {

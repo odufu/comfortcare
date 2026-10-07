@@ -37,6 +37,95 @@ import 'package:comfort_care/features/clinical/domain/entities/health_vitals.dar
 import 'package:comfort_care/features/clinical/domain/entities/consultation_message.dart';
 import 'package:comfort_care/features/cart/presentation/pages/cart_prescription_review_page.dart';
 import 'package:comfort_care/features/cart/presentation/bloc/cart_event.dart';
+import 'package:comfort_care/features/products/domain/repositories/products_repository.dart';
+import 'package:comfort_care/features/products/domain/usecases/get_products.dart';
+import 'package:comfort_care/features/products/presentation/bloc/products_bloc.dart';
+import 'package:comfort_care/features/products/presentation/pages/admin_product_management_page.dart';
+
+class FakeProductsRepository implements ProductsRepository {
+  List<ProductEntity> products = [
+    const ProductEntity(
+      id: 'prod-1',
+      name: 'Lonart Forte Tablets',
+      brand: 'Bliss GVS',
+      genericName: 'Artemether + Lumefantrine',
+      packSize: '6 Tablets',
+      price: 2850.0,
+      wholesalePrice: 2200.0,
+      stock: 45,
+      category: 'Antimalarials',
+      description: 'First-line ACT antimalarial for acute uncomplicated malaria.',
+      requiresPrescription: false,
+      isColdChain: false,
+      nafdacNumber: '04-8921',
+      dosageInstructions: '1 tablet twice daily for 3 days',
+      activeIngredients: 'Artemether 80mg, Lumefantrine 480mg',
+      imageUrl: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500',
+    ),
+  ];
+
+  @override
+  Future<List<ProductEntity>> getProducts({String? category, String? query, bool isWholesale = false}) async {
+    return List.from(products);
+  }
+
+  @override
+  Future<ProductEntity?> getProductById(String id) async {
+    return products.cast<ProductEntity?>().firstWhere((p) => p?.id == id, orElse: () => null);
+  }
+
+  @override
+  Future<ProductEntity> createProduct(ProductEntity product) async {
+    products.add(product);
+    return product;
+  }
+
+  @override
+  Future<ProductEntity> updateProduct(ProductEntity product) async {
+    final idx = products.indexWhere((p) => p.id == product.id);
+    if (idx != -1) products[idx] = product;
+    return product;
+  }
+
+  @override
+  Future<void> deleteProduct(String id) async {
+    products.removeWhere((p) => p.id == id);
+  }
+
+  @override
+  Future<void> updateStock(String id, int stock) async {
+    final idx = products.indexWhere((p) => p.id == id);
+    if (idx != -1) {
+      final old = products[idx];
+      products[idx] = ProductEntity(
+        id: old.id,
+        name: old.name,
+        brand: old.brand,
+        genericName: old.genericName,
+        packSize: old.packSize,
+        price: old.price,
+        wholesalePrice: old.wholesalePrice,
+        category: old.category,
+        description: old.description,
+        dosageInstructions: old.dosageInstructions,
+        activeIngredients: old.activeIngredients,
+        nafdacNumber: old.nafdacNumber,
+        requiresPrescription: old.requiresPrescription,
+        isColdChain: old.isColdChain,
+        storageTemp: old.storageTemp,
+        stock: stock,
+        imageUrl: old.imageUrl,
+        badge1: old.badge1,
+        badge1Icon: old.badge1Icon,
+        badge2: old.badge2,
+        badge2Icon: old.badge2Icon,
+        packLabel: old.packLabel,
+        cartonText: old.cartonText,
+        isCartonHighlight: old.isCartonHighlight,
+      );
+    }
+  }
+}
 
 class FakeAuthRepository implements AuthRepository {
   UserEntity? currentUser;
@@ -1038,6 +1127,45 @@ void main() {
       // Verify Prescriptions Regimen is represented in the conversation
       expect(find.text('Recommended Drugs'), findsWidgets);
       expect(find.text('Coartem 80/480mg'), findsWidgets);
+    });
+  });
+
+  group('Admin Product Management & Supabase Inventory Tests', () {
+    testWidgets('AdminProductManagementPage renders inventory metrics and handles stock updates', (tester) async {
+      tester.view.physicalSize = const Size(1200, 900);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() => tester.view.resetPhysicalSize());
+
+      final repo = FakeProductsRepository();
+      final useCase = GetProductsUseCase(repo);
+      final productsBloc = ProductsBloc(getProductsUseCase: useCase);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: BlocProvider<ProductsBloc>.value(
+            value: productsBloc,
+            child: const AdminProductManagementPage(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('ComfortCare Inventory Hub'), findsOneWidget);
+      expect(find.text('Total SKUs'), findsOneWidget);
+      expect(find.text('Lonart Forte Tablets'), findsOneWidget);
+      expect(find.textContaining('Bliss GVS'), findsWidgets);
+      expect(find.text('Add Product'), findsOneWidget);
+
+      // Tap Add Product to open dialog
+      await tester.tap(find.text('Add Product'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Add New Medication'), findsOneWidget);
+      expect(find.text('Cancel'), findsOneWidget);
+
+      // Dismiss dialog
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
     });
   });
 }

@@ -1,4 +1,5 @@
 import 'package:uuid/uuid.dart';
+import '../../../../core/services/gemini_service.dart';
 import '../../../products/data/models/product_model.dart';
 import '../../domain/entities/consultation_message.dart';
 import '../../domain/entities/health_vitals.dart';
@@ -149,6 +150,35 @@ class ClinicalRemoteDataSourceImpl implements ClinicalRemoteDataSource {
         ),
         clinicalNotes: 'Triggered Emergency Triage Protocol.',
       );
+    }
+
+    // 1. Try real live AI response from GeminiService (Gemini 2.5 Flash)
+    try {
+      final aiResponse = await GeminiService.generateClinicalResponse(
+        prompt: text,
+      );
+      if (aiResponse.trim().isNotEmpty) {
+        final priority = lower.contains('fever') ||
+                lower.contains('severe') ||
+                lower.contains('vomit') ||
+                lower.contains('bleeding')
+            ? TriagePriority.high
+            : TriagePriority.normal;
+
+        return ConsultationMessageEntity(
+          id: 'msg-${_uuid.v4().substring(0, 6)}',
+          text: aiResponse,
+          isFromUser: false,
+          timestamp: DateTime.now(),
+          priority: priority,
+          clinicalNotes:
+              'Real-Time Clinical AI Consultation via Dr. Comfort (Gemini 2.5 Flash) • PCN Nigeria Standards.',
+          vitalsSnapshot: _currentVitals,
+          recommendedProducts: _pickRelevantProducts(lower),
+        );
+      }
+    } catch (_) {
+      // Gracefully fall through to smart offline heuristic protocols
     }
 
     if (lower.contains('food') || lower.contains('interaction') || lower.contains('diet')) {
@@ -511,5 +541,108 @@ class ClinicalRemoteDataSourceImpl implements ClinicalRemoteDataSource {
   Future<void> logVitals(HealthVitalsEntity vitals) async {
     await Future.delayed(const Duration(milliseconds: 300));
     _currentVitals = vitals;
+  }
+
+  List<ProductModel> _pickRelevantProducts(String lower) {
+    final list = <ProductModel>[];
+    if (lower.contains('malaria') || lower.contains('chills') || lower.contains('mosquito')) {
+      list.add(const ProductModel(
+        id: 'prod-coartem-80-480',
+        name: 'Coartem 80/480mg',
+        brand: 'Novartis',
+        genericName: 'Novartis • 6 Tablets',
+        packSize: '6 Tablets Blister Pack',
+        price: 4200.0,
+        wholesalePrice: 3833.33,
+        category: 'Antimalarials',
+        description: 'First-line ACT antimalarial for Plasmodium falciparum clearance.',
+        dosageInstructions: 'Take 1 tablet twice daily with meals for 3 consecutive days.',
+        activeIngredients: 'Artemether (80 mg), Lumefantrine (480 mg)',
+        nafdacNumber: 'NAFDAC: 04-2011',
+        imageUrl:
+            'https://lh3.googleusercontent.com/aida-public/AB6AXuCYoLw9r-RmsXTnOXgJM3rXNLOWTp4aNanpbJT4yg1dHRH5bh8wBJw_eZkLeWPOHuZZ_kVoP-UXzPUtD-sfGLck1C3w9gjm4SZ56JuI0g4F_HK7Ob0BQbZ3Bi0BW4x66DmgyxUZGJx_OLz-TnFNPyQg49zsaiNsncvjT35QqHDYEHcDPjQ54vxtV0J_wBbh5rV6n2cXy_EKqVhLe6jV77o16zZPiZGVmHho2akb6gLVW1oRjZXo8o5CaNgYsVNmVvK3mQ',
+      ));
+    }
+    if (lower.contains('headache') ||
+        lower.contains('pain') ||
+        lower.contains('fever') ||
+        lower.contains('temperature') ||
+        lower.contains('ache')) {
+      list.add(const ProductModel(
+        id: 'prod-emzor-paracetamol',
+        name: 'Emzor Paracetamol 500mg',
+        brand: 'Emzor Nigeria',
+        genericName: 'Pain & Fever Relief',
+        packSize: '100 Tablets Dispenser',
+        price: 1200.0,
+        wholesalePrice: 950.0,
+        category: 'Vitamins & Immunity',
+        description: 'Antipyretic and analgesic for rapid relief of headache and fever.',
+        dosageInstructions: 'Take 2 tablets every 8 hours after food.',
+        activeIngredients: 'Paracetamol BP (500 mg)',
+        nafdacNumber: 'NAFDAC Approved 04-0125',
+        imageUrl:
+            'https://lh3.googleusercontent.com/aida-public/AB6AXuCG62rWr9JxPQ9S2YUheX_IV-3Z7b3R-0iE31gDJAYwxN_ZujSybiUkPJ-lGbFumwZqaBqkz749PIdssh9GLR_Zh3RqLolYgmipDWk4YiVqtlUXFGJjcvV7dUMj5LCgiqEoEDDRy9QdCxjuCaORKcyjhgyon9Tm6M7yQf6lH-B1ap5BkzBQQEouCNunxIoDlzSL0-GXsf0GNJFvnDX27doXELYtgvFIbnw6vcwIWn2A1z1iWT03rkAq',
+      ));
+    }
+    if (lower.contains('bp') ||
+        lower.contains('pressure') ||
+        lower.contains('heart') ||
+        lower.contains('hypertension')) {
+      list.add(const ProductModel(
+        id: 'prod-omron-m2',
+        name: 'Omron M2 Basic BP',
+        brand: 'Omron',
+        genericName: 'Upper Arm Digital',
+        packSize: '1 Complete Device with Cuff',
+        price: 38500.0,
+        wholesalePrice: 32000.0,
+        category: 'Health Devices',
+        description: 'Clinically validated digital blood pressure monitor with Intellisense.',
+        dosageInstructions: 'Measure seated after 5 minutes of rest, morning and evening.',
+        activeIngredients: 'Oscillometric Sensor, Clinical Validation Protocol',
+        nafdacNumber: '3yr Warranty',
+        imageUrl:
+            'https://images.unsplash.com/photo-1631815588090-d4bfec5b1ccb?w=600&auto=format&fit=crop&q=80',
+      ));
+    }
+    if (lower.contains('infection') || lower.contains('cough') || lower.contains('antibiotic')) {
+      list.add(const ProductModel(
+        id: 'prod-augmentin-625',
+        name: 'Augmentin 625mg',
+        brand: 'GSK',
+        genericName: 'Amoxicillin + Clavulanic Acid (14 Tabs)',
+        packSize: '14 Film-Coated Tablets',
+        price: 7500.0,
+        wholesalePrice: 6200.0,
+        category: 'Antibiotics',
+        description: 'Broad spectrum antibacterial therapy for respiratory tract infections.',
+        dosageInstructions: 'Take 1 tablet every 12 hours at start of meals as prescribed.',
+        activeIngredients: 'Amoxicillin Trihydrate (500 mg), Potassium Clavulanate (125 mg)',
+        nafdacNumber: 'NAFDAC Reg. No. 04-2194',
+        requiresPrescription: true,
+        imageUrl:
+            'https://lh3.googleusercontent.com/aida-public/AB6AXuCvRFtfhY1CZMrdW6GR2-AFf7eBxEjGi0yfEf-bdUQV5O_S-oj4eV5iV0WylJ1dM-2knDIf0oPguNIa4SGr7pmZHKHAuMQgNUFUW5VK1z0QY5W2RtE_b2D7zSLND7XlH5H0npyqlutF9FPCgW74_Gapenn7XZLj2_o6MvopsBRmdKAqqhUnQVMaU87Z959jC9WMAuimo9QPmEEO-U6aQjGnxUhqwQCaTgGdJn-x0jMJAeK10cph4Ec-',
+      ));
+    }
+    if (list.isEmpty) {
+      list.add(const ProductModel(
+        id: 'prod-panadol-extra',
+        name: 'Panadol Extra Tablets',
+        brand: 'GlaxoSmithKline (GSK)',
+        genericName: 'Paracetamol 500mg + Caffeine 65mg',
+        packSize: '10 Blister Packs (20 Tabs)',
+        price: 1850.0,
+        wholesalePrice: 1450.0,
+        category: 'Vitamins & Immunity',
+        description: 'Tough on pain, gentle on stomach.',
+        dosageInstructions: 'Take 1-2 tablets every 4-6 hours as needed.',
+        activeIngredients: 'Paracetamol (500 mg), Caffeine (65 mg)',
+        nafdacNumber: 'NAFDAC Reg. No. 04-0312',
+        imageUrl:
+            'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&auto=format&fit=crop&q=60',
+      ));
+    }
+    return list;
   }
 }

@@ -219,6 +219,9 @@ class _CCSideNavState extends State<CCSideNav> {
                         _buildAiDoctorCard(context, colorScheme, textTheme)
                       else
                         _buildAiDoctorMiniButton(context, colorScheme),
+
+                      const SizedBox(height: 10),
+                      _buildAdminLink(context, isNarrow, colorScheme),
                     ],
                   ),
                 ),
@@ -558,6 +561,79 @@ class _CCSideNavState extends State<CCSideNav> {
               size: 22,
               color: Colors.white,
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAdminLink(
+      BuildContext context, bool isCollapsed, ColorScheme colorScheme) {
+    if (isCollapsed) {
+      return Tooltip(
+        message: 'Admin Inventory Hub',
+        child: Material(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(14),
+          child: InkWell(
+            onTap: () => context.push('/admin/products'),
+            borderRadius: BorderRadius.circular(14),
+            child: Container(
+              height: 48,
+              alignment: Alignment.center,
+              child: Icon(
+                Icons.admin_panel_settings_outlined,
+                size: 22,
+                color: colorScheme.secondary,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Material(
+      color: colorScheme.secondaryContainer.withValues(alpha: 0.25),
+      borderRadius: BorderRadius.circular(14),
+      child: InkWell(
+        onTap: () => context.push('/admin/products'),
+        borderRadius: BorderRadius.circular(14),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          child: Row(
+            children: [
+              Icon(
+                Icons.admin_panel_settings_outlined,
+                size: 20,
+                color: colorScheme.secondary,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'Admin Inventory',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: colorScheme.secondary,
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: colorScheme.secondary.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  'Live',
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.secondary,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

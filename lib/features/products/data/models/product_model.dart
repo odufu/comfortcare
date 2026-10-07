@@ -28,6 +28,35 @@ class ProductModel extends ProductEntity {
     super.isCartonHighlight = false,
   });
 
+  factory ProductModel.fromEntity(ProductEntity entity) {
+    return ProductModel(
+      id: entity.id,
+      name: entity.name,
+      brand: entity.brand,
+      genericName: entity.genericName,
+      packSize: entity.packSize,
+      price: entity.price,
+      wholesalePrice: entity.wholesalePrice,
+      category: entity.category,
+      description: entity.description,
+      dosageInstructions: entity.dosageInstructions,
+      activeIngredients: entity.activeIngredients,
+      nafdacNumber: entity.nafdacNumber,
+      requiresPrescription: entity.requiresPrescription,
+      isColdChain: entity.isColdChain,
+      storageTemp: entity.storageTemp,
+      stock: entity.stock,
+      imageUrl: entity.imageUrl,
+      badge1: entity.badge1,
+      badge1Icon: entity.badge1Icon,
+      badge2: entity.badge2,
+      badge2Icon: entity.badge2Icon,
+      packLabel: entity.packLabel,
+      cartonText: entity.cartonText,
+      isCartonHighlight: entity.isCartonHighlight,
+    );
+  }
+
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     return ProductModel(
       id: json['id'] as String? ?? '',

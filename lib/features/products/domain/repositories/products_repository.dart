@@ -8,4 +8,9 @@ abstract class ProductsRepository {
   });
 
   Future<ProductEntity?> getProductById(String id);
+
+  Future<ProductEntity> createProduct(ProductEntity product);
+  Future<ProductEntity> updateProduct(ProductEntity product);
+  Future<void> deleteProduct(String id);
+  Future<void> updateStock(String id, int stock);
 }

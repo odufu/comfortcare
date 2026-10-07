@@ -1,3 +1,4 @@
+import '../../../../core/constants/api_constants.dart';
 import '../../../../core/services/supabase_service.dart';
 import '../models/product_model.dart';
 
@@ -9,10 +10,15 @@ abstract class ProductsRemoteDataSource {
   });
 
   Future<ProductModel?> getProductById(String id);
+
+  Future<ProductModel> createProduct(ProductModel product);
+  Future<ProductModel> updateProduct(ProductModel product);
+  Future<void> deleteProduct(String id);
+  Future<void> updateStock(String id, int stock);
 }
 
 class ProductsRemoteDataSourceImpl implements ProductsRemoteDataSource {
-  static const List<ProductModel> _mockProducts = [
+  static final List<ProductModel> _mockProducts = [
     ProductModel(
       id: 'prod-coartem-80-480',
       name: 'Coartem 80/480mg',
@@ -307,13 +313,23 @@ class ProductsRemoteDataSourceImpl implements ProductsRemoteDataSource {
     final client = SupabaseService.client;
     if (client != null && SupabaseService.isInitialized) {
       try {
-        var req = client.from('products').select();
+        var req = client.from(ApiConstants.productsTable).select();
         if (category != null && category != 'All') {
           req = req.eq('category', category);
         }
-        final res = await req;
+        final res = await req.order('created_at', ascending: false);
         if (res.isNotEmpty) {
-          return res.map((e) => ProductModel.fromJson(e)).toList();
+          var fetched = res.map((e) => ProductModel.fromJson(e)).toList();
+          if (query != null && query.trim().isNotEmpty) {
+            final q = query.toLowerCase().trim();
+            fetched = fetched
+                .where((p) =>
+                    p.name.toLowerCase().contains(q) ||
+                    p.genericName.toLowerCase().contains(q) ||
+                    p.brand.toLowerCase().contains(q))
+                .toList();
+          }
+          return fetched;
         }
       } catch (_) {
         // Fallback to mock
@@ -356,7 +372,11 @@ class ProductsRemoteDataSourceImpl implements ProductsRemoteDataSource {
     final client = SupabaseService.client;
     if (client != null && SupabaseService.isInitialized) {
       try {
-        final res = await client.from('products').select().eq('id', id).maybeSingle();
+        final res = await client
+            .from(ApiConstants.productsTable)
+            .select()
+            .eq('id', id)
+            .maybeSingle();
         if (res != null) {
           return ProductModel.fromJson(res);
         }
@@ -365,5 +385,121 @@ class ProductsRemoteDataSourceImpl implements ProductsRemoteDataSource {
 
     await Future.delayed(const Duration(milliseconds: 150));
     return _mockProducts.where((p) => p.id == id).firstOrNull ?? _mockProducts.first;
+  }
+
+  @override
+  Future<ProductModel> createProduct(ProductModel product) async {
+    final client = SupabaseService.client;
+    if (client != null && SupabaseService.isInitialized) {
+      try {
+        final payload = product.toJson();
+        final res = await client
+            .from(ApiConstants.productsTable)
+            .insert(payload)
+            .select()
+            .single();
+        final created = ProductModel.fromJson(res);
+        _mockProducts.insert(0, created);
+        return created;
+      } catch (_) {
+        // Fallback
+      }
+    }
+
+    _mockProducts.insert(0, product);
+    return product;
+  }
+
+  @override
+  Future<ProductModel> updateProduct(ProductModel product) async {
+    final client = SupabaseService.client;
+    if (client != null && SupabaseService.isInitialized) {
+      try {
+        final payload = product.toJson();
+        final res = await client
+            .from(ApiConstants.productsTable)
+            .update(payload)
+            .eq('id', product.id)
+            .select()
+            .single();
+        final updated = ProductModel.fromJson(res);
+        final index = _mockProducts.indexWhere((p) => p.id == product.id);
+        if (index != -1) {
+          _mockProducts[index] = updated;
+        }
+        return updated;
+      } catch (_) {
+        // Fallback
+      }
+    }
+
+    final index = _mockProducts.indexWhere((p) => p.id == product.id);
+    if (index != -1) {
+      _mockProducts[index] = product;
+    }
+    return product;
+  }
+
+  @override
+  Future<void> deleteProduct(String id) async {
+    final client = SupabaseService.client;
+    if (client != null && SupabaseService.isInitialized) {
+      try {
+        await client
+            .from(ApiConstants.productsTable)
+            .delete()
+            .eq('id', id);
+      } catch (_) {
+        // Fallback
+      }
+    }
+
+    _mockProducts.removeWhere((p) => p.id == id);
+  }
+
+  @override
+  Future<void> updateStock(String id, int stock) async {
+    final client = SupabaseService.client;
+    if (client != null && SupabaseService.isInitialized) {
+      try {
+        await client
+            .from(ApiConstants.productsTable)
+            .update({'stock': stock})
+            .eq('id', id);
+      } catch (_) {
+        // Fallback
+      }
+    }
+
+    final index = _mockProducts.indexWhere((p) => p.id == id);
+    if (index != -1) {
+      final p = _mockProducts[index];
+      _mockProducts[index] = ProductModel(
+        id: p.id,
+        name: p.name,
+        brand: p.brand,
+        genericName: p.genericName,
+        packSize: p.packSize,
+        price: p.price,
+        wholesalePrice: p.wholesalePrice,
+        category: p.category,
+        description: p.description,
+        dosageInstructions: p.dosageInstructions,
+        activeIngredients: p.activeIngredients,
+        nafdacNumber: p.nafdacNumber,
+        requiresPrescription: p.requiresPrescription,
+        isColdChain: p.isColdChain,
+        storageTemp: p.storageTemp,
+        stock: stock,
+        imageUrl: p.imageUrl,
+        badge1: p.badge1,
+        badge1Icon: p.badge1Icon,
+        badge2: p.badge2,
+        badge2Icon: p.badge2Icon,
+        packLabel: p.packLabel,
+        cartonText: p.cartonText,
+        isCartonHighlight: p.isCartonHighlight,
+      );
+    }
   }
 }
