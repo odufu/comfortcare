@@ -9,8 +9,19 @@ class ClinicalRepositoryImpl implements ClinicalRepository {
   ClinicalRepositoryImpl(this._remoteDataSource);
 
   @override
-  Future<List<ConsultationMessageEntity>> getConsultationHistory() {
-    return _remoteDataSource.getConsultationHistory();
+  Future<List<ConsultationMessageEntity>> getConsultationHistory({
+    String? userName,
+    bool forceNewSession = true,
+  }) {
+    return _remoteDataSource.getConsultationHistory(
+      userName: userName,
+      forceNewSession: forceNewSession,
+    );
+  }
+
+  @override
+  Future<List<ConsultationMessageEntity>> startNewSession({String? userName}) {
+    return _remoteDataSource.startNewSession(userName: userName);
   }
 
   @override
@@ -26,5 +37,10 @@ class ClinicalRepositoryImpl implements ClinicalRepository {
   @override
   Future<void> logVitals(HealthVitalsEntity vitals) {
     return _remoteDataSource.logVitals(vitals);
+  }
+
+  @override
+  Future<void> clearHistory() {
+    return _remoteDataSource.clearHistory();
   }
 }

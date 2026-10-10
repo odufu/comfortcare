@@ -93,11 +93,15 @@ class CCButton extends StatelessWidget {
                     leadingIcon!,
                     const SizedBox(width: 8),
                   ],
-                  Text(
-                    label,
-                    style: textTheme.labelLarge?.copyWith(
-                      color: foregroundColor,
-                      fontWeight: FontWeight.w700,
+                  Flexible(
+                    child: Text(
+                      label,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: textTheme.labelLarge?.copyWith(
+                        color: foregroundColor,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                   if (trailingIcon != null) ...[

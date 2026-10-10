@@ -103,24 +103,31 @@ class PrescriptionDossierCard extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.check_circle,
-                      color: colorScheme.secondary,
-                      size: 16,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      'Verified by Pharm. Halima Bello (PCN #44892)',
-                      style: textTheme.labelSmall?.copyWith(
-                        color: colorScheme.onSecondaryContainer,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 11,
+                Expanded(
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.check_circle,
+                        color: colorScheme.secondary,
+                        size: 16,
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          'Verified by Pharm. Halima Bello (PCN #44892)',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: textTheme.labelSmall?.copyWith(
+                            color: colorScheme.onSecondaryContainer,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
+                const SizedBox(width: 8),
                 Text(
                   'Rx Approved',
                   style: textTheme.labelSmall?.copyWith(

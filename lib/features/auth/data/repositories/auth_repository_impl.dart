@@ -38,6 +38,8 @@ class AuthRepositoryImpl implements AuthRepository {
     required UserRole role,
     String? facilityName,
     String? licenseNumber,
+    String? specialty,
+    String? documentationName,
   }) async {
     final user = await _remoteDataSource.register(
       fullName: fullName,
@@ -47,6 +49,8 @@ class AuthRepositoryImpl implements AuthRepository {
       role: role,
       facilityName: facilityName,
       licenseNumber: licenseNumber,
+      specialty: specialty,
+      documentationName: documentationName,
     );
     await _localDataSource.cacheUser(user);
     await _localDataSource.saveToken('token-${user.id}');

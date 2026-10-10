@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/extensions/context_extensions.dart';
 import '../../../../core/extensions/currency_extensions.dart';
+import '../../../../core/widgets/cc_shimmer.dart';
 import '../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../../cart/presentation/bloc/cart_event.dart';
 import '../../domain/entities/product.dart';
@@ -255,17 +256,13 @@ class ProductCard extends StatelessWidget {
                       child: CachedNetworkImage(
                         imageUrl: product.imageUrl,
                         fit: BoxFit.cover,
-                        placeholder: (context, url) => Container(
-                          color: colorScheme.surfaceContainerLow,
-                          child: Center(
-                            child: SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: colorScheme.primary,
-                              ),
-                            ),
+                        memCacheWidth: 400,
+                        memCacheHeight: 400,
+                        fadeInDuration: const Duration(milliseconds: 200),
+                        fadeOutDuration: const Duration(milliseconds: 100),
+                        placeholder: (context, url) => CCShimmer(
+                          child: Container(
+                            color: colorScheme.surfaceContainerHigh,
                           ),
                         ),
                         errorWidget: (context, url, error) => Center(

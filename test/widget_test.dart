@@ -41,6 +41,7 @@ import 'package:comfort_care/features/products/domain/repositories/products_repo
 import 'package:comfort_care/features/products/domain/usecases/get_products.dart';
 import 'package:comfort_care/features/products/presentation/bloc/products_bloc.dart';
 import 'package:comfort_care/features/products/presentation/pages/admin_product_management_page.dart';
+import 'package:comfort_care/features/dashboard/presentation/pages/onboarding_page.dart';
 
 class FakeProductsRepository implements ProductsRepository {
   List<ProductEntity> products = [
@@ -156,8 +157,18 @@ class FakeAuthRepository implements AuthRepository {
     required UserRole role,
     String? facilityName,
     String? licenseNumber,
+    String? specialty,
+    String? documentationName,
   }) async {
-    return UserEntity(id: 'test-user-2', email: email, fullName: fullName, phoneNumber: phoneNumber, role: role);
+    return UserEntity(
+      id: 'test-user-2',
+      email: email,
+      fullName: fullName,
+      phoneNumber: phoneNumber,
+      role: role,
+      specialty: specialty,
+      documentationName: documentationName,
+    );
   }
 
   @override
@@ -175,39 +186,25 @@ class FakeClinicalRepository implements ClinicalRepository {
   );
 
   @override
-  Future<List<ConsultationMessageEntity>> getConsultationHistory() async => [
+  Future<List<ConsultationMessageEntity>> getConsultationHistory({
+    String? userName,
+    bool forceNewSession = true,
+  }) async => [
         ConsultationMessageEntity(
-          id: 'msg-01',
-          text: "Good afternoon. I've had intense headache and fever of 38.6°C.",
-          isFromUser: true,
-          timestamp: DateTime.now().subtract(const Duration(minutes: 5)),
-        ),
-        ConsultationMessageEntity(
-          id: 'msg-02',
-          text: "Hello, based on your symptoms this indicates acute uncomplicated malaria.",
+          id: 'msg-welcome',
+          text: "Hello! I am Dr. Comfort, your AI Clinical Pharmacist at ComfortCare Abuja. How may I assist you with your health today?",
           isFromUser: false,
-          timestamp: DateTime.now().subtract(const Duration(minutes: 4)),
-          priority: TriagePriority.high,
-          clinicalNotes: 'Reviewed against PCN malaria management guidelines.',
-          vitalsSnapshot: vitals,
-          recommendedProducts: const [
-            ProductEntity(
-              id: 'prod-coartem-80-480',
-              name: 'Coartem 80/480mg',
-              brand: 'Novartis',
-              genericName: 'Artemether 80mg + Lumefantrine 480mg',
-              category: 'Antimalarial',
-              packSize: '6 Tablets',
-              price: 4200.0,
-              wholesalePrice: 3900.0,
-              description: 'Antimalarial ACT therapy',
-              dosageInstructions: '1 tablet with fatty food',
-              activeIngredients: 'Artemether 80mg, Lumefantrine 480mg',
-              nafdacNumber: '04-2011',
-              imageUrl: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500',
-              requiresPrescription: true,
-            ),
-          ],
+          timestamp: DateTime.now(),
+        ),
+      ];
+
+  @override
+  Future<List<ConsultationMessageEntity>> startNewSession({String? userName}) async => [
+        ConsultationMessageEntity(
+          id: 'msg-welcome',
+          text: "Hello! I am Dr. Comfort, your AI Clinical Pharmacist at ComfortCare Abuja. How may I assist you with your health today?",
+          isFromUser: false,
+          timestamp: DateTime.now(),
         ),
       ];
 
@@ -218,6 +215,9 @@ class FakeClinicalRepository implements ClinicalRepository {
   Future<void> logVitals(HealthVitalsEntity v) async {
     vitals = v;
   }
+
+  @override
+  Future<void> clearHistory() async {}
 
   @override
   Future<ConsultationMessageEntity> sendMessage(String text) async {
@@ -484,12 +484,16 @@ void main() {
         ),
       );
 
-      expect(find.text('AI Doctor'), findsOneWidget);
-      expect(find.text('Live Co-Pilot'), findsOneWidget);
-      expect(find.text('PCN'), findsOneWidget);
-      expect(find.byIcon(Icons.smart_toy), findsOneWidget);
+      // Verify trailing text is removed
+      expect(find.text('AI Doctor'), findsNothing);
+      expect(find.text('Live Co-Pilot'), findsNothing);
+      expect(find.text('PCN'), findsNothing);
 
-      await tester.tap(find.text('AI Doctor'));
+      // Verify medical AI chat icon
+      expect(find.byIcon(Icons.chat_bubble_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.add), findsOneWidget);
+
+      await tester.tap(find.byType(CCFloatingAiDoctorButton));
       expect(pressed, isTrue);
     });
 
@@ -616,7 +620,7 @@ void main() {
   });
 
   group('Core Bottom Navigation Restructuring Tests', () {
-    testWidgets('CCBottomNavBar renders exact 5 core anchors: Home, Pharmacy, Orders, Profile, Health Vitals', (tester) async {
+    testWidgets('CCBottomNavBar renders exact 5 core anchors: Home, Pharmacy, AI Doctor, Orders, Profile', (tester) async {
       int tappedIndex = -1;
 
       await tester.pumpWidget(
@@ -636,34 +640,34 @@ void main() {
       // Verify all 5 core anchors exist
       expect(find.text('Home'), findsOneWidget);
       expect(find.text('Pharmacy'), findsOneWidget);
+      expect(find.text('AI Doctor'), findsOneWidget);
       expect(find.text('Orders'), findsOneWidget);
       expect(find.text('Profile'), findsOneWidget);
-      expect(find.text('Health Vitals'), findsOneWidget);
 
       // Verify Icons
       expect(find.byIcon(Icons.home), findsOneWidget);
       expect(find.byIcon(Icons.local_pharmacy_outlined), findsOneWidget);
+      expect(find.byIcon(Icons.smart_toy), findsOneWidget);
       expect(find.byIcon(Icons.receipt_long_outlined), findsOneWidget);
       expect(find.byIcon(Icons.person_outline), findsOneWidget);
-      expect(find.byIcon(Icons.monitor_heart_outlined), findsOneWidget);
 
       // Tap Pharmacy tab (index 1)
       await tester.tap(find.text('Pharmacy'));
       await tester.pump();
       expect(tappedIndex, 1);
 
-      // Tap Orders tab (index 2)
-      await tester.tap(find.text('Orders'));
+      // Tap AI Doctor tab (index 2)
+      await tester.tap(find.text('AI Doctor'));
       await tester.pump();
       expect(tappedIndex, 2);
 
-      // Tap Profile tab (index 3)
-      await tester.tap(find.text('Profile'));
+      // Tap Orders tab (index 3)
+      await tester.tap(find.text('Orders'));
       await tester.pump();
       expect(tappedIndex, 3);
 
-      // Tap Health Vitals tab (index 4)
-      await tester.tap(find.text('Health Vitals'));
+      // Tap Profile tab (index 4)
+      await tester.tap(find.text('Profile'));
       await tester.pump();
       expect(tappedIndex, 4);
     });
@@ -884,7 +888,7 @@ void main() {
   });
 
   group('Login Screen & Dual-Pane Layout Tests', () {
-    testWidgets('LoginPage renders role selector, demo pills, biometric trigger, and signs in', (tester) async {
+    testWidgets('LoginPage renders simplistic login form with default accounts dropdown, credentials, and signs in', (tester) async {
       final fakeAuthRepo = FakeAuthRepository();
       final authBloc = AuthBloc(
         loginUseCase: LoginUseCase(fakeAuthRepo),
@@ -905,24 +909,32 @@ void main() {
       );
       await tester.pump();
 
-      // Verify regulatory badges & titles
+      // Verify title and simplistic form elements
       expect(find.text('Sign In to Dispensary Hub'), findsOneWidget);
-      expect(find.text('Individual / Patient'), findsOneWidget);
-      expect(find.text('Clinic / Wholesale'), findsWidgets);
+      expect(find.text('Default Role Account (Quick Access)'), findsOneWidget);
+      expect(find.text('Email or Phone Number'), findsOneWidget);
+      expect(find.text('Password'), findsOneWidget);
+      expect(find.text('Sign In'), findsOneWidget);
 
-      // Verify quick demo pills
-      expect(find.text('Quick Demo Logins:'), findsOneWidget);
+      // Verify default account loaded initially
+      expect(find.text('Amina Bello'), findsOneWidget);
       expect(find.text('Patient'), findsOneWidget);
-      expect(find.text('Pharmacist'), findsOneWidget);
 
-      // Verify Biometric button
-      expect(find.text('Fast Biometric Sign In'), findsOneWidget);
+      // Tap Dropdown to open role list
+      await tester.tap(find.text('Amina Bello'));
+      await tester.pumpAndSettle();
 
-      // Tap Clinic / Wholesale demo pill
-      await tester.tap(find.text('Pharmacist'));
+      // Select Pharmacist account from dropdown
+      expect(find.text('MedPlus Pharmacy Ltd'), findsWidgets);
+      await tester.tap(find.text('MedPlus Pharmacy Ltd').last);
+      await tester.pumpAndSettle();
+
+      expect(authBloc.state.selectedRole, UserRole.pharmacy);
+      expect(find.text('pharmacy@comfortcare.ng'), findsWidgets);
+
+      // Tap Sign In CTA
+      await tester.tap(find.text('Sign In'));
       await tester.pump();
-
-      expect(authBloc.state.selectedRole, UserRole.pharmacist);
     });
   });
 
@@ -1064,10 +1076,9 @@ void main() {
       });
       expect(containerFinder, findsOneWidget);
 
-      // Verify header branding and PCN badge
-      expect(find.text('ComfortCare AI Doctor'), findsOneWidget);
-      expect(find.text('PCN Regulated'), findsOneWidget);
-      expect(find.text('Live Pharmacist Co-Pilot Active'), findsOneWidget);
+      // Verify clean header branding
+      expect(find.text('Dr. Comfort'), findsOneWidget);
+      expect(find.text('Online • AI Specialist'), findsOneWidget);
     });
 
     testWidgets('Sending a message simulates doctor reply with health stats and prescriptions', (tester) async {
@@ -1096,22 +1107,17 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      // Verify initial message history loaded
-      expect(find.text("Good afternoon. I've had intense headache and fever of 38.6°C."), findsOneWidget);
-      expect(find.text('Patient Biometric Telemetry'), findsOneWidget);
-      expect(find.text('120/80'), findsOneWidget); // Blood pressure reading
-      expect(find.text('Recommended Drugs'), findsOneWidget); // Prescriptions
+      // Verify initial welcoming greeting is loaded
+      expect(find.textContaining('Dr. Comfort'), findsWidgets);
 
-      // Send message via quick action chip
-      final chipFinder = find.text('Ask about food interactions');
-      await tester.ensureVisible(chipFinder);
-      await tester.pumpAndSettle();
-      await tester.tap(chipFinder);
+      // Send message via text input field
+      await tester.enterText(find.byType(TextField), 'Ask about food interactions');
+      await tester.tap(find.byIcon(Icons.arrow_upward));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      // User message is rendered in the chat (found in user message bubble and in chip list)
-      expect(find.text('Ask about food interactions'), findsNWidgets(2));
+      // User message is rendered in the chat
+      expect(find.text('Ask about food interactions'), findsOneWidget);
 
       // Settle async thinking simulation
       await tester.pump(const Duration(milliseconds: 500));
@@ -1166,6 +1172,88 @@ void main() {
       // Dismiss dialog
       await tester.tap(find.text('Cancel'));
       await tester.pumpAndSettle();
+    });
+  });
+
+  group('Onboarding Responsive Desktop & Mobile Tests', () {
+    testWidgets('OnboardingPage renders dual-pane enterprise layout on desktop viewport', (tester) async {
+      tester.view.physicalSize = const Size(1200, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() => tester.view.resetPhysicalSize());
+
+      final fakeStorage = FakeLocalStorageService();
+      final fakeAuthRepo = FakeAuthRepository();
+      final authBloc = AuthBloc(
+        loginUseCase: LoginUseCase(fakeAuthRepo),
+        logoutUseCase: LogoutUseCase(fakeAuthRepo),
+        getCurrentUserUseCase: GetCurrentUserUseCase(fakeAuthRepo),
+        authRepository: fakeAuthRepo,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: BlocProvider<AuthBloc>.value(
+            value: authBloc,
+            child: OnboardingPage(localStorageService: fakeStorage),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Verify Left Pane Desktop Brand Showcase & Telemetry
+      expect(find.text('Direct Pharmaceutical Supply &\nLive Telehealth Network'), findsOneWidget);
+      expect(find.text('Cold-Chain Telemetry Active: 3.8°C Central Depot'), findsOneWidget);
+      expect(find.text('Feature 01'), findsOneWidget);
+      expect(find.text('Feature 02'), findsOneWidget);
+      expect(find.text('Feature 03'), findsOneWidget);
+
+      // Verify Right Pane Desktop Actions & Dynamic Tier Card
+      expect(find.text('Welcome to ComfortCare'), findsOneWidget);
+      expect(find.text('Individual Patient Tier Benefits'), findsOneWidget);
+      expect(find.text('25-35 Min Doorstep Delivery'), findsOneWidget);
+      expect(find.text('Create Patient Account'), findsOneWidget);
+      expect(find.text('Sign In to Dispensary Hub'), findsOneWidget);
+
+      // Test switching role to wholesale on desktop
+      await tester.tap(find.text('Clinic / Wholesale'));
+      await tester.pumpAndSettle();
+
+      expect(authBloc.state.selectedRole, UserRole.wholesale);
+      expect(find.text('Wholesale & Clinic Tier Benefits'), findsOneWidget);
+      expect(find.text('Wholesale Cartons & Packs'), findsOneWidget);
+      expect(find.text('Create Clinic / Wholesale Account'), findsOneWidget);
+    });
+
+    testWidgets('OnboardingPage renders clean constrained layout on mobile viewport', (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() => tester.view.resetPhysicalSize());
+
+      final fakeStorage = FakeLocalStorageService();
+      final fakeAuthRepo = FakeAuthRepository();
+      final authBloc = AuthBloc(
+        loginUseCase: LoginUseCase(fakeAuthRepo),
+        logoutUseCase: LogoutUseCase(fakeAuthRepo),
+        getCurrentUserUseCase: GetCurrentUserUseCase(fakeAuthRepo),
+        authRepository: fakeAuthRepo,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: BlocProvider<AuthBloc>.value(
+            value: authBloc,
+            child: OnboardingPage(localStorageService: fakeStorage),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Verify Mobile Brand Identity & Regulatory badges
+      expect(find.text('ComfortCare'), findsOneWidget);
+      expect(find.text('NAFDAC Reg. Certified'), findsOneWidget);
+      expect(find.text('Life Camp, Abuja'), findsOneWidget);
+      expect(find.text('Create Patient Account'), findsOneWidget);
+      expect(find.text('Sign In to Dispensary Hub'), findsOneWidget);
     });
   });
 }

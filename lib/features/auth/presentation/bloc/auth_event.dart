@@ -42,6 +42,8 @@ class RegisterSubmitted extends AuthEvent {
   final UserRole role;
   final String? facilityName;
   final String? licenseNumber;
+  final String? specialty;
+  final String? documentationName;
 
   const RegisterSubmitted({
     required this.fullName,
@@ -51,6 +53,8 @@ class RegisterSubmitted extends AuthEvent {
     required this.role,
     this.facilityName,
     this.licenseNumber,
+    this.specialty,
+    this.documentationName,
   });
 
   @override
@@ -62,6 +66,8 @@ class RegisterSubmitted extends AuthEvent {
         role,
         facilityName,
         licenseNumber,
+        specialty,
+        documentationName,
       ];
 }
 

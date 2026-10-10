@@ -305,7 +305,7 @@ class _HealthVitalsMonitorPageState extends State<HealthVitalsMonitorPage> {
                                 label: '+ Record New Vitals Reading',
                                 onPressed: () => _showLogVitalsDialog(context),
                               ),
-                              const SizedBox(height: 20),
+                              const SizedBox(height: 84),
                             ],
                           ),
                       ],
@@ -417,7 +417,7 @@ class _HealthVitalsMonitorPageState extends State<HealthVitalsMonitorPage> {
       physics: const NeverScrollableScrollPhysics(),
       crossAxisSpacing: 10,
       mainAxisSpacing: 10,
-      childAspectRatio: 1.35,
+      childAspectRatio: isDesktop ? 1.35 : 1.25,
       children: [
         _buildVitalCard(
           context,
@@ -489,25 +489,32 @@ class _HealthVitalsMonitorPageState extends State<HealthVitalsMonitorPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.show_chart, size: 18, color: colorScheme.primary),
-                      const SizedBox(width: 6),
-                      Text(
-                        'Blood Pressure 7-Day Trend',
-                        style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    'Optimal Target Band: 110–125 / 70–85 mmHg',
-                    style: textTheme.bodySmall?.copyWith(fontSize: 11, color: colorScheme.onSurfaceVariant),
-                  ),
-                ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.show_chart, size: 18, color: colorScheme.primary),
+                        const SizedBox(width: 6),
+                        Flexible(
+                          child: Text(
+                            'Blood Pressure 7-Day Trend',
+                            style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Text(
+                      'Optimal Target Band: 110–125 / 70–85 mmHg',
+                      style: textTheme.bodySmall?.copyWith(fontSize: 11, color: colorScheme.onSurfaceVariant),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
               ),
+              const SizedBox(width: 8),
               CCChip(
                 label: '${vitals.systolic}/${vitals.diastolic} mmHg',
                 variant: CCChipVariant.primary,
@@ -580,19 +587,25 @@ class _HealthVitalsMonitorPageState extends State<HealthVitalsMonitorPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  const Icon(Icons.monitor_heart, size: 18, color: Color(0xFF10B981)),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Live ECG Telemetry Waveform',
-                    style: textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w800,
-                      color: Colors.white,
+              Expanded(
+                child: Row(
+                  children: [
+                    const Icon(Icons.monitor_heart, size: 18, color: Color(0xFF10B981)),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        'Live ECG Telemetry Waveform',
+                        style: textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
+              const SizedBox(width: 8),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
@@ -601,6 +614,7 @@ class _HealthVitalsMonitorPageState extends State<HealthVitalsMonitorPage> {
                   border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.4)),
                 ),
                 child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
                       width: 6,
@@ -692,16 +706,22 @@ class _HealthVitalsMonitorPageState extends State<HealthVitalsMonitorPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  Icon(Icons.water_drop_outlined, size: 18, color: colorScheme.secondary),
-                  const SizedBox(width: 6),
-                  Text(
-                    '24-Hour Blood Glucose Profile',
-                    style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
-                  ),
-                ],
+              Expanded(
+                child: Row(
+                  children: [
+                    Icon(Icons.water_drop_outlined, size: 18, color: colorScheme.secondary),
+                    const SizedBox(width: 6),
+                    Flexible(
+                      child: Text(
+                        '24-Hour Blood Glucose Profile',
+                        style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
               ),
+              const SizedBox(width: 8),
               CCChip(
                 label: 'Optimal Euglycemia',
                 variant: CCChipVariant.secondary,
@@ -764,10 +784,14 @@ class _HealthVitalsMonitorPageState extends State<HealthVitalsMonitorPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Weekly Medication Adherence',
-                style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
+              Expanded(
+                child: Text(
+                  'Weekly Medication Adherence',
+                  style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
+              const SizedBox(width: 8),
               CCChip(
                 label: '86% Streak',
                 variant: CCChipVariant.secondary,
@@ -881,10 +905,14 @@ class _HealthVitalsMonitorPageState extends State<HealthVitalsMonitorPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Prescription Adherence Schedule',
-                style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
+              Expanded(
+                child: Text(
+                  'Prescription Adherence Schedule',
+                  style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
+              const SizedBox(width: 8),
               Icon(Icons.alarm_on, size: 18, color: colorScheme.primary),
             ],
           ),

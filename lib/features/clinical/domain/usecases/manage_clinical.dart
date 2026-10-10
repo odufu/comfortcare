@@ -7,8 +7,17 @@ class ManageClinicalUseCase {
 
   ManageClinicalUseCase(this._repository);
 
-  Future<List<ConsultationMessageEntity>> getHistory() =>
-      _repository.getConsultationHistory();
+  Future<List<ConsultationMessageEntity>> getHistory({
+    String? userName,
+    bool forceNewSession = true,
+  }) =>
+      _repository.getConsultationHistory(
+        userName: userName,
+        forceNewSession: forceNewSession,
+      );
+
+  Future<List<ConsultationMessageEntity>> startNewSession({String? userName}) =>
+      _repository.startNewSession(userName: userName);
 
   Future<ConsultationMessageEntity> sendMessage(String text) =>
       _repository.sendMessage(text);
@@ -18,4 +27,6 @@ class ManageClinicalUseCase {
 
   Future<void> logVitals(HealthVitalsEntity vitals) =>
       _repository.logVitals(vitals);
+
+  Future<void> clearHistory() => _repository.clearHistory();
 }

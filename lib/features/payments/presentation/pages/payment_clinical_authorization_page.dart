@@ -7,7 +7,6 @@ import '../../../../core/widgets/cc_button.dart';
 import '../../../../core/widgets/cc_chip.dart';
 import '../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../../cart/presentation/bloc/cart_event.dart';
-import '../../../cart/presentation/bloc/cart_state.dart';
 import '../../../orders/presentation/bloc/orders_bloc.dart';
 import '../../../orders/presentation/bloc/orders_event.dart';
 import '../../domain/entities/payment_transaction.dart';
@@ -18,11 +17,11 @@ import '../bloc/payments_state.dart';
 class PaymentClinicalAuthorizationPage extends StatelessWidget {
   const PaymentClinicalAuthorizationPage({super.key});
 
-  void _onAuthorizeAndPay(BuildContext context, CartState cartState) {
+  void _onAuthorizeAndPay(BuildContext context, double payableAmount) {
     context.read<PaymentsBloc>().add(
           AuthorizeAndPayEvent(
             orderId: 'ORDER-${DateTime.now().millisecondsSinceEpoch}',
-            amount: cartState.grandTotal,
+            amount: payableAmount,
           ),
         );
   }
@@ -32,15 +31,21 @@ class PaymentClinicalAuthorizationPage extends StatelessWidget {
     final colorScheme = context.colorScheme;
     final textTheme = context.textTheme;
     final cartState = context.watch<CartBloc>().state;
+    final ordersState = context.watch<OrdersBloc>().state;
+    final dispatchFee = ordersState.dispatchFee > 0 ? ordersState.dispatchFee : cartState.deliveryFee;
+    final actualGrandTotal = (cartState.subtotal + dispatchFee - cartState.discount).clamp(0.0, double.infinity);
 
     return BlocConsumer<PaymentsBloc, PaymentsState>(
       listener: (context, state) {
         if (state.status == PaymentsStatus.authorized) {
-          // Place order in orders bloc
+          final paymentReceipt = state.transaction?.reference ??
+              'CC-PAYSTACK-${DateTime.now().millisecondsSinceEpoch.toString().substring(5)}';
+          // Place order in orders bloc and trigger NovaExpress logistics dispatch
           context.read<OrdersBloc>().add(
                 PlaceOrderEvent(
                   items: cartState.items,
-                  totalAmount: cartState.grandTotal,
+                  totalAmount: actualGrandTotal,
+                  paymentReceipt: paymentReceipt,
                 ),
               );
           // Clear cart
@@ -341,7 +346,7 @@ class PaymentClinicalAuthorizationPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text('Abuja Priority Delivery', style: textTheme.bodyMedium),
-                          Text(cartState.deliveryFee.toNaira(), style: textTheme.labelLarge),
+                          Text(dispatchFee.toNaira(), style: textTheme.labelLarge),
                         ],
                       ),
                       const SizedBox(height: 8),
@@ -374,7 +379,7 @@ class PaymentClinicalAuthorizationPage extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            cartState.grandTotal.toNaira(),
+                            actualGrandTotal.toNaira(),
                             style: textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.w800,
                               color: colorScheme.primary,
@@ -389,9 +394,9 @@ class PaymentClinicalAuthorizationPage extends StatelessWidget {
 
                 // Submit Button
                 CCButton(
-                  label: 'Authorize Payment & Release Meds (${cartState.grandTotal.toNaira()})',
+                  label: 'Authorize Payment & Release Meds (${actualGrandTotal.toNaira()})',
                   isLoading: state.status == PaymentsStatus.processing,
-                  onPressed: () => _onAuthorizeAndPay(context, cartState),
+                  onPressed: () => _onAuthorizeAndPay(context, actualGrandTotal),
                 ),
                 const SizedBox(height: 24),
               ],

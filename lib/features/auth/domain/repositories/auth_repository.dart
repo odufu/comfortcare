@@ -15,6 +15,8 @@ abstract class AuthRepository {
     required UserRole role,
     String? facilityName,
     String? licenseNumber,
+    String? specialty,
+    String? documentationName,
   });
 
   Future<void> logout();

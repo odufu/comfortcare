@@ -13,16 +13,45 @@ class ClinicalBloc extends Bloc<ClinicalEvent, ClinicalState> {
       : _manageClinicalUseCase = manageClinicalUseCase,
         super(const ClinicalState()) {
     on<LoadConsultationHistory>(_onLoadConsultationHistory);
+    on<StartNewSessionEvent>(_onStartNewSession);
+    on<ClearConsultationSessionEvent>(_onClearConsultationSession);
     on<SendConsultationMessage>(_onSendConsultationMessage);
     on<LoadHealthVitals>(_onLoadHealthVitals);
     on<LogHealthVitalsEvent>(_onLogHealthVitals);
+  }
+
+  Future<void> _onClearConsultationSession(
+      ClearConsultationSessionEvent event, Emitter<ClinicalState> emit) async {
+    await _manageClinicalUseCase.clearHistory();
+    emit(const ClinicalState(status: ClinicalStatus.initial, messages: []));
   }
 
   Future<void> _onLoadConsultationHistory(
       LoadConsultationHistory event, Emitter<ClinicalState> emit) async {
     emit(state.copyWith(status: ClinicalStatus.loading));
     try {
-      final messages = await _manageClinicalUseCase.getHistory();
+      final messages = await _manageClinicalUseCase.getHistory(
+        userName: event.userName,
+        forceNewSession: event.forceNewSession,
+      );
+      final vitals = await _manageClinicalUseCase.getLatestVitals();
+      emit(state.copyWith(
+        status: ClinicalStatus.loaded,
+        messages: messages,
+        vitals: vitals,
+      ));
+    } catch (e) {
+      emit(state.copyWith(status: ClinicalStatus.error, errorMessage: e.toString()));
+    }
+  }
+
+  Future<void> _onStartNewSession(
+      StartNewSessionEvent event, Emitter<ClinicalState> emit) async {
+    emit(state.copyWith(status: ClinicalStatus.loading));
+    try {
+      final messages = await _manageClinicalUseCase.startNewSession(
+        userName: event.userName,
+      );
       final vitals = await _manageClinicalUseCase.getLatestVitals();
       emit(state.copyWith(
         status: ClinicalStatus.loaded,

@@ -9,6 +9,8 @@ extension CurrencyFormatting on num {
     );
     return format.format(this);
   }
+
+  String get currencyFormat => toNaira();
 }
 
 extension CurrencyStringFormatting on String {
@@ -16,4 +18,6 @@ extension CurrencyStringFormatting on String {
     final value = double.tryParse(this) ?? 0;
     return value.toNaira(showDecimals: showDecimals);
   }
+
+  String get currencyFormat => toNaira();
 }

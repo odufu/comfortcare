@@ -40,9 +40,11 @@ class _CCFloatingAiDoctorButtonState extends State<CCFloatingAiDoctorButton>
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: 56,
+      height: 56,
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(32),
+        shape: BoxShape.circle,
         gradient: const LinearGradient(
           colors: [Color(0xFF006194), Color(0xFF007BB9)],
           begin: Alignment.topLeft,
@@ -59,95 +61,71 @@ class _CCFloatingAiDoctorButtonState extends State<CCFloatingAiDoctorButton>
       ),
       child: Material(
         color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(32),
-          onTap: widget.onPressed ?? () => context.push('/ai-consult'),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    const Icon(
-                      Icons.smart_toy,
-                      color: Colors.white,
-                      size: 22,
+        shape: const CircleBorder(),
+        child: Tooltip(
+          message: 'Dr. Comfort AI Medical Chat',
+          child: InkWell(
+            customBorder: const CircleBorder(),
+            onTap: widget.onPressed ?? () => context.push('/ai-consult'),
+            child: Center(
+              child: Stack(
+                clipBehavior: Clip.none,
+                alignment: Alignment.center,
+                children: [
+                  SizedBox(
+                    width: 30,
+                    height: 30,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: const [
+                        Icon(
+                          Icons.chat_bubble_rounded,
+                          color: Colors.white,
+                          size: 28,
+                        ),
+                        Positioned(
+                          top: 5,
+                          child: Icon(
+                            Icons.add,
+                            color: Color(0xFF006194),
+                            size: 14,
+                          ),
+                        ),
+                      ],
                     ),
-                    Positioned(
-                      top: -2,
-                      right: -3,
-                      child: AnimatedBuilder(
-                        animation: _pulseAnimation,
-                        builder: (context, child) {
-                          return Transform.scale(
-                            scale: _pulseAnimation.value,
-                            child: Container(
-                              width: 8,
-                              height: 8,
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFA0F399),
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: const Color(0xFF006194),
-                                  width: 1.5,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color(0xFFA0F399).withValues(alpha: 0.8),
-                                    blurRadius: 4,
-                                  ),
-                                ],
+                  ),
+                  Positioned(
+                    top: -2,
+                    right: -2,
+                    child: AnimatedBuilder(
+                      animation: _pulseAnimation,
+                      builder: (context, child) {
+                        return Transform.scale(
+                          scale: _pulseAnimation.value,
+                          child: Container(
+                            width: 9,
+                            height: 9,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFA0F399),
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: const Color(0xFF006194),
+                                width: 1.5,
                               ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: const Color(0xFFA0F399).withValues(alpha: 0.8),
+                                  blurRadius: 4,
+                                ),
+                              ],
                             ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(width: 10),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'AI Doctor',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: -0.2,
-                      ),
-                    ),
-                    Text(
-                      'Live Co-Pilot',
-                      style: TextStyle(
-                        color: const Color(0xFFCCE5FF).withValues(alpha: 0.9),
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(width: 6),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFA0F399),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Text(
-                    'PCN',
-                    style: TextStyle(
-                      color: Color(0xFF217128),
-                      fontSize: 9,
-                      fontWeight: FontWeight.w800,
+                          ),
+                        );
+                      },
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

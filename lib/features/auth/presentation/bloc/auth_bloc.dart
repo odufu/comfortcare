@@ -84,6 +84,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         role: event.role,
         facilityName: event.facilityName,
         licenseNumber: event.licenseNumber,
+        specialty: event.specialty,
+        documentationName: event.documentationName,
       );
       emit(state.copyWith(
         status: AuthStatus.authenticated,

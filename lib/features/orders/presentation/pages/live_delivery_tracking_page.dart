@@ -70,54 +70,101 @@ class _LiveDeliveryTrackingPageState extends State<LiveDeliveryTrackingPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                width: 8,
-                                height: 8,
-                                decoration: BoxDecoration(
-                                  color: colorScheme.secondary,
-                                  shape: BoxShape.circle,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration: BoxDecoration(
+                                    color: colorScheme.secondary,
+                                    shape: BoxShape.circle,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                'ACTIVE LOGISTICS DISPATCH',
-                                style: textTheme.labelSmall?.copyWith(
-                                  color: colorScheme.secondary,
-                                  fontWeight: FontWeight.w800,
-                                  letterSpacing: 0.5,
+                                const SizedBox(width: 6),
+                                Expanded(
+                                  child: Text(
+                                    'NOVAEXPRESS LOGISTICS • FLAT-RATE DISPATCH',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: textTheme.labelSmall?.copyWith(
+                                      color: const Color(0xFF0D9488),
+                                      fontWeight: FontWeight.w800,
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '#$orderId',
-                            style: textTheme.headlineSmall?.copyWith(
-                              fontWeight: FontWeight.w800,
-                              color: colorScheme.primary,
+                              ],
                             ),
-                          ),
-                          const SizedBox(height: 2),
-                          Row(
-                            children: [
-                              Icon(Icons.schedule, size: 14, color: colorScheme.primary),
-                              const SizedBox(width: 4),
-                              Text(
-                                order?.eta ?? '18 mins • Arriving ~3:45 PM',
-                                style: textTheme.bodySmall?.copyWith(
-                                  color: colorScheme.onSurface,
-                                  fontWeight: FontWeight.w600,
+                            const SizedBox(height: 4),
+                            Wrap(
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              spacing: 8,
+                              children: [
+                                Text(
+                                  '#$orderId',
+                                  style: textTheme.headlineSmall?.copyWith(
+                                    fontWeight: FontWeight.w800,
+                                    color: colorScheme.primary,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF0D9488).withValues(alpha: 0.15),
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Text(
+                                    order?.novaExpressTrackingNumber ?? 'NOV-2026-8492',
+                                    style: const TextStyle(
+                                      color: Color(0xFF0D9488),
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 2),
+                            Row(
+                              children: [
+                                Icon(Icons.schedule, size: 14, color: colorScheme.primary),
+                                const SizedBox(width: 4),
+                                Flexible(
+                                  child: Text(
+                                    order?.eta ?? '18 mins • Arriving ~3:45 PM',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: textTheme.bodySmall?.copyWith(
+                                      color: colorScheme.onSurface,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                                if (order?.paymentReceipt != null) ...[
+                                  const SizedBox(width: 8),
+                                  Flexible(
+                                    child: Text(
+                                      '• Gateway Ref: ${order!.paymentReceipt}',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: textTheme.bodySmall?.copyWith(
+                                        color: const Color(0xFF16A34A),
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 10,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
+                      const SizedBox(width: 12),
                       // Circular Progress (68%)
                       Container(
                         width: 54,
@@ -430,12 +477,27 @@ class _LiveDeliveryTrackingPageState extends State<LiveDeliveryTrackingPage> {
                               ),
                             ),
                             Text(
-                              'ComfortCare Abuja Logistics Courier',
-                              style: textTheme.bodySmall?.copyWith(fontSize: 11),
+                              'NovaExpress Pharmaceutical Courier • Wuse Hub',
+                              style: textTheme.bodySmall?.copyWith(
+                                fontSize: 11,
+                                color: const Color(0xFF0D9488),
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ],
                         ),
                       ),
+                      IconButton(
+                        style: IconButton.styleFrom(
+                          backgroundColor: const Color(0xFF16A34A),
+                          foregroundColor: Colors.white,
+                        ),
+                        icon: const Icon(Icons.chat_bubble_outline, size: 18),
+                        onPressed: () {
+                          context.showSnackBar('Opening WhatsApp Chat with Rider: ${order?.riderPhone ?? "+234 812 345 6789"}');
+                        },
+                      ),
+                      const SizedBox(width: 8),
                       IconButton(
                         style: IconButton.styleFrom(
                           backgroundColor: colorScheme.secondary,

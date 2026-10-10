@@ -13,6 +13,9 @@ class UserModel extends UserEntity {
     super.address,
     super.loyaltyPoints = 0,
     super.isVerified = false,
+    super.specialty,
+    super.documentationName,
+    super.approvalStatus = 'approved',
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -27,6 +30,9 @@ class UserModel extends UserEntity {
       address: json['address'] as String?,
       loyaltyPoints: json['loyalty_points'] as int? ?? json['loyaltyPoints'] as int? ?? 0,
       isVerified: json['is_verified'] as bool? ?? json['isVerified'] as bool? ?? false,
+      specialty: json['specialty'] as String?,
+      documentationName: json['documentation_name'] as String? ?? json['documentationName'] as String?,
+      approvalStatus: json['approval_status'] as String? ?? json['approvalStatus'] as String? ?? 'approved',
     );
   }
 
@@ -42,6 +48,9 @@ class UserModel extends UserEntity {
       'address': address,
       'loyalty_points': loyaltyPoints,
       'is_verified': isVerified,
+      'specialty': specialty,
+      'documentation_name': documentationName,
+      'approval_status': approvalStatus,
     };
   }
 
@@ -52,14 +61,19 @@ class UserModel extends UserEntity {
 
   static UserRole _roleFromString(String? role) {
     switch (role?.toLowerCase()) {
+      case 'consultant':
+      case 'doctor':
+        return UserRole.consultant;
+      case 'pharmacy':
       case 'wholesale':
-        return UserRole.wholesale;
       case 'pharmacist':
-        return UserRole.pharmacist;
+        return UserRole.pharmacy;
       case 'admin':
         return UserRole.admin;
+      case 'user':
+      case 'patient':
       default:
-        return UserRole.patient;
+        return UserRole.user;
     }
   }
 
@@ -75,6 +89,9 @@ class UserModel extends UserEntity {
       address: entity.address,
       loyaltyPoints: entity.loyaltyPoints,
       isVerified: entity.isVerified,
+      specialty: entity.specialty,
+      documentationName: entity.documentationName,
+      approvalStatus: entity.approvalStatus,
     );
   }
 }

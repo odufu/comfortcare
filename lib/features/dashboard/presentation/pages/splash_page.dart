@@ -36,15 +36,13 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
 
     Future.delayed(const Duration(milliseconds: 2200), () {
       if (mounted) {
-        final isOnboarded = widget.localStorageService.isOnboardingCompleted();
         final authState = context.read<AuthBloc>().state;
 
         if (authState.isAuthenticated) {
           context.go('/dashboard');
-        } else if (isOnboarded) {
-          context.go('/auth/login');
         } else {
-          context.go('/onboarding');
+          // Immediately route straight to login if no user is logged in
+          context.go('/auth/login');
         }
       }
     });

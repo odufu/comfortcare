@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/extensions/context_extensions.dart';
-import '../../../../core/extensions/currency_extensions.dart';
 import '../../../cart/presentation/bloc/cart_bloc.dart';
 import '../bloc/products_bloc.dart';
 import '../bloc/products_event.dart';
 import '../bloc/products_state.dart';
 import '../widgets/product_card.dart';
+import '../widgets/product_card_skeleton.dart';
 
 class ProductsCatalogPage extends StatefulWidget {
   const ProductsCatalogPage({super.key});
@@ -30,89 +30,20 @@ class _ProductsCatalogPageState extends State<ProductsCatalogPage> {
   ];
 
   String? _activeMicroFilter;
-  String _currentLocation = 'Comfort Mall, Abuja';
 
   @override
   void initState() {
     super.initState();
-    context.read<ProductsBloc>().add(const LoadProducts());
+    final currentProducts = context.read<ProductsBloc>().state.products;
+    if (currentProducts.isEmpty) {
+      context.read<ProductsBloc>().add(const LoadProducts());
+    }
   }
 
   @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
-  }
-
-  void _showLocationPicker() {
-    final locations = [
-      'Comfort Mall, Abuja',
-      'Wuse II Medical Hub',
-      'Life Camp Central, Abuja',
-      'Garki Hospital Area',
-      'Maitama District',
-    ];
-
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: context.colorScheme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (ctx) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Select Delivery Hub',
-                      style: ctx.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () => Navigator.pop(ctx),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                ...locations.map((loc) {
-                  final isSelected = loc == _currentLocation;
-                  return ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: Icon(
-                      Icons.location_on,
-                      color: isSelected ? const Color(0xFF1B6D24) : ctx.colorScheme.outline,
-                    ),
-                    title: Text(
-                      loc,
-                      style: ctx.textTheme.bodyMedium?.copyWith(
-                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                        color: isSelected ? ctx.colorScheme.primary : ctx.colorScheme.onSurface,
-                      ),
-                    ),
-                    trailing: isSelected
-                        ? const Icon(Icons.check_circle, color: Color(0xFF1B6D24))
-                        : null,
-                    onTap: () {
-                      setState(() => _currentLocation = loc);
-                      Navigator.pop(ctx);
-                    },
-                  );
-                }),
-              ],
-            ),
-          ),
-        );
-      },
-    );
   }
 
   void _showScannerDialog() {
@@ -236,19 +167,20 @@ class _ProductsCatalogPageState extends State<ProductsCatalogPage> {
 
     return BlocBuilder<ProductsBloc, ProductsState>(
       builder: (context, state) {
-        // Apply micro filters locally on top of state.products
-        var filteredProducts = state.products;
-        if (_activeMicroFilter == 'In Stock') {
-          filteredProducts = filteredProducts.where((p) => p.stock > 0).toList();
-        } else if (_activeMicroFilter == 'NAFDAC Verified') {
-          filteredProducts =
-              filteredProducts.where((p) => p.nafdacNumber.isNotEmpty).toList();
-        } else if (_activeMicroFilter == 'Rx Required') {
-          filteredProducts =
-              filteredProducts.where((p) => p.requiresPrescription).toList();
-        } else if (_activeMicroFilter == 'Cold-Chain') {
-          filteredProducts = filteredProducts.where((p) => p.isColdChain).toList();
-        }
+        final filteredProducts = _activeMicroFilter == null
+            ? state.products
+            : state.products.where((p) {
+                if (_activeMicroFilter == 'Rx Required') {
+                  return p.requiresPrescription || (p.badge1 == 'Rx Required');
+                }
+                if (_activeMicroFilter == 'Cold-Chain') {
+                  return p.isColdChain || (p.badge1 == 'Cold-Chain');
+                }
+                if (_activeMicroFilter == 'In Stock') {
+                  return p.stock > 0;
+                }
+                return true;
+              }).toList();
 
         final cartState = context.watch<CartBloc>().state;
 
@@ -263,7 +195,7 @@ class _ProductsCatalogPageState extends State<ProductsCatalogPage> {
                   children: [
                     CustomScrollView(
                   slivers: [
-                    // 1. Top Bar Header
+                    // 1. Sleek Top Bar Header with Embedded Search & Cart
                     SliverToBoxAdapter(
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -279,137 +211,84 @@ class _ProductsCatalogPageState extends State<ProductsCatalogPage> {
                         ),
                         child: Row(
                           children: [
-                            // Logo
+                            // Brand Logo
                             InkWell(
                               onTap: () => context.go('/dashboard'),
+                              borderRadius: BorderRadius.circular(20),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Image.asset(
                                     'assets/images/logo.png',
-                                    height: 30,
+                                    height: 32,
                                     errorBuilder: (context, error, stackTrace) =>
                                         Icon(Icons.local_pharmacy, color: colorScheme.primary, size: 28),
                                   ),
-                                  const SizedBox(width: 6),
                                 ],
                               ),
                             ),
+                            const SizedBox(width: 12),
 
-                            // Deliver to pill dropdown
+                            // Embedded Search Bar in Header
                             Expanded(
-                              child: InkWell(
-                                onTap: _showLocationPicker,
-                                borderRadius: BorderRadius.circular(24),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                                  decoration: BoxDecoration(
-                                    color: colorScheme.surfaceContainerLow,
-                                    borderRadius: BorderRadius.circular(24),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Icon(
-                                        Icons.location_on,
-                                        color: Color(0xFF1B6D24),
-                                        size: 18,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Text(
-                                              'DELIVER TO',
-                                              style: textTheme.labelSmall?.copyWith(
-                                                fontSize: 9,
-                                                fontWeight: FontWeight.w700,
-                                                letterSpacing: 0.5,
-                                                color: colorScheme.onSurfaceVariant,
-                                              ),
-                                            ),
-                                            Text(
-                                              _currentLocation,
-                                              style: textTheme.labelMedium?.copyWith(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w700,
-                                                color: colorScheme.onSurface,
-                                              ),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Icon(
-                                        Icons.keyboard_arrow_down,
-                                        size: 16,
-                                        color: colorScheme.onSurfaceVariant,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-
-                            // Admin Inventory Hub button
-                            InkWell(
-                              onTap: () => context.push('/admin/products'),
-                              borderRadius: BorderRadius.circular(20),
                               child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+                                height: 42,
                                 decoration: BoxDecoration(
-                                  color: colorScheme.secondaryContainer.withValues(alpha: 0.6),
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: colorScheme.secondary.withValues(alpha: 0.3),
-                                  ),
+                                  color: colorScheme.surfaceContainerLow,
+                                  borderRadius: BorderRadius.circular(22),
                                 ),
+                                padding: const EdgeInsets.symmetric(horizontal: 12),
                                 child: Row(
-                                  mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(
-                                      Icons.admin_panel_settings_outlined,
-                                      size: 17,
-                                      color: colorScheme.secondary,
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      'Admin',
-                                      style: TextStyle(
-                                        fontSize: 11.5,
-                                        fontWeight: FontWeight.bold,
-                                        color: colorScheme.secondary,
+                                    Icon(Icons.search, color: colorScheme.primary, size: 18),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: TextField(
+                                        controller: _searchController,
+                                        style: textTheme.bodyMedium?.copyWith(
+                                          color: colorScheme.onSurface,
+                                          fontSize: 13,
+                                        ),
+                                        decoration: InputDecoration(
+                                          hintText: 'Search medications...',
+                                          hintStyle: textTheme.bodyMedium?.copyWith(
+                                            color: colorScheme.outline,
+                                            fontSize: 13,
+                                          ),
+                                          border: InputBorder.none,
+                                          isDense: true,
+                                          contentPadding: EdgeInsets.zero,
+                                        ),
+                                        onChanged: (val) {
+                                          context.read<ProductsBloc>().add(SearchProducts(val));
+                                        },
                                       ),
                                     ),
+                                    if (_searchController.text.isNotEmpty)
+                                      IconButton(
+                                        icon: const Icon(Icons.close, size: 16),
+                                        padding: EdgeInsets.zero,
+                                        constraints: const BoxConstraints(),
+                                        onPressed: () {
+                                          _searchController.clear();
+                                          context
+                                              .read<ProductsBloc>()
+                                              .add(const SearchProducts(''));
+                                        },
+                                      )
+                                    else
+                                      IconButton(
+                                        icon: const Icon(Icons.document_scanner_outlined, size: 18),
+                                        color: colorScheme.primary,
+                                        padding: EdgeInsets.zero,
+                                        constraints: const BoxConstraints(),
+                                        onPressed: _showScannerDialog,
+                                      ),
                                   ],
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 6),
-
-                            // Orders receipt icon button
-                            InkWell(
-                              onTap: () => context.go('/orders'),
-                              borderRadius: BorderRadius.circular(22),
-                              child: Container(
-                                width: 40,
-                                height: 40,
-                                decoration: BoxDecoration(
-                                  color: colorScheme.surfaceContainerLow,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
-                                  Icons.receipt_long_outlined,
-                                  size: 20,
-                                  color: colorScheme.onSurfaceVariant,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 6),
+                            const SizedBox(width: 10),
 
                             // Cart icon button with badge
                             InkWell(
@@ -468,493 +347,112 @@ class _ProductsCatalogPageState extends State<ProductsCatalogPage> {
                       ),
                     ),
 
-                    // 2. Search & Scan Header Bar
+                    // 2. Single Unified Filter Row: Tune filter button + Category pills
                     SliverToBoxAdapter(
                       child: Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                // Search Input Field
-                                Expanded(
-                                  child: Container(
-                                    height: 46,
-                                    decoration: BoxDecoration(
-                                      color: colorScheme.surfaceContainerLow,
-                                      borderRadius: BorderRadius.circular(24),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(horizontal: 14),
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.search, color: colorScheme.primary, size: 20),
-                                        const SizedBox(width: 8),
-                                        Expanded(
-                                          child: TextField(
-                                            controller: _searchController,
-                                            style: textTheme.bodyMedium?.copyWith(
-                                              color: colorScheme.onSurface,
-                                              fontSize: 13,
-                                            ),
-                                            decoration: InputDecoration(
-                                              hintText: 'Search antibiotics, malaria meds, BP...',
-                                              hintStyle: textTheme.bodyMedium?.copyWith(
-                                                color: colorScheme.outline,
-                                                fontSize: 13,
-                                              ),
-                                              border: InputBorder.none,
-                                              isDense: true,
-                                              contentPadding: EdgeInsets.zero,
-                                            ),
-                                            onChanged: (val) {
-                                              context.read<ProductsBloc>().add(SearchProducts(val));
-                                            },
-                                          ),
-                                        ),
-                                        if (_searchController.text.isNotEmpty)
-                                          IconButton(
-                                            icon: const Icon(Icons.close, size: 16),
-                                            padding: EdgeInsets.zero,
-                                            constraints: const BoxConstraints(),
-                                            onPressed: () {
-                                              _searchController.clear();
-                                              context
-                                                  .read<ProductsBloc>()
-                                                  .add(const SearchProducts(''));
-                                            },
-                                          )
-                                        else
-                                          IconButton(
-                                            icon: Icon(
-                                              Icons.mic,
-                                              size: 18,
-                                              color: colorScheme.onSurfaceVariant,
-                                            ),
-                                            padding: EdgeInsets.zero,
-                                            constraints: const BoxConstraints(),
-                                            onPressed: () {
-                                              context.showSnackBar('Listening for voice search...');
-                                            },
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-
-                                // Document / Prescription scanner button
-                                InkWell(
-                                  onTap: _showScannerDialog,
-                                  borderRadius: BorderRadius.circular(22),
-                                  child: Container(
-                                    width: 44,
-                                    height: 44,
-                                    decoration: BoxDecoration(
-                                      color: colorScheme.surfaceContainerHigh,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Icon(
-                                      Icons.document_scanner_outlined,
-                                      color: colorScheme.primary,
-                                      size: 20,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-
-                                // Open Filters button
-                                InkWell(
-                                  onTap: () => _showFilterBottomSheet(context),
-                                  borderRadius: BorderRadius.circular(22),
-                                  child: Container(
-                                    width: 44,
-                                    height: 44,
-                                    decoration: BoxDecoration(
-                                      color: colorScheme.primary,
-                                      shape: BoxShape.circle,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: colorScheme.primary.withValues(alpha: 0.3),
-                                          blurRadius: 8,
-                                          offset: const Offset(0, 2),
-                                        ),
-                                      ],
-                                    ),
-                                    child: const Icon(
-                                      Icons.tune,
-                                      color: Colors.white,
-                                      size: 20,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 10),
-
-                            // Wholesale vs Retail Dual Segment Switch
-                            Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                color: colorScheme.surfaceContainerHigh,
-                                borderRadius: BorderRadius.circular(24),
-                              ),
-                              child: Row(
-                                children: [
-                                  // Retail Tab
-                                  Expanded(
-                                    child: InkWell(
-                                      onTap: () {
-                                        if (state.isWholesale) {
-                                          context.read<ProductsBloc>().add(
-                                                LoadProducts(
-                                                  category: state.selectedCategory,
-                                                  query: state.searchQuery,
-                                                  isWholesale: false,
-                                                ),
-                                              );
-                                        }
-                                      },
-                                      borderRadius: BorderRadius.circular(20),
-                                      child: AnimatedContainer(
-                                        duration: const Duration(milliseconds: 250),
-                                        padding: const EdgeInsets.symmetric(vertical: 8),
-                                        decoration: BoxDecoration(
-                                          color: !state.isWholesale
-                                              ? colorScheme.surfaceContainerLowest
-                                              : Colors.transparent,
-                                          borderRadius: BorderRadius.circular(20),
-                                          boxShadow: !state.isWholesale
-                                              ? [
-                                                  BoxShadow(
-                                                    color: Colors.black.withValues(alpha: 0.08),
-                                                    blurRadius: 4,
-                                                    offset: const Offset(0, 1),
-                                                  ),
-                                                ]
-                                              : null,
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Icon(
-                                              Icons.person_outline,
-                                              size: 16,
-                                              color: !state.isWholesale
-                                                  ? colorScheme.primary
-                                                  : colorScheme.onSurfaceVariant,
-                                            ),
-                                            const SizedBox(width: 6),
-                                            Text(
-                                              'Retail (Packs)',
-                                              style: textTheme.labelMedium?.copyWith(
-                                                fontWeight: FontWeight.w700,
-                                                fontSize: 12,
-                                                color: !state.isWholesale
-                                                  ? colorScheme.primary
-                                                  : colorScheme.onSurfaceVariant,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-
-                                  // Wholesale Tab
-                                  Expanded(
-                                    child: InkWell(
-                                      onTap: () {
-                                        if (!state.isWholesale) {
-                                          context.read<ProductsBloc>().add(
-                                                LoadProducts(
-                                                  category: state.selectedCategory,
-                                                  query: state.searchQuery,
-                                                  isWholesale: true,
-                                                ),
-                                              );
-                                        }
-                                      },
-                                      borderRadius: BorderRadius.circular(20),
-                                      child: AnimatedContainer(
-                                        duration: const Duration(milliseconds: 250),
-                                        padding: const EdgeInsets.symmetric(vertical: 8),
-                                        decoration: BoxDecoration(
-                                          color: state.isWholesale
-                                              ? colorScheme.surfaceContainerLowest
-                                              : Colors.transparent,
-                                          borderRadius: BorderRadius.circular(20),
-                                          boxShadow: state.isWholesale
-                                              ? [
-                                                  BoxShadow(
-                                                    color: Colors.black.withValues(alpha: 0.08),
-                                                    blurRadius: 4,
-                                                    offset: const Offset(0, 1),
-                                                  ),
-                                                ]
-                                              : null,
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Icon(
-                                              Icons.domain_outlined,
-                                              size: 16,
-                                              color: state.isWholesale
-                                                  ? colorScheme.primary
-                                                  : colorScheme.onSurfaceVariant,
-                                            ),
-                                            const SizedBox(width: 5),
-                                            Text(
-                                              'Wholesale Bulk',
-                                              style: textTheme.labelMedium?.copyWith(
-                                                fontWeight: FontWeight.w700,
-                                                fontSize: 12,
-                                                color: state.isWholesale
-                                                  ? colorScheme.primary
-                                                  : colorScheme.onSurfaceVariant,
-                                              ),
-                                            ),
-                                            const SizedBox(width: 5),
-                                            Container(
-                                              padding: const EdgeInsets.symmetric(
-                                                  horizontal: 6, vertical: 2),
-                                              decoration: BoxDecoration(
-                                                color: const Color(0xFFA0F399),
-                                                borderRadius: BorderRadius.circular(10),
-                                              ),
-                                              child: const Text(
-                                                'SAVE 25%',
-                                                style: TextStyle(
-                                                  color: Color(0xFF005312),
-                                                  fontSize: 9,
-                                                  fontWeight: FontWeight.w900,
-                                                  letterSpacing: 0.2,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    // 3. Category Pill Carousel
-                    SliverToBoxAdapter(
-                      child: SizedBox(
-                        height: 38,
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          itemCount: _categories.length,
-                          separatorBuilder: (context, index) => const SizedBox(width: 8),
-                          itemBuilder: (context, i) {
-                            final cat = _categories[i];
-                            final isSelected = state.selectedCategory == cat;
-                            return InkWell(
-                              onTap: () {
-                                context.read<ProductsBloc>().add(SelectCategoryFilter(cat));
-                              },
-                              borderRadius: BorderRadius.circular(20),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                decoration: BoxDecoration(
-                                  color: isSelected
-                                      ? colorScheme.primary
-                                      : colorScheme.surfaceContainer,
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: isSelected
-                                      ? [
-                                          BoxShadow(
-                                            color: colorScheme.primary.withValues(alpha: 0.25),
-                                            blurRadius: 4,
-                                            offset: const Offset(0, 1),
-                                          ),
-                                        ]
-                                      : null,
-                                ),
-                                alignment: Alignment.center,
-                                child: Text(
-                                  cat,
-                                  style: TextStyle(
-                                    color: isSelected
-                                        ? Colors.white
-                                        : colorScheme.onSurfaceVariant,
-                                    fontSize: 12,
-                                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-
-                    // 4. Smart Micro-Filter Badges
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 8, bottom: 8),
+                        padding: const EdgeInsets.only(top: 10, bottom: 8),
                         child: SizedBox(
-                          height: 32,
+                          height: 38,
                           child: ListView(
                             scrollDirection: Axis.horizontal,
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             children: [
-                              // In Stock (Abuja Hub)
-                              _buildMicroBadge(
-                                label: 'In Stock (Abuja Hub)',
-                                icon: Icons.warehouse_outlined,
-                                color: const Color(0xFF1B6D24),
-                                isSelected: _activeMicroFilter == 'In Stock',
-                                onTap: () => setState(() {
-                                  _activeMicroFilter =
-                                      _activeMicroFilter == 'In Stock' ? null : 'In Stock';
-                                }),
-                              ),
-                              const SizedBox(width: 8),
-
-                              // NAFDAC Verified
-                              _buildMicroBadge(
-                                label: 'NAFDAC Verified',
-                                icon: Icons.verified_outlined,
-                                color: colorScheme.primary,
-                                isSelected: _activeMicroFilter == 'NAFDAC Verified',
-                                onTap: () => setState(() {
-                                  _activeMicroFilter =
-                                      _activeMicroFilter == 'NAFDAC Verified'
-                                          ? null
-                                          : 'NAFDAC Verified';
-                                }),
-                              ),
-                              const SizedBox(width: 8),
-
-                              // Rx Required
-                              _buildMicroBadge(
-                                label: 'Rx Required',
-                                icon: Icons.receipt_long,
-                                color: const Color(0xFFB7131A),
-                                isSelected: _activeMicroFilter == 'Rx Required',
-                                onTap: () => setState(() {
-                                  _activeMicroFilter =
-                                      _activeMicroFilter == 'Rx Required' ? null : 'Rx Required';
-                                }),
-                              ),
-                              const SizedBox(width: 8),
-
-                              // Cold-Chain
-                              _buildMicroBadge(
-                                label: 'Cold-Chain',
-                                icon: Icons.ac_unit,
-                                color: colorScheme.primary,
-                                isSelected: _activeMicroFilter == 'Cold-Chain',
-                                onTap: () => setState(() {
-                                  _activeMicroFilter =
-                                      _activeMicroFilter == 'Cold-Chain' ? null : 'Cold-Chain';
-                                }),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    // 5. Abuja Hub Fulfillment Micro-Banner
-                    SliverToBoxAdapter(
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              colorScheme.surfaceContainerLow,
-                              colorScheme.surfaceContainer,
-                              colorScheme.surfaceContainerLow,
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(14),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.03),
-                              blurRadius: 4,
-                              offset: const Offset(0, 1),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 34,
-                              height: 34,
-                              decoration: const BoxDecoration(
-                                color: Color(0xFFA0F399),
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(
-                                Icons.bolt,
-                                color: Color(0xFF005312),
-                                size: 20,
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Abuja Dispatch Center Live',
-                                    style: textTheme.labelMedium?.copyWith(
-                                      fontWeight: FontWeight.w800,
-                                      color: colorScheme.onSurface,
-                                      fontSize: 13,
+                              // Tune filter button
+                              InkWell(
+                                onTap: () => _showFilterBottomSheet(context),
+                                borderRadius: BorderRadius.circular(20),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: _activeMicroFilter != null
+                                        ? colorScheme.primary
+                                        : colorScheme.surfaceContainer,
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                      color: _activeMicroFilter != null
+                                          ? colorScheme.primary
+                                          : colorScheme.surfaceContainerHigh,
+                                      width: 1,
                                     ),
                                   ),
-                                  Text(
-                                    'Guaranteed cold-chain delivery within 20-35 mins',
-                                    style: textTheme.bodySmall?.copyWith(
-                                      color: colorScheme.onSurfaceVariant,
-                                      fontSize: 11,
-                                    ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.tune,
+                                        size: 15,
+                                        color: _activeMicroFilter != null
+                                            ? Colors.white
+                                            : colorScheme.onSurfaceVariant,
+                                      ),
+                                      const SizedBox(width: 5),
+                                      Text(
+                                        _activeMicroFilter ?? 'Filter',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w700,
+                                          color: _activeMicroFilter != null
+                                              ? Colors.white
+                                              : colorScheme.onSurfaceVariant,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFA0F399).withValues(alpha: 0.7),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const Text(
-                                'Wuse II • Open',
-                                style: TextStyle(
-                                  color: Color(0xFF1B6D24),
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w800,
                                 ),
                               ),
-                            ),
-                          ],
+                              const SizedBox(width: 8),
+
+                              // Category Pills
+                              ..._categories.map((cat) {
+                                final isSelected = state.selectedCategory == cat;
+                                return Padding(
+                                  padding: const EdgeInsets.only(right: 8),
+                                  child: InkWell(
+                                    onTap: () {
+                                      context.read<ProductsBloc>().add(SelectCategoryFilter(cat));
+                                    },
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                      decoration: BoxDecoration(
+                                        color: isSelected
+                                            ? colorScheme.primary
+                                            : colorScheme.surfaceContainer,
+                                        borderRadius: BorderRadius.circular(20),
+                                        boxShadow: isSelected
+                                            ? [
+                                                BoxShadow(
+                                                  color: colorScheme.primary.withValues(alpha: 0.25),
+                                                  blurRadius: 4,
+                                                  offset: const Offset(0, 1),
+                                                ),
+                                              ]
+                                            : null,
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        cat,
+                                        style: TextStyle(
+                                          color: isSelected
+                                              ? Colors.white
+                                              : colorScheme.onSurfaceVariant,
+                                          fontSize: 12,
+                                          fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }),
+                            ],
+                          ),
                         ),
                       ),
                     ),
 
                     // 6. Medication & Supplies List / Grid
-                    if (state.status == ProductsStatus.loading)
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.all(48.0),
-                          child: Center(
-                            child: CircularProgressIndicator(color: colorScheme.primary),
-                          ),
-                        ),
-                      )
+                    if (state.status == ProductsStatus.loading && filteredProducts.isEmpty)
+                      const ProductSkeletonGrid(itemCount: 6)
                     else if (filteredProducts.isEmpty)
                       SliverToBoxAdapter(
                         child: Padding(
@@ -991,7 +489,7 @@ class _ProductsCatalogPageState extends State<ProductsCatalogPage> {
                           final childAspectRatio = screenWidth >= 720 ? 0.72 : 0.66;
 
                           return SliverPadding(
-                            padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
+                            padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                             sliver: SliverGrid(
                               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: crossAxisCount,
@@ -1021,163 +519,6 @@ class _ProductsCatalogPageState extends State<ProductsCatalogPage> {
                       ),
                   ],
                 ),
-
-                // 7. Sticky Floating Order Bottom Bar
-                if (cartState.totalItems > 0)
-                  Positioned(
-                    bottom: 12,
-                    left: 16,
-                    right: 16,
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF283044),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.12),
-                          width: 1,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.3),
-                            blurRadius: 16,
-                            offset: const Offset(0, 6),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          // Left Icon with item count
-                          Stack(
-                            clipBehavior: Clip.none,
-                            children: [
-                              Container(
-                                width: 40,
-                                height: 40,
-                                decoration: const BoxDecoration(
-                                  color: Color(0xFF006194),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.shopping_bag,
-                                  color: Colors.white,
-                                  size: 20,
-                                ),
-                              ),
-                              Positioned(
-                                top: -2,
-                                right: -2,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF1B6D24),
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(
-                                      color: const Color(0xFF283044),
-                                      width: 1.5,
-                                    ),
-                                  ),
-                                  constraints: const BoxConstraints(
-                                    minWidth: 16,
-                                    minHeight: 16,
-                                  ),
-                                  child: Text(
-                                    '${cartState.totalItems}',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 9,
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(width: 12),
-
-                          // Text Info
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  '${cartState.totalItems} ${cartState.totalItems == 1 ? 'item' : 'items'} • ${cartState.subtotal.toNaira()}',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                Row(
-                                  children: [
-                                    Container(
-                                      width: 6,
-                                      height: 6,
-                                      decoration: const BoxDecoration(
-                                        color: Color(0xFFA0F399),
-                                        shape: BoxShape.circle,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 5),
-                                    const Text(
-                                      'Express Abuja Dispatch',
-                                      style: TextStyle(
-                                        color: Color(0xFFCCE5FF),
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          // View Cart Button
-                          InkWell(
-                            onTap: () => context.push('/cart'),
-                            borderRadius: BorderRadius.circular(20),
-                            child: Container(
-                              height: 38,
-                              padding: const EdgeInsets.symmetric(horizontal: 14),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF006194),
-                                borderRadius: BorderRadius.circular(20),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color(0xFF006194).withValues(alpha: 0.3),
-                                    blurRadius: 6,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              child: const Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    'View Cart',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                  SizedBox(width: 4),
-                                  Icon(
-                                    Icons.arrow_forward,
-                                    size: 14,
-                                    color: Colors.white,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
               ],
             ),
           ),
@@ -1185,56 +526,6 @@ class _ProductsCatalogPageState extends State<ProductsCatalogPage> {
       ),
     );
       },
-    );
-  }
-
-  Widget _buildMicroBadge({
-    required String label,
-    required IconData icon,
-    required Color color,
-    required bool isSelected,
-    required VoidCallback onTap,
-  }) {
-    final colorScheme = context.colorScheme;
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? color.withValues(alpha: 0.15)
-              : colorScheme.surfaceContainerLowest,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isSelected ? color : colorScheme.surfaceContainerHigh,
-            width: 1,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 4,
-              offset: const Offset(0, 1),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 14, color: color),
-            const SizedBox(width: 5),
-            Text(
-              label,
-              style: TextStyle(
-                color: isSelected ? color : colorScheme.onSurface,
-                fontSize: 11,
-                fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

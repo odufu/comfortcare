@@ -25,6 +25,8 @@ class ProductEntity extends Equatable {
   final String? packLabel;
   final String? cartonText;
   final bool isCartonHighlight;
+  final String indications;
+  final String equivalentDrugs;
 
   const ProductEntity({
     required this.id,
@@ -51,6 +53,8 @@ class ProductEntity extends Equatable {
     this.packLabel,
     this.cartonText,
     this.isCartonHighlight = false,
+    this.indications = '',
+    this.equivalentDrugs = '',
   });
 
   @override
@@ -79,5 +83,7 @@ class ProductEntity extends Equatable {
         packLabel,
         cartonText,
         isCartonHighlight,
+        indications,
+        equivalentDrugs,
       ];
 }

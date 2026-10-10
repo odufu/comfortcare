@@ -17,6 +17,7 @@ class RegimenItemData {
   final String? imageUrl;
   final IconData? icon;
   final String? badgeText;
+  final String? dosageInstructions;
   final List<RegimenTagData> tags;
 
   const RegimenItemData({
@@ -28,6 +29,7 @@ class RegimenItemData {
     this.imageUrl,
     this.icon,
     this.badgeText,
+    this.dosageInstructions,
     required this.tags,
   });
 }
@@ -64,6 +66,22 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
   late final List<RegimenItemData> _items;
   final Set<String> _selectedItemIds = {};
 
+  static String _extractIntervalBadge(String dosage) {
+    final lower = dosage.toLowerCase();
+    if (lower.contains('4-6 hour') || lower.contains('4–6 hour') || lower.contains('4 to 6 hour')) {
+      return 'Interval: 4–6 hrs';
+    } else if (lower.contains('8 hour') || lower.contains('8 hr') || lower.contains('8 hrs')) {
+      return 'Interval: 8 hrs';
+    } else if (lower.contains('12 hour') || lower.contains('twice daily')) {
+      return 'Interval: 12 hrs (Twice daily)';
+    } else if (lower.contains('24 hour') || lower.contains('once daily') || lower.contains(' daily')) {
+      return 'Interval: 24 hrs (Once daily)';
+    } else if (lower.contains('2-3 times') || lower.contains('2 to 3 times') || lower.contains('3 times')) {
+      return 'Interval: 2–3x daily';
+    }
+    return '';
+  }
+
   @override
   void initState() {
     super.initState();
@@ -80,9 +98,7 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
   void _initItems() {
     if (widget.products != null && widget.products!.isNotEmpty) {
       _items = widget.products!.map((p) {
-        final dosageBrief = p.dosageInstructions.length > 28
-            ? '${p.dosageInstructions.substring(0, 26)}...'
-            : p.dosageInstructions;
+        final intervalTag = _extractIntervalBadge(p.dosageInstructions);
         return RegimenItemData(
           id: p.id,
           title: p.name,
@@ -93,6 +109,7 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
               ? p.badge1
               : (p.requiresPrescription ? 'Rx' : null),
           imageUrl: p.imageUrl,
+          dosageInstructions: p.dosageInstructions,
           tags: [
             RegimenTagData(
               text: p.category,
@@ -100,11 +117,13 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
               textColor: const Color(0xFF002204),
               isBold: true,
             ),
-            RegimenTagData(
-              text: dosageBrief.isNotEmpty ? dosageBrief : 'PCN Regulated',
-              backgroundColor: const Color(0xFFDAE2FD),
-              textColor: const Color(0xFF3F4850),
-            ),
+            if (intervalTag.isNotEmpty)
+              RegimenTagData(
+                text: intervalTag,
+                backgroundColor: const Color(0xFFDAE2FD),
+                textColor: const Color(0xFF001D31),
+                isBold: true,
+              ),
           ],
         );
       }).toList();
@@ -120,6 +139,7 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
         price: 4200.0,
         isCheckedByDefault: true,
         badgeText: 'ACT',
+        dosageInstructions: 'Take 1 tablet twice daily with meals for 3 days.',
         imageUrl:
             'https://lh3.googleusercontent.com/aida-public/AB6AXuCYoLw9r-RmsXTnOXgJM3rXNLOWTp4aNanpbJT4yg1dHRH5bh8wBJw_eZkLeWPOHuZZ_kVoP-UXzPUtD-sfGLck1C3w9gjm4SZ56JuI0g4F_HK7Ob0BQbZ3Bi0BW4x66DmgyxUZGJx_OLz-TnFNPyQg49zsaiNsncvjT35QqHDYEHcDPjQ54vxtV0J_wBbh5rV6n2cXy_EKqVhLe6jV77o16zZPiZGVmHho2akb6gLVW1oRjZXo8o5CaNgYsVNmVvK3mQ',
         tags: [
@@ -130,9 +150,10 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
             isBold: true,
           ),
           RegimenTagData(
-            text: 'Take with meals',
+            text: 'Interval: 12 hrs (Twice daily)',
             backgroundColor: Color(0xFFDAE2FD),
             textColor: Color(0xFF3F4850),
+            isBold: true,
           ),
         ],
       ),
@@ -144,6 +165,7 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
         price: 1200.0,
         isCheckedByDefault: true,
         icon: Icons.vaccines,
+        dosageInstructions: 'Take 2 tablets every 8 hours with water. Do not exceed 8 tablets in 24 hours.',
         tags: [
           RegimenTagData(
             text: '2 tabs every 8 hrs',
@@ -165,6 +187,7 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
         price: 1800.0,
         isCheckedByDefault: true,
         icon: Icons.biotech,
+        dosageInstructions: 'Single use rapid test. Read results strictly between 15-20 minutes.',
         tags: [
           RegimenTagData(
             text: '15-Min Results',
@@ -187,6 +210,7 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
         price: 1400.0,
         isCheckedByDefault: false,
         icon: Icons.local_drink_outlined,
+        dosageInstructions: 'Dissolve entire sachet in 1 liter of clean drinking water.',
         tags: [
           RegimenTagData(
             text: 'Optional Add-on',
@@ -706,6 +730,68 @@ class _AiClinicalRegimenCardState extends State<AiClinicalRegimenCard> {
                             );
                           }).toList(),
                         ),
+
+                        // Prominent, unclipped Dosage & Interval display
+                        if (item.dosageInstructions != null &&
+                            item.dosageInstructions!.trim().isNotEmpty) ...[
+                          const SizedBox(height: 7),
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.55)
+                                  : const Color(0xFFF1F5F9),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: colorScheme.outlineVariant.withValues(alpha: 0.4),
+                                width: 0.8,
+                              ),
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 1.5),
+                                  child: Icon(
+                                    Icons.schedule_rounded,
+                                    size: 13,
+                                    color: colorScheme.primary,
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                Expanded(
+                                  child: RichText(
+                                    text: TextSpan(
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        height: 1.35,
+                                        color: isDark
+                                            ? colorScheme.onSurface
+                                            : const Color(0xFF1E293B),
+                                      ),
+                                      children: [
+                                        TextSpan(
+                                          text: 'Dosage & Interval: ',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                            color: colorScheme.primary,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: item.dosageInstructions!,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),

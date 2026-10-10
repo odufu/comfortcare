@@ -23,6 +23,10 @@ class OrderEntity extends Equatable {
   final String destinationAddress;
   final String recipientName;
   final String recipientPhone;
+  final String recipientWhatsapp;
+  final String? paymentReceipt;
+  final String novaExpressTrackingNumber;
+  final double flatRateDeliveryFee;
   final DispatchSpeed dispatchSpeed;
   final OrderStatus status;
   final String riderName;
@@ -38,6 +42,10 @@ class OrderEntity extends Equatable {
     required this.destinationAddress,
     required this.recipientName,
     required this.recipientPhone,
+    this.recipientWhatsapp = '+234 803 265 1505',
+    this.paymentReceipt,
+    this.novaExpressTrackingNumber = 'NOV-2026-8492',
+    this.flatRateDeliveryFee = 3500.0,
     required this.dispatchSpeed,
     this.status = OrderStatus.placed,
     this.riderName = 'Rider Ibrahim',
@@ -55,6 +63,10 @@ class OrderEntity extends Equatable {
         destinationAddress,
         recipientName,
         recipientPhone,
+        recipientWhatsapp,
+        paymentReceipt,
+        novaExpressTrackingNumber,
+        flatRateDeliveryFee,
         dispatchSpeed,
         status,
         riderName,

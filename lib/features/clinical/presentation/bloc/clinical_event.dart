@@ -8,7 +8,29 @@ abstract class ClinicalEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class LoadConsultationHistory extends ClinicalEvent {}
+class LoadConsultationHistory extends ClinicalEvent {
+  final String? userName;
+  final bool forceNewSession;
+
+  const LoadConsultationHistory({
+    this.userName,
+    this.forceNewSession = false,
+  });
+
+  @override
+  List<Object?> get props => [userName, forceNewSession];
+}
+
+class ClearConsultationSessionEvent extends ClinicalEvent {}
+
+class StartNewSessionEvent extends ClinicalEvent {
+  final String? userName;
+
+  const StartNewSessionEvent({this.userName});
+
+  @override
+  List<Object?> get props => [userName];
+}
 
 class SendConsultationMessage extends ClinicalEvent {
   final String message;

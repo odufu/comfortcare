@@ -18,9 +18,14 @@ import '../../features/products/presentation/pages/admin_product_management_page
 import '../../features/products/presentation/pages/product_details_page.dart';
 import '../../features/products/presentation/pages/products_catalog_page.dart';
 import '../../features/profile/presentation/pages/account_profile_settings_page.dart';
+import '../../features/consultants/presentation/pages/consultants_directory_page.dart';
+import '../../features/consultants/presentation/pages/consultant_profile_page.dart';
+import '../../features/consultants/presentation/pages/doctor_console_page.dart';
+import '../../features/consultants/presentation/pages/telehealth_call_page.dart';
+import '../../features/admin/presentation/pages/admin_console_page.dart';
+import '../../features/pharmacy_portal/presentation/pages/pharmacy_console_page.dart';
 import '../storage/local_storage_service.dart';
 import '../widgets/cc_bottom_nav_bar.dart';
-import '../widgets/cc_floating_ai_doctor_button.dart';
 import '../widgets/cc_side_nav.dart';
 
 class AppRouter {
@@ -92,6 +97,40 @@ class AppRouter {
           return LiveDeliveryTrackingPage(orderId: id);
         },
       ),
+      GoRoute(
+        path: '/telehealth/call/:id',
+        builder: (context, state) {
+          final doctorId = state.pathParameters['id'] ?? '';
+          final type = state.uri.queryParameters['type'] ?? 'video';
+          return TelehealthCallPage(
+            doctorId: doctorId,
+            initialCallType: type,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/doctor/console',
+        builder: (context, state) => const DoctorConsolePage(),
+      ),
+      GoRoute(
+        path: '/consultant/console',
+        builder: (context, state) => const DoctorConsolePage(),
+      ),
+      GoRoute(
+        path: '/admin/console',
+        builder: (context, state) => const AdminConsolePage(),
+      ),
+      GoRoute(
+        path: '/pharmacy/console',
+        builder: (context, state) => const PharmacyConsolePage(),
+      ),
+      GoRoute(
+        path: '/consultants/:id',
+        builder: (context, state) {
+          final doctorId = state.pathParameters['id'] ?? '';
+          return ConsultantProfilePage(doctorId: doctorId);
+        },
+      ),
       // Shell Route for responsive navigation (Side Nav on Desktop >= 840px, Bottom Nav on Mobile)
       ShellRoute(
         navigatorKey: _shellNavigatorKey,
@@ -101,14 +140,14 @@ class AppRouter {
           final isAiConsult = location.startsWith('/ai-consult');
           if (location.startsWith('/products')) {
             index = 1;
-          } else if (location.startsWith('/orders')) {
-            index = 2;
-          } else if (location.startsWith('/profile')) {
-            index = 3;
-          } else if (location.startsWith('/vitals')) {
-            index = 4;
           } else if (isAiConsult) {
-            index = -1;
+            index = 2;
+          } else if (location.startsWith('/orders')) {
+            index = 3;
+          } else if (location.startsWith('/profile') || location.startsWith('/vitals')) {
+            index = 4;
+          } else if (location.startsWith('/dashboard')) {
+            index = 0;
           }
 
           void handleNavigation(int newIndex) {
@@ -120,13 +159,13 @@ class AppRouter {
                 context.go('/products');
                 break;
               case 2:
-                context.go('/orders');
+                context.go('/ai-consult');
                 break;
               case 3:
-                context.go('/profile');
+                context.go('/orders');
                 break;
               case 4:
-                context.go('/vitals');
+                context.go('/profile');
                 break;
             }
           }
@@ -155,16 +194,10 @@ class AppRouter {
 
               return Scaffold(
                 body: child,
-                floatingActionButton: isAiConsult
-                    ? null
-                    : const CCFloatingAiDoctorButton(),
-                floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-                bottomNavigationBar: isAiConsult
-                    ? null
-                    : CCBottomNavBar(
-                        currentIndex: index,
-                        onTap: handleNavigation,
-                      ),
+                bottomNavigationBar: CCBottomNavBar(
+                  currentIndex: index,
+                  onTap: handleNavigation,
+                ),
               );
             },
           );
@@ -193,6 +226,10 @@ class AppRouter {
           GoRoute(
             path: '/vitals',
             builder: (context, state) => const HealthVitalsMonitorPage(),
+          ),
+          GoRoute(
+            path: '/consultants',
+            builder: (context, state) => const ConsultantsDirectoryPage(),
           ),
         ],
       ),

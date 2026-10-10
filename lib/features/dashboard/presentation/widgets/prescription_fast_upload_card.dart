@@ -93,159 +93,106 @@ class PrescriptionFastUploadCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = context.textTheme;
 
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            const Color(0xFF006194),
-            const Color(0xFF007BB9),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF006194).withValues(alpha: 0.25),
-            blurRadius: 14,
-            offset: const Offset(0, 4),
+    return InkWell(
+      onTap: () {
+        if (onUploadTap != null) {
+          onUploadTap!();
+        } else {
+          _showUploadSheet(context);
+        }
+      },
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [
+              Color(0xFF006194),
+              Color(0xFF007BB9),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-        ],
-      ),
-      padding: const EdgeInsets.all(18),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.shield_outlined, color: Colors.white, size: 12),
-                          const SizedBox(width: 4),
-                          Text(
-                            'NAFDAC Regulated Rx',
-                            style: textTheme.labelSmall?.copyWith(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      'Have a Prescription?',
-                      style: textTheme.headlineMedium?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w800,
-                        fontSize: 20,
-                        letterSpacing: -0.3,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Snap & Send — verified by licensed clinical pharmacists in under 30 mins.',
-                      style: textTheme.bodySmall?.copyWith(
-                        color: Colors.white.withValues(alpha: 0.9),
-                        height: 1.35,
-                      ),
-                    ),
-                  ],
-                ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF006194).withValues(alpha: 0.2),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        child: Row(
+          children: [
+            Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.18),
+                borderRadius: BorderRadius.circular(12),
               ),
-              const SizedBox(width: 14),
-              // Camera Button Container matching screenshot
-              Material(
+              child: const Icon(
+                Icons.camera_alt_outlined,
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                elevation: 2,
-                shadowColor: Colors.black.withValues(alpha: 0.15),
-                child: InkWell(
-                  onTap: () {
-                    if (onUploadTap != null) {
-                      onUploadTap!();
-                    } else {
-                      _showUploadSheet(context);
-                    }
-                  },
-                  borderRadius: BorderRadius.circular(16),
-                  child: Container(
-                    width: 52,
-                    height: 52,
-                    alignment: Alignment.center,
-                    child: const Icon(
-                      Icons.camera_alt_outlined,
-                      color: Color(0xFF006194),
-                      size: 26,
+                size: 22,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Have a Prescription?',
+                    style: textTheme.titleSmall?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 14.5,
                     ),
                   ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Icon(Icons.schedule, color: Colors.white.withValues(alpha: 0.85), size: 16),
-                  const SizedBox(width: 5),
+                  const SizedBox(height: 2),
                   Text(
-                    'Average match: 4 mins',
-                    style: textTheme.labelSmall?.copyWith(
-                      color: Colors.white.withValues(alpha: 0.9),
-                      fontWeight: FontWeight.w600,
+                    'Snap & send for pharmacist verification (<30m)',
+                    style: textTheme.bodySmall?.copyWith(
+                      color: Colors.white.withValues(alpha: 0.85),
                       fontSize: 11,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: const Color(0xFF006194),
-                  elevation: 1,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  minimumSize: Size.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                ),
-                onPressed: () {
-                  if (onUploadTap != null) {
-                    onUploadTap!();
-                  } else {
-                    _showUploadSheet(context);
-                  }
-                },
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: const [
-                    Text(
-                      'Upload Rx',
-                      style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
-                    ),
-                    SizedBox(width: 4),
-                    Icon(Icons.arrow_forward, size: 15),
-                  ],
-                ),
+            ),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
               ),
-            ],
-          ),
-        ],
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Text(
+                    'Upload Rx',
+                    style: TextStyle(
+                      color: Color(0xFF006194),
+                      fontWeight: FontWeight.w700,
+                      fontSize: 12,
+                    ),
+                  ),
+                  SizedBox(width: 3),
+                  Icon(
+                    Icons.arrow_forward,
+                    size: 13,
+                    color: Color(0xFF006194),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -5,8 +5,11 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/extensions/context_extensions.dart';
 import '../../../../core/theme/bloc/theme_bloc.dart';
 import '../../../../core/theme/bloc/theme_event.dart';
+import '../../../auth/domain/entities/user.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth_event.dart';
+import '../../../clinical/presentation/bloc/clinical_bloc.dart';
+import '../../../clinical/presentation/bloc/clinical_event.dart';
 import '../bloc/profile_bloc.dart';
 import '../bloc/profile_event.dart';
 import '../bloc/profile_state.dart';
@@ -34,7 +37,42 @@ class _AccountProfileSettingsPageState extends State<AccountProfileSettingsPage>
     return BlocBuilder<ProfileBloc, ProfileState>(
       builder: (context, state) {
         final profile = state.profile;
+        final authUser = context.watch<AuthBloc>().state.user;
         final isDarkMode = context.isDarkMode;
+
+        final displayName = authUser?.fullName.isNotEmpty == true
+            ? authUser!.fullName
+            : (profile?.fullName ?? 'ComfortCare Patient');
+        final displayPhone = authUser?.phoneNumber.isNotEmpty == true
+            ? authUser!.phoneNumber
+            : (profile?.phone ?? '+234 803 265 1505');
+
+        final String roleBadgeText;
+        final IconData roleIcon;
+        final String bannerNotice;
+        final String bannerBadge;
+
+        if (authUser?.role == UserRole.consultant) {
+          roleBadgeText = 'Licensed Consultant (${authUser?.specialty ?? "Medical Specialist"})';
+          roleIcon = Icons.medical_services;
+          bannerNotice = 'On-Call Telehealth Active across Abuja';
+          bannerBadge = 'PROVIDER';
+        } else if (authUser?.role == UserRole.pharmacy) {
+          roleBadgeText = 'Registered Community Pharmacy Partner';
+          roleIcon = Icons.local_pharmacy;
+          bannerNotice = 'Wholesale Bulk Ordering & Inventory Active';
+          bannerBadge = 'PHARMACY';
+        } else if (authUser?.role == UserRole.admin) {
+          roleBadgeText = 'System Administrator & Governance';
+          roleIcon = Icons.admin_panel_settings;
+          bannerNotice = 'Full Administrative & Vetting Privileges';
+          bannerBadge = 'ADMIN';
+        } else {
+          roleBadgeText = 'Verified Patient & Healthcare Consumer';
+          roleIcon = Icons.person;
+          bannerNotice = 'Cold-Chain Telemetry & Express Dispatch Active';
+          bannerBadge = 'VERIFIED';
+        }
 
         return Scaffold(
           appBar: AppBar(
@@ -115,7 +153,7 @@ class _AccountProfileSettingsPageState extends State<AccountProfileSettingsPage>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  profile?.fullName ?? 'Dr. Farouk Al-Mansur',
+                                  displayName,
                                   style: textTheme.titleMedium?.copyWith(
                                     fontWeight: FontWeight.w800,
                                     color: Colors.white,
@@ -123,7 +161,7 @@ class _AccountProfileSettingsPageState extends State<AccountProfileSettingsPage>
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
-                                  '${profile?.phone ?? "+234 803 265 1505"} • Abuja',
+                                  '$displayPhone • Abuja',
                                   style: textTheme.bodySmall?.copyWith(
                                     color: Colors.white.withValues(alpha: 0.85),
                                   ),
@@ -145,11 +183,11 @@ class _AccountProfileSettingsPageState extends State<AccountProfileSettingsPage>
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.local_pharmacy, size: 14, color: Colors.white),
+                            Icon(roleIcon, size: 14, color: Colors.white),
                             const SizedBox(width: 6),
                             Flexible(
                               child: Text(
-                                profile?.roleBadge ?? 'Verified Clinic & Retail Buyer (Tier 2 Wholesale)',
+                                roleBadgeText,
                                 style: textTheme.labelSmall?.copyWith(
                                   color: Colors.white,
                                   fontSize: 10,
@@ -164,7 +202,7 @@ class _AccountProfileSettingsPageState extends State<AccountProfileSettingsPage>
                       ),
                       const SizedBox(height: 10),
 
-                      // Wholesaler status notice
+                      // Status notice banner
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         decoration: BoxDecoration(
@@ -174,28 +212,35 @@ class _AccountProfileSettingsPageState extends State<AccountProfileSettingsPage>
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
-                              children: [
-                                const Icon(Icons.verified_user, size: 14, color: Colors.white),
-                                const SizedBox(width: 6),
-                                Text(
-                                  'Discounts Active on 412 Items',
-                                  style: textTheme.labelSmall?.copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w700,
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.verified_user, size: 14, color: Colors.white),
+                                  const SizedBox(width: 6),
+                                  Expanded(
+                                    child: Text(
+                                      bannerNotice,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: textTheme.labelSmall?.copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
+                            const SizedBox(width: 8),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
                                 color: colorScheme.secondary,
                                 borderRadius: BorderRadius.circular(6),
                               ),
-                              child: const Text(
-                                '12% OFF',
-                                style: TextStyle(
+                              child: Text(
+                                bannerBadge,
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 10,
                                   fontWeight: FontWeight.w800,
@@ -374,6 +419,140 @@ class _AccountProfileSettingsPageState extends State<AccountProfileSettingsPage>
                         trailing: const Icon(Icons.chevron_right, size: 20),
                         onTap: () => context.push('/ai-consult'),
                       ),
+                      const Divider(height: 1),
+                      ListTile(
+                        leading: Container(
+                          width: 36,
+                          height: 36,
+                          decoration: BoxDecoration(
+                            color: colorScheme.surfaceContainerLow,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(Icons.medical_services_outlined, color: colorScheme.primary, size: 20),
+                        ),
+                        title: Text(
+                          'Medical Consultants & Doctors',
+                          style: textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700),
+                        ),
+                        subtitle: Text(
+                          'Abuja specialists, patient ratings & telehealth booking',
+                          style: textTheme.bodySmall,
+                        ),
+                        trailing: const Icon(Icons.chevron_right, size: 20),
+                        onTap: () => context.push('/consultants'),
+                      ),
+                      if (authUser?.role == UserRole.consultant) ...[
+                        const Divider(height: 1),
+                        ListTile(
+                          leading: Container(
+                            width: 36,
+                            height: 36,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF0D9488).withValues(alpha: 0.12),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(Icons.video_camera_front_outlined, color: Color(0xFF0D9488), size: 20),
+                          ),
+                          title: Text(
+                            'Doctor Clinical Console',
+                            style: textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700),
+                          ),
+                          subtitle: Text(
+                            'On-call status, live patient queue & telehealth calls',
+                            style: textTheme.bodySmall,
+                          ),
+                          trailing: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF0D9488).withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Text(
+                              'Provider',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF0D9488),
+                              ),
+                            ),
+                          ),
+                          onTap: () => context.push('/doctor/console'),
+                        ),
+                      ] else if (authUser?.role == UserRole.pharmacy) ...[
+                        const Divider(height: 1),
+                        ListTile(
+                          leading: Container(
+                            width: 36,
+                            height: 36,
+                            decoration: BoxDecoration(
+                              color: colorScheme.secondary.withValues(alpha: 0.12),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(Icons.local_pharmacy, color: colorScheme.secondary, size: 20),
+                          ),
+                          title: Text(
+                            'Pharmacy Portal & Wholesale Console',
+                            style: textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700),
+                          ),
+                          subtitle: Text(
+                            'Decentralized fulfillment, local inventory & cartons',
+                            style: textTheme.bodySmall,
+                          ),
+                          trailing: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: colorScheme.secondary.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              'Pharmacy',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: colorScheme.secondary,
+                              ),
+                            ),
+                          ),
+                          onTap: () => context.push('/pharmacy/console'),
+                        ),
+                      ] else if (authUser?.role == UserRole.admin) ...[
+                        const Divider(height: 1),
+                        ListTile(
+                          leading: Container(
+                            width: 36,
+                            height: 36,
+                            decoration: BoxDecoration(
+                              color: colorScheme.primary.withValues(alpha: 0.12),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(Icons.admin_panel_settings, color: colorScheme.primary, size: 20),
+                          ),
+                          title: Text(
+                            'Admin Management Console',
+                            style: textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700),
+                          ),
+                          subtitle: Text(
+                            'Vetting consultants, product catalog & governance',
+                            style: textTheme.bodySmall,
+                          ),
+                          trailing: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: colorScheme.primary.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              'Admin',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                          onTap: () => context.push('/admin/console'),
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -408,6 +587,7 @@ class _AccountProfileSettingsPageState extends State<AccountProfileSettingsPage>
                       style: textTheme.bodySmall,
                     ),
                     onTap: () {
+                      context.read<ClinicalBloc>().add(ClearConsultationSessionEvent());
                       context.read<AuthBloc>().add(LogoutRequested());
                       context.go('/auth/login');
                     },

@@ -392,7 +392,10 @@ class _CartPrescriptionReviewPageState extends State<CartPrescriptionReviewPage>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 6,
+                  runSpacing: 4,
                   children: [
                     Text(
                       'NAFDAC & Cold-Chain Monitored',
@@ -401,7 +404,6 @@ class _CartPrescriptionReviewPageState extends State<CartPrescriptionReviewPage>
                         color: colorScheme.primary,
                       ),
                     ),
-                    const SizedBox(width: 6),
                     CCChip(
                       label: '2°C - 8°C Verified',
                       variant: CCChipVariant.secondary,

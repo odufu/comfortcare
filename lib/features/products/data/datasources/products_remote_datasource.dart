@@ -47,6 +47,8 @@ class ProductsRemoteDataSourceImpl implements ProductsRemoteDataSource {
       packLabel: 'Retail Pack',
       cartonText: 'Carton (30): ₦115,000',
       isCartonHighlight: true,
+      indications: 'Acute uncomplicated Malaria, P. falciparum infection, high fever, shivering, chills, headache, joint weakness',
+      equivalentDrugs: 'Lonart Forte, Amatem Softgel, Lokmal, Artemether + Lumefantrine, P-Alaxin',
     ),
     ProductModel(
       id: 'prod-omron-m2',
@@ -75,6 +77,8 @@ class ProductsRemoteDataSourceImpl implements ProductsRemoteDataSource {
       packLabel: 'Digital Monitor',
       cartonText: 'Free Delivery',
       isCartonHighlight: true,
+      indications: 'Blood pressure monitoring, hypertension tracking, cardiovascular care, heart rate tracking',
+      equivalentDrugs: 'Accu-Chek, Digital Sphygmomanometer, Upper Arm BP Cuff, Beurer BP Monitor',
     ),
     ProductModel(
       id: 'prod-amoxil-500',
@@ -103,6 +107,8 @@ class ProductsRemoteDataSourceImpl implements ProductsRemoteDataSource {
       packLabel: 'Pack of 20',
       cartonText: 'Pack of 20',
       isCartonHighlight: false,
+      indications: 'Bacterial infections, respiratory tract infections, dental infections, ear-nose-throat infections, bronchitis',
+      equivalentDrugs: 'Augmentin 625mg, Ampiclox, Amoxicillin Trihydrate, Fleming',
     ),
     ProductModel(
       id: 'prod-latex-gloves',
@@ -131,6 +137,8 @@ class ProductsRemoteDataSourceImpl implements ProductsRemoteDataSource {
       packLabel: 'Single Box (100 pcs)',
       cartonText: 'Carton: ₦58k',
       isCartonHighlight: true,
+      indications: 'Clinical examination, infection barrier, hospital procedures, wound dressing, patient hygiene',
+      equivalentDrugs: 'Nitrile Gloves, Vinyl Gloves, Surgical Gloves, Sterile Exam Gloves',
     ),
     ProductModel(
       id: 'prod-augmentin-625',
@@ -160,6 +168,8 @@ class ProductsRemoteDataSourceImpl implements ProductsRemoteDataSource {
       packLabel: 'Retail Pack',
       cartonText: 'Doctor Rx validation at checkout',
       isCartonHighlight: false,
+      indications: 'Severe bacterial infections, sinusitis, lower respiratory infections, urinary tract infection (UTI), skin/soft tissue infection, dental abscess',
+      equivalentDrugs: 'Fleming 625mg, Amoxil 500mg, Curam 625mg, Co-amoxiclav, Clavulin',
     ),
     ProductModel(
       id: 'prod-emzor-paracetamol',
@@ -188,6 +198,8 @@ class ProductsRemoteDataSourceImpl implements ProductsRemoteDataSource {
       packLabel: 'Box Pack',
       cartonText: 'Wholesale outer carton available',
       isCartonHighlight: true,
+      indications: 'Headache, fever, mild to moderate body pain, aches, chills, muscle soreness, toothache, malaise',
+      equivalentDrugs: 'Panadol Extra, Boska, Tylenol, Paracetamol, Panadol Actifast, Daga',
     ),
     ProductModel(
       id: 'prod-mixtard-insulin',
@@ -217,6 +229,8 @@ class ProductsRemoteDataSourceImpl implements ProductsRemoteDataSource {
       packLabel: '10ml Vial',
       cartonText: 'Strict Cold-Chain Direct Delivery',
       isCartonHighlight: true,
+      indications: 'Diabetes mellitus (Type 1 and Type 2), blood sugar regulation, glycemic control, hyperglycemia prevention',
+      equivalentDrugs: 'Humulin 70/30, Lantus, Actrapid, Novomix, Insuman',
     ),
     ProductModel(
       id: 'prod-panadol-extra',
@@ -245,6 +259,8 @@ class ProductsRemoteDataSourceImpl implements ProductsRemoteDataSource {
       packLabel: 'Retail Pack',
       cartonText: '20 Strips outer carton available',
       isCartonHighlight: false,
+      indications: 'Severe headache, migraine, tension headache, acute fever, muscular pain, toothache, dysmenorrhea',
+      equivalentDrugs: 'Emzor Paracetamol, Boska, Panadol Actifast, Cataflam, Ibuprofen, Feldene',
     ),
     ProductModel(
       id: 'prod-carestart-rdt',
@@ -273,6 +289,8 @@ class ProductsRemoteDataSourceImpl implements ProductsRemoteDataSource {
       packLabel: 'Single Test Kit',
       cartonText: 'Box of 25 Tests available',
       isCartonHighlight: false,
+      indications: 'Malaria diagnostic testing, Plasmodium falciparum parasite screening, febrile illness differential diagnosis',
+      equivalentDrugs: 'SD Bioline Malaria RDT, First Response Malaria Test Kit',
     ),
     ProductModel(
       id: 'prod-ors-zinc',
@@ -301,8 +319,106 @@ class ProductsRemoteDataSourceImpl implements ProductsRemoteDataSource {
       packLabel: '5 Sachets Pack',
       cartonText: 'Carton (50 packs): ₦45,000',
       isCartonHighlight: true,
+      indications: 'Dehydration, diarrhea, gastroenteritis, electrolyte depletion, heat exhaustion, cholera rehydration',
+      equivalentDrugs: 'HydraLyte, Electrorush, Dioralyte, Oralyt',
+    ),
+    ProductModel(
+      id: 'prod-osteocare-vitabiotics',
+      name: 'Osteocare Calcium + Vitamin D3 & Zinc',
+      brand: 'Vitabiotics',
+      genericName: 'Calcium Carbonate 800mg + Vit D3 400IU + Magnesium & Zinc',
+      packSize: '30 Tablets Pack',
+      price: 4800.0,
+      wholesalePrice: 4100.0,
+      category: 'Vitamins & Immunity',
+      description:
+          'Clinical bone remineralization formula specifically supporting bone fracture healing, callus formation, skeletal consolidation, and joint strength.',
+      dosageInstructions: 'Take 2 tablets daily with a main meal and water. Do not chew.',
+      activeIngredients: 'Calcium 800mg, Magnesium 300mg, Zinc 10mg, Vitamin D3 10µg (400 IU)',
+      nafdacNumber: 'NAFDAC Reg. No. 04-3319',
+      requiresPrescription: false,
+      isColdChain: false,
+      storageTemp: 'Store below 25°C in a dry place',
+      stock: 95,
+      imageUrl:
+          'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=600&auto=format&fit=crop&q=80',
+      badge1: 'Bone Healing',
+      badge1Icon: 'health_and_safety',
+      badge2: 'Vitabiotics UK',
+      badge2Icon: 'verified',
+      packLabel: 'Pack of 30',
+      cartonText: 'Carton (24 packs): ₦98,000',
+      isCartonHighlight: true,
+      indications:
+          'Bone fracture healing, fracture recovery, bone consolidation, calcium deficiency, osteoporosis prevention, leg bone remineralization, post-trauma bone support, joint stiffness',
+      equivalentDrugs: 'Caltrate 600+D, Calcichew D3, Calcium Sandoz, Bone Health Complex, Osteo-D',
+    ),
+    ProductModel(
+      id: 'prod-deep-heat-rub',
+      name: 'Deep Heat Fast Relief Rub',
+      brand: 'Mentholatum',
+      genericName: 'Methyl Salicylate 12.8% + Menthol 5.9%',
+      packSize: '100g Tube',
+      price: 2950.0,
+      wholesalePrice: 2450.0,
+      category: 'Vitamins & Immunity',
+      description:
+          'Targeted heat therapy and analgesic rub for relieving post-fracture muscular stiffness, joint tightness, and facilitating physical therapy exercises and leg fluidity.',
+      dosageInstructions:
+          'Gently massage into the affected leg or joint 2-3 times daily, especially before and after rehabilitation mobility exercises.',
+      activeIngredients: 'Methyl Salicylate 12.8%, Menthol 5.9%, Eucalyptus Oil 1.97%',
+      nafdacNumber: 'NAFDAC Reg. No. 04-1021',
+      requiresPrescription: false,
+      isColdChain: false,
+      storageTemp: 'Store below 30°C',
+      stock: 140,
+      imageUrl:
+          'https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&auto=format&fit=crop&q=80',
+      badge1: 'Stiffness Relief',
+      badge1Icon: 'healing',
+      badge2: 'Fast Relief',
+      badge2Icon: 'flash_on',
+      packLabel: '100g Tube',
+      cartonText: 'Wholesale carton available',
+      isCartonHighlight: false,
+      indications:
+          'Leg stiffness, muscle tightness, joint mobility, physiotherapy rub, fracture recovery stiffness, walking pain, muscular spasm, legs not moving fluidly',
+      equivalentDrugs: 'Voltarol Gel, Fastum Gel, Flexall, Tiger Balm, Ice Power, Wintergreen Gel',
+    ),
+    ProductModel(
+      id: 'prod-neurobion-forte',
+      name: 'Neurobion Forte Tablets',
+      brand: 'P&G Health',
+      genericName: 'Vitamin B1 + B6 + B12 Neurotropic Complex',
+      packSize: '30 Coated Tablets',
+      price: 3400.0,
+      wholesalePrice: 2850.0,
+      category: 'Vitamins & Immunity',
+      description:
+          'Neurotropic B-vitamin complex supporting peripheral nerve regeneration, neuromuscular transmission, and coordination for smooth, fluid limb movements during rehabilitation.',
+      dosageInstructions: 'Take 1 tablet daily with a glass of water after food.',
+      activeIngredients: 'Thiamine (B1) 100mg, Pyridoxine (B6) 200mg, Cyanocobalamin (B12) 200µg',
+      nafdacNumber: 'NAFDAC Reg. No. 04-2901',
+      requiresPrescription: false,
+      isColdChain: false,
+      storageTemp: 'Store below 25°C',
+      stock: 160,
+      imageUrl:
+          'https://images.unsplash.com/photo-1471864190281-a93a3070b6de?w=600&auto=format&fit=crop&q=80',
+      badge1: 'Nerve Health',
+      badge1Icon: 'psychology',
+      badge2: 'Merck Formulation',
+      badge2Icon: 'verified',
+      packLabel: '30 Tablets',
+      cartonText: 'Box of 100 available',
+      isCartonHighlight: false,
+      indications:
+          'Nerve repair, fluid movement coordination, limb numbness, neuropathy, post-injury nerve healing, rehabilitation motor control, gait coordination',
+      equivalentDrugs: 'Neurovit, Nervamin, B-Complex High Potency, Vitamin B1 B6 B12',
     ),
   ];
+
+  static List<ProductModel> get inMemoryProducts => List.unmodifiable(_mockProducts);
 
   @override
   Future<List<ProductModel>> getProducts({
@@ -402,7 +518,20 @@ class ProductsRemoteDataSourceImpl implements ProductsRemoteDataSource {
         _mockProducts.insert(0, created);
         return created;
       } catch (_) {
-        // Fallback
+        // Retry without extended AI columns in case migration is not yet applied
+        try {
+          final stripped = Map<String, dynamic>.from(product.toJson())
+            ..remove('indications')
+            ..remove('equivalent_drugs');
+          final res = await client
+              .from(ApiConstants.productsTable)
+              .insert(stripped)
+              .select()
+              .single();
+          final created = ProductModel.fromJson(res);
+          _mockProducts.insert(0, created);
+          return created;
+        } catch (_) {}
       }
     }
 
@@ -429,7 +558,24 @@ class ProductsRemoteDataSourceImpl implements ProductsRemoteDataSource {
         }
         return updated;
       } catch (_) {
-        // Fallback
+        // Retry without extended AI columns in case migration is not yet applied
+        try {
+          final stripped = Map<String, dynamic>.from(product.toJson())
+            ..remove('indications')
+            ..remove('equivalent_drugs');
+          final res = await client
+              .from(ApiConstants.productsTable)
+              .update(stripped)
+              .eq('id', product.id)
+              .select()
+              .single();
+          final updated = ProductModel.fromJson(res);
+          final index = _mockProducts.indexWhere((p) => p.id == product.id);
+          if (index != -1) {
+            _mockProducts[index] = updated;
+          }
+          return updated;
+        } catch (_) {}
       }
     }
 

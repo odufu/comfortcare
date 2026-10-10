@@ -465,6 +465,71 @@ class _AdminProductManagementPageState
                       ),
                     ],
                   ),
+                  if (item.indications.isNotEmpty || item.equivalentDrugs.isNotEmpty) ...[
+                    const SizedBox(height: 6),
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 4,
+                      children: [
+                        if (item.indications.isNotEmpty)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: colorScheme.primaryContainer.withValues(alpha: 0.35),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.psychology, size: 10, color: colorScheme.primary),
+                                const SizedBox(width: 3),
+                                ConstrainedBox(
+                                  constraints: const BoxConstraints(maxWidth: 220),
+                                  child: Text(
+                                    'Cases: ${item.indications}',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: colorScheme.primary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        if (item.equivalentDrugs.isNotEmpty)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.teal.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.sync_alt, size: 10, color: Colors.teal),
+                                const SizedBox(width: 3),
+                                ConstrainedBox(
+                                  constraints: const BoxConstraints(maxWidth: 180),
+                                  child: Text(
+                                    'Alts: ${item.equivalentDrugs}',
+                                    style: const TextStyle(
+                                      fontSize: 10,
+                                      color: Colors.teal,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
                   const SizedBox(height: 8),
 
                   // Stock Stepper & Quick Action Buttons
@@ -599,6 +664,10 @@ class _AdminProductManagementPageState
         text: existing?.dosageInstructions ?? 'Take according to physician prescription.');
     final ingredientsCtrl =
         TextEditingController(text: existing?.activeIngredients ?? 'Active Pharmaceutical Ingredient');
+    final indicationsCtrl =
+        TextEditingController(text: existing?.indications ?? '');
+    final equivalentsCtrl =
+        TextEditingController(text: existing?.equivalentDrugs ?? '');
     final imageCtrl = TextEditingController(text: existing?.imageUrl ?? '');
 
     String category = existing?.category ?? 'Antimalarials';
@@ -613,8 +682,8 @@ class _AdminProductManagementPageState
           return Dialog(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             child: Container(
-              width: 580,
-              height: 620,
+              width: 600,
+              height: 680,
               padding: const EdgeInsets.all(24),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -784,6 +853,82 @@ class _AdminProductManagementPageState
                           ),
                           const SizedBox(height: 12),
                           TextField(
+                            controller: ingredientsCtrl,
+                            decoration: const InputDecoration(
+                              labelText: 'Active Ingredients & Strength',
+                              hintText: 'e.g. Artemether 80mg, Lumefantrine 480mg',
+                              isDense: true,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+
+                          // AI Suggestion & Clinical Indications Box
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: colorScheme.primaryContainer.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: colorScheme.primary.withValues(alpha: 0.35),
+                              ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(Icons.psychology, size: 18, color: colorScheme.primary),
+                                    const SizedBox(width: 6),
+                                    Expanded(
+                                      child: Text(
+                                        'AI Clinical Grounding Parameters (Dr. Comfort)',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                          color: colorScheme.primary,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'These structured clinical properties guide Dr. Comfort to match symptoms and recommend substitutes.',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                TextField(
+                                  controller: indicationsCtrl,
+                                  maxLines: 2,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Cases Where It Is Used / Indications *',
+                                    hintText: 'e.g. Acute uncomplicated Malaria, high fever, shivering, chills, headache',
+                                    helperText: 'Conditions & symptoms where this medicine is indicated.',
+                                    helperMaxLines: 2,
+                                    isDense: true,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                TextField(
+                                  controller: equivalentsCtrl,
+                                  maxLines: 2,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Other Drugs That Do Same Work / Equivalents',
+                                    hintText: 'e.g. Lonart Forte, Amatem Softgel, Lokmal, Artemether+Lumefantrine',
+                                    helperText: 'Substitutes suggested by Dr. Comfort when unstocked brands are requested.',
+                                    helperMaxLines: 2,
+                                    isDense: true,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          const SizedBox(height: 12),
+                          TextField(
                             controller: descCtrl,
                             maxLines: 2,
                             decoration: const InputDecoration(
@@ -886,6 +1031,8 @@ class _AdminProductManagementPageState
                             description: descCtrl.text.trim(),
                             dosageInstructions: dosageCtrl.text.trim(),
                             activeIngredients: ingredientsCtrl.text.trim(),
+                            indications: indicationsCtrl.text.trim(),
+                            equivalentDrugs: equivalentsCtrl.text.trim(),
                             nafdacNumber: nafdacCtrl.text.trim(),
                             requiresPrescription: requiresRx,
                             isColdChain: isColdChain,

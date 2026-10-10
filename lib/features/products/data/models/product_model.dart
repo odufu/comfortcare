@@ -26,6 +26,8 @@ class ProductModel extends ProductEntity {
     super.packLabel,
     super.cartonText,
     super.isCartonHighlight = false,
+    super.indications = '',
+    super.equivalentDrugs = '',
   });
 
   factory ProductModel.fromEntity(ProductEntity entity) {
@@ -54,6 +56,8 @@ class ProductModel extends ProductEntity {
       packLabel: entity.packLabel,
       cartonText: entity.cartonText,
       isCartonHighlight: entity.isCartonHighlight,
+      indications: entity.indications,
+      equivalentDrugs: entity.equivalentDrugs,
     );
   }
 
@@ -84,6 +88,8 @@ class ProductModel extends ProductEntity {
       packLabel: json['pack_label'] as String? ?? json['packLabel'] as String?,
       cartonText: json['carton_text'] as String? ?? json['cartonText'] as String?,
       isCartonHighlight: json['is_carton_highlight'] as bool? ?? json['isCartonHighlight'] as bool? ?? false,
+      indications: json['indications'] as String? ?? json['cases_used_for'] as String? ?? '',
+      equivalentDrugs: json['equivalent_drugs'] as String? ?? json['equivalentDrugs'] as String? ?? '',
     );
   }
 
@@ -113,6 +119,8 @@ class ProductModel extends ProductEntity {
       'pack_label': packLabel,
       'carton_text': cartonText,
       'is_carton_highlight': isCartonHighlight,
+      'indications': indications,
+      'equivalent_drugs': equivalentDrugs,
     };
   }
 }

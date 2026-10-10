@@ -221,6 +221,10 @@ class _CCSideNavState extends State<CCSideNav> {
                         _buildAiDoctorMiniButton(context, colorScheme),
 
                       const SizedBox(height: 10),
+                      _buildConsultantsLink(context, isNarrow, colorScheme),
+                      const SizedBox(height: 6),
+                      _buildDoctorConsoleLink(context, isNarrow, colorScheme),
+                      const SizedBox(height: 6),
                       _buildAdminLink(context, isNarrow, colorScheme),
                     ],
                   ),
@@ -631,6 +635,145 @@ class _CCSideNavState extends State<CCSideNav> {
                     fontWeight: FontWeight.bold,
                     color: colorScheme.secondary,
                   ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildConsultantsLink(
+      BuildContext context, bool isCollapsed, ColorScheme colorScheme) {
+    if (isCollapsed) {
+      return Tooltip(
+        message: 'Medical Consultants & Specialists',
+        child: Material(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(14),
+          child: InkWell(
+            onTap: () => context.push('/consultants'),
+            borderRadius: BorderRadius.circular(14),
+            child: Container(
+              height: 48,
+              alignment: Alignment.center,
+              child: Icon(
+                Icons.medical_services_outlined,
+                size: 22,
+                color: colorScheme.primary,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Material(
+      color: colorScheme.primaryContainer.withValues(alpha: 0.35),
+      borderRadius: BorderRadius.circular(14),
+      child: InkWell(
+        onTap: () => context.push('/consultants'),
+        borderRadius: BorderRadius.circular(14),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          child: Row(
+            children: [
+              Icon(
+                Icons.medical_services_outlined,
+                size: 20,
+                color: colorScheme.primary,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'Consultants & Doctors',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: colorScheme.primary,
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: colorScheme.primary.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  'MDCN',
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.primary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDoctorConsoleLink(
+      BuildContext context, bool isCollapsed, ColorScheme colorScheme) {
+    if (isCollapsed) {
+      return Tooltip(
+        message: 'Doctor Telehealth Console',
+        child: Material(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(14),
+          child: InkWell(
+            onTap: () => context.push('/doctor/console'),
+            borderRadius: BorderRadius.circular(14),
+            child: Container(
+              height: 48,
+              alignment: Alignment.center,
+              child: const Icon(
+                Icons.video_camera_front_outlined,
+                size: 22,
+                color: Color(0xFF0D9488),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Material(
+      color: const Color(0xFF0D9488).withValues(alpha: 0.12),
+      borderRadius: BorderRadius.circular(14),
+      child: InkWell(
+        onTap: () => context.push('/doctor/console'),
+        borderRadius: BorderRadius.circular(14),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          child: const Row(
+            children: [
+              Icon(
+                Icons.video_camera_front_outlined,
+                size: 20,
+                color: Color(0xFF0D9488),
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'Doctor Console',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF0D9488),
+                  ),
+                ),
+              ),
+              Text(
+                'On-Call',
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF0D9488),
                 ),
               ),
             ],

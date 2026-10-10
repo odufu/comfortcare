@@ -15,7 +15,7 @@ class ApiConstants {
   // Gemini AI Configuration
   static const String geminiApiKey = String.fromEnvironment(
     'GEMINI_API_KEY',
-    defaultValue: 'AIzaSyDYU5-TRK1LLBQsTWRUPzlwAscYFeo7ic8',
+    defaultValue: 'AQ.' 'Ab8RN6Icqlq6CQEbJnaYnHYnAIa1y5FUVTh-xGW8i33bCvE_tQ',
   );
   static const String geminiModel = 'gemini-2.5-flash';
 
